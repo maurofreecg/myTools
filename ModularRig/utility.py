@@ -71,7 +71,7 @@ def arm_jntT(clavicleP = (2.663, 146.853, -1.658), clavicleO = (0, 15, 0),
     ring_00 = mc.joint(hand, p= ring_00P, rad=1, o= ring_00O, n='ring_00'), mc.select(d=True)
     ring_01 = mc.joint(ring_00, p= ring_01P, rad=1, o= ring_01O, n='ring_01'), mc.select(d=True)
     ring_02 = mc.joint(ring_01, p= ring_02P, rad=1, o= ring_02O, n='ring_02'), mc.select(d=True)
-    ring_03 = mc.joint(ring_02, p= ring_03P, rad=1, o= ring_03O, n='ring_02'), mc.select(d=True)
+    ring_03 = mc.joint(ring_02, p= ring_03P, rad=1, o= ring_03O, n='ring_03'), mc.select(d=True)
     
     ### middle
     middle_00 = mc.joint(hand, p= middle_00P, rad=1, o= middle_00O, n='middle_00'), mc.select(d=True)
@@ -165,7 +165,7 @@ def biped_jntT(neckP = (0, 155.256, -5.945), neckO = (0, -1.638, 90.000), headP 
     ring_00 = mc.joint(hand, p= ring_00P, rad=1, o= ring_00O, n='ring_00'), mc.select(d=True)
     ring_01 = mc.joint(ring_00, p= ring_01P, rad=1, o= ring_01O, n='ring_01'), mc.select(d=True)
     ring_02 = mc.joint(ring_01, p= ring_02P, rad=1, o= ring_02O, n='ring_02'), mc.select(d=True)
-    ring_03 = mc.joint(ring_02, p= ring_03P, rad=1, o= ring_03O, n='ring_02'), mc.select(d=True)
+    ring_03 = mc.joint(ring_02, p= ring_03P, rad=1, o= ring_03O, n='ring_03'), mc.select(d=True)
     
     ### middle
     middle_00 = mc.joint(hand, p= middle_00P, rad=1, o= middle_00O, n='middle_00'), mc.select(d=True)
@@ -262,6 +262,7 @@ def arm_fingers_FK_transform():
 
     mc.select(arm_fingers_jnt_list)
     tranRotScl_const()
+
 
 
 
