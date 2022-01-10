@@ -22,4 +22,5 @@ HIK_rename_list = ['Hips', 'RightUpLeg', 'RightLeg', 'RightFoot', 'RightToeBase'
 rename_list = []
 
 for rename in range(len(base_jnt_list)):
-    mc.rename(rename, HIK_rename_list)
+    if mc.objExists(rename):
+        mc.rename(HIK_rename_list, shape=True)

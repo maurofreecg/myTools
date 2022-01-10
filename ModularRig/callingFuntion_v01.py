@@ -12,4 +12,7 @@ ut.spine_FK_transfomr()
 ut.arm_jntT()
 ut.arm_fingers_FK_transform()
 ut.leg_jntT()
+ut.leg_FK_Transform()
 ut.biped_jntT()
+ut.biped_FK_transform()
+

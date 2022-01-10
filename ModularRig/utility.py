@@ -27,7 +27,7 @@ def celtCross_crv():
                           (0, -1.833147, 0), (0, 0.341712, -0.326917), (0, -0.0517824, 1.82575), (0, -0.134583, -0.326917), (0, 0.693935, -0.108972,),
                           (0, 1.108194, 0)], n=item + '_ctrl')
         mc.parent(celtCross_ctrl, celtCrossGrp), mc.parent(celtCrossGrp, celtCrossGrpMaster)
-        mc.delete(mc.parentConstraint(item, masterGrp, mo=False))
+        mc.delete(mc.parentConstraint(item, celtCrossGrpMaster, mo=False))
 
 ############################################## neckHead templete #########################################################################
 def neckHead_jntT(neckP = (0, 155.256, -5.945), neckO = (0, -1.638, 90.000),
@@ -111,7 +111,7 @@ def leg_jntT(thighP = (10.431, 95.474, -2.290), thighO = (0,-5.546,-90.000),
             calfP = (10.431, 54.838, 1.656), calfO = (0,15.067,0),
             footP = (10.431, 12.113, -5.511), footO = (0, 260.979, 0),
             ballP = (10.431, -0.050, 5.758), ballO = (-90, -90, 0),
-            toeP = (10.431, -0.113, 12.968), toeO = (-90, -90, 0), *kwargs):
+            toeP = (10.431, -0.113, 12.968), toeO = (0, 0, 0), *kwargs):
 
     thigh_l = mc.joint(p= thighP, rad=2, o= thighO, n='thigh_l'), mc.select(d=True)
     calf_l = mc.joint(thigh_l, p= calfP, rad=2, o= calfO, n='calf_l'), mc.select(d=True)
@@ -150,7 +150,7 @@ def biped_jntT(neckP = (0, 155.256, -5.945), neckO = (0, -1.638, 90.000), headP 
               calfP = (10.431, 54.838, 1.656), calfO = (0,15.067,0),
               footP = (10.431, 12.113, -5.511), footO = (0, 260.979, 0),
               ballP = (10.431, -0.050, 5.758), ballO = (-90, -90, 0),
-              toeP = (10.431, -0.113, 12.968), toeO = (-90, -90, 0), *kwargs):
+              toeP = (10.431, -0.113, 12.968), toeO = (0, 0, 0), *kwargs):
 
     ### spine
     pelvis = mc.joint(p= pelvisP, rad=2, o= pelvisO, n='pelvis'), mc.select(d=True)
@@ -217,8 +217,12 @@ def tranRotScl_const():
         crv = mc.circle( n= i + '_ctrl', ch=False, radius = 3, nr=(1, 0, 0))
         mc.parent(crv, grp), mc.parent(grp, masterGrp)
         mc.delete(mc.parentConstraint(i, masterGrp, mo=False))
-        mc.connectAttr(('%s.r'%crv[0]), ('%s.r'%i))
-        mc.connectAttr(('%s.s'%crv[0]), ('%s.s'%i))
+        mc.connectAttr(('%s.rx'%crv[0]), ('%s.rx'%i))
+        mc.connectAttr(('%s.ry'%crv[0]), ('%s.ry'%i))
+        mc.connectAttr(('%s.rz'%crv[0]), ('%s.rz'%i))
+        mc.connectAttr(('%s.sx'%crv[0]), ('%s.sx'%i))
+        mc.connectAttr(('%s.sy'%crv[0]), ('%s.sy'%i))
+        mc.connectAttr(('%s.sz'%crv[0]), ('%s.sz'%i))
         multM = mc.createNode('multMatrix', n= i + '_MM')
         decM = mc.createNode('decomposeMatrix', n= i + '_DM')
         mc.connectAttr(multM + '.matrixSum', decM + '.inputMatrix')
@@ -249,6 +253,8 @@ def neck_FK_transform():
     mc.connectAttr('head_ctrl.rotateX', neck_PB + '.inRotateX2')
     mc.connectAttr(neck_PB + '.outRotateX', neckTwist + '.rx')
 
+    mc.select(d=True)
+
 ################################################## spine FK transform ################################################################
 def spine_FK_transfomr():
     spine_jnt_list = ['pelvis', 'spine_01', 'spine_02', 'spine_03']
@@ -265,82 +271,610 @@ def spine_FK_transfomr():
     spineCtrlGrp = mc.group(n = 'spine_controls', em=True)
     mc.parent('pelvis_masterCtrlSpace', spineCtrlGrp)
 
+    mc.select(d=True)
+
 ################################################# arm finger FK transform ######################################################
-#def arm_fingers_FK_transform():
+def arm_fingers_FK_transform():
 
-arm_fingers_l_jnt_list = ['clavicle_l', 'upperarm_l', 'lowerarm_l', 'hand_l', 'pinky_00_l', 'pinky_01_l', 'pinky_02_l', 'pinky_03_l',
-                          'ring_00_l', 'ring_01_l', 'ring_02_l', 'ring_03_l', 'middle_00_l', 'middle_01_l', 'middle_02_l', 'middle_03_l',
-                          'index_00_l', 'index_01_l', 'index_02_l', 'index_03_l', 'thumb_01_l', 'thumb_02_l', 'thumb_03_l']
+    arm_fingers_l_jnt_list = ['clavicle_l', 'upperarm_l', 'lowerarm_l', 'hand_l', 'pinky_00_l', 'pinky_01_l', 'pinky_02_l', 'pinky_03_l',
+                              'ring_00_l', 'ring_01_l', 'ring_02_l', 'ring_03_l', 'middle_00_l', 'middle_01_l', 'middle_02_l', 'middle_03_l',
+                              'index_00_l', 'index_01_l', 'index_02_l', 'index_03_l', 'thumb_01_l', 'thumb_02_l', 'thumb_03_l']
 
-for arm_fingers_jnt in (arm_fingers_l_jnt_list):
-     mc.makeIdentity(arm_fingers_jnt, apply=True, t=True, r=True, s=True)
-     mc.select(d=True)
+    for arm_fingers_jnt in (arm_fingers_l_jnt_list):
+         mc.makeIdentity(arm_fingers_jnt, apply=True, t=True, r=True, s=True)
+         mc.select(d=True)
 
-### twist arm
-upperarmTwist_01_l = mc.joint('upperarm_l', n='upperarm_twist_01_l', rad=2)
-upperarmTConst_01_l = mc.pointConstraint('upperarm_l', 'lowerarm_l', upperarmTwist_01_l ,mo=False), mc.setAttr('upperarm_twist_01_l_pointConstraint1.upperarm_lW0', 2)
-upperarmTwist_02_l = mc.joint('upperarm_l', n='upperarm_twist_02_l', rad=2)
-upperarmTConst_02_l = mc.pointConstraint('upperarm_l', 'lowerarm_l', upperarmTwist_02_l ,mo=False), mc.setAttr('upperarm_twist_02_l_pointConstraint1.lowerarm_lW1', 2)
-mc.delete('upperarm_twist_01_l_pointConstraint1', 'upperarm_twist_02_l_pointConstraint1')
+    ### twist arm
+    upperarmTwist_01_l = mc.joint('upperarm_l', n='upperarm_twist_01_l', rad=2)
+    upperarmTConst_01_l = mc.pointConstraint('upperarm_l', 'lowerarm_l', upperarmTwist_01_l ,mo=False), mc.setAttr('upperarm_twist_01_l_pointConstraint1.upperarm_lW0', 2)
+    upperarmTwist_02_l = mc.joint('upperarm_l', n='upperarm_twist_02_l', rad=2)
+    upperarmTConst_02_l = mc.pointConstraint('upperarm_l', 'lowerarm_l', upperarmTwist_02_l ,mo=False), mc.setAttr('upperarm_twist_02_l_pointConstraint1.lowerarm_lW1', 2)
+    mc.delete('upperarm_twist_01_l_pointConstraint1', 'upperarm_twist_02_l_pointConstraint1')
 
-lowerarmTwist_01_l = mc.joint('lowerarm_l', n='lowerarm_twist_01_l', rad=2)
-lowerarmTConst_01_l = mc.pointConstraint('lowerarm_l', 'hand_l', lowerarmTwist_01_l ,mo=False), mc.setAttr('lowerarm_twist_01_l_pointConstraint1.lowerarm_lW0', 1.5)
-lowerarmTwist_02_l = mc.joint('lowerarm_l', n='lowerarm_twist_02_l', rad=2)
-lowerarmTConst_02_l = mc.pointConstraint('lowerarm_l', 'hand_l', lowerarmTwist_02_l ,mo=False), mc.setAttr('lowerarm_twist_02_l_pointConstraint1.hand_lW1', 3)
-mc.delete('lowerarm_twist_01_l_pointConstraint1', 'lowerarm_twist_02_l_pointConstraint1')
+    lowerarmTwist_01_l = mc.joint('lowerarm_l', n='lowerarm_twist_01_l', rad=2)
+    lowerarmTConst_01_l = mc.pointConstraint('lowerarm_l', 'hand_l', lowerarmTwist_01_l ,mo=False), mc.setAttr('lowerarm_twist_01_l_pointConstraint1.lowerarm_lW0', 1.5)
+    lowerarmTwist_02_l = mc.joint('lowerarm_l', n='lowerarm_twist_02_l', rad=2)
+    lowerarmTConst_02_l = mc.pointConstraint('lowerarm_l', 'hand_l', lowerarmTwist_02_l ,mo=False), mc.setAttr('lowerarm_twist_02_l_pointConstraint1.hand_lW1', 3)
+    mc.delete('lowerarm_twist_01_l_pointConstraint1', 'lowerarm_twist_02_l_pointConstraint1')
+    mc.select(d=True)
 
-mc.mirrorJoint('clavicle_l', mirrorYZ=True, mirrorBehavior=True, searchReplace=('_l', '_r')), mc.select(d=True)
+    mc.mirrorJoint('clavicle_l', mirrorYZ=True, mirrorBehavior=True, searchReplace=('_l', '_r')), mc.select(d=True)
 
-arm_fingers_r_jnt_list = ['clavicle_r', 'upperarm_r', 'lowerarm_r', 'hand_r', 'pinky_00_r', 'pinky_01_r', 'pinky_02_r', 'pinky_03_r',
-                          'ring_00_r', 'ring_01_r', 'ring_02_r', 'ring_03_r', 'middle_00_r', 'middle_01_r', 'middle_02_r', 'middle_03_r',
-                          'index_00_r', 'index_01_r', 'index_02_r', 'index_03_r', 'thumb_01_r', 'thumb_02_r', 'thumb_03_r']
+    arm_fingers_r_jnt_list = ['clavicle_r', 'upperarm_r', 'lowerarm_r', 'hand_r', 'pinky_00_r', 'pinky_01_r', 'pinky_02_r', 'pinky_03_r',
+                              'ring_00_r', 'ring_01_r', 'ring_02_r', 'ring_03_r', 'middle_00_r', 'middle_01_r', 'middle_02_r', 'middle_03_r',
+                              'index_00_r', 'index_01_r', 'index_02_r', 'index_03_r', 'thumb_01_r', 'thumb_02_r', 'thumb_03_r']
 
-mc.select(arm_fingers_l_jnt_list, arm_fingers_r_jnt_list)
-tranRotScl_const()
+    mc.select(arm_fingers_l_jnt_list, arm_fingers_r_jnt_list)
+    tranRotScl_const()
 
-### controls
-arm_fingers_l_ctrl_list = ['clavicle_l_ctrl', 'upperarm_l_ctrl', 'lowerarm_l_ctrl', 'hand_l_ctrl', 'pinky_00_l_ctrl', 'pinky_01_l_ctrl', 'pinky_02_l_ctrl', 'pinky_03_l_ctrl',
-                            'ring_00_l_ctrl', 'ring_01_l_ctrl', 'ring_02_l_ctrl', 'ring_03_l_ctrl', 'middle_00_l_ctrl', 'middle_01_l_ctrl', 'middle_02_l_ctrl', 'middle_03_l_ctrl',
-                            'index_00_l_ctrl', 'index_01_l_ctrl', 'index_02_l_ctrl', 'index_03_l_ctrl', 'thumb_01_l_ctrl', 'thumb_02_l_ctrl', 'thumb_03_l_ctrl']
+    ### controls
+    arm_fingers_l_ctrl_list = ['clavicle_l_ctrl', 'upperarm_l_ctrl', 'lowerarm_l_ctrl', 'hand_l_ctrl', 'pinky_00_l_ctrl', 'pinky_01_l_ctrl', 'pinky_02_l_ctrl', 'pinky_03_l_ctrl',
+                                'ring_00_l_ctrl', 'ring_01_l_ctrl', 'ring_02_l_ctrl', 'ring_03_l_ctrl', 'middle_00_l_ctrl', 'middle_01_l_ctrl', 'middle_02_l_ctrl', 'middle_03_l_ctrl',
+                                'index_00_l_ctrl', 'index_01_l_ctrl', 'index_02_l_ctrl', 'index_03_l_ctrl', 'thumb_01_l_ctrl', 'thumb_02_l_ctrl', 'thumb_03_l_ctrl']
 
-arm_fingers_r_ctrl_list = ['clavicle_r_ctrl', 'upperarm_r_ctrl', 'lowerarm_r_ctrl', 'hand_r_ctrl', 'pinky_00_r_ctrl', 'pinky_01_r_ctrl', 'pinky_02_r_ctrl', 'pinky_03_r_ctrl',
-                           'ring_00_r_ctrl', 'ring_01_r_ctrl', 'ring_02_r_ctrl', 'ring_03_r_ctrl', 'middle_00_r_ctrl', 'middle_01_r_ctrl', 'middle_02_r_ctrl', 'middle_03_r_ctrl',
-                           'index_00_r_ctrl', 'index_01_r_ctrl', 'index_02_r_ctrl', 'index_03_r_ctrl', 'thumb_01_r_ctrl', 'thumb_02_r_ctrl', 'thumb_03_r_ctrl']
+    arm_fingers_r_ctrl_list = ['clavicle_r_ctrl', 'upperarm_r_ctrl', 'lowerarm_r_ctrl', 'hand_r_ctrl', 'pinky_00_r_ctrl', 'pinky_01_r_ctrl', 'pinky_02_r_ctrl', 'pinky_03_r_ctrl',
+                               'ring_00_r_ctrl', 'ring_01_r_ctrl', 'ring_02_r_ctrl', 'ring_03_r_ctrl', 'middle_00_r_ctrl', 'middle_01_r_ctrl', 'middle_02_r_ctrl', 'middle_03_r_ctrl',
+                               'index_00_r_ctrl', 'index_01_r_ctrl', 'index_02_r_ctrl', 'index_03_r_ctrl', 'thumb_01_r_ctrl', 'thumb_02_r_ctrl', 'thumb_03_r_ctrl']
 
-for armF_l in arm_fingers_l_ctrl_list:
-    itemColor(armF_l, 6)
+    for armF_l in arm_fingers_l_ctrl_list:
+        itemColor(armF_l, 6)
 
-for armF_r in arm_fingers_r_ctrl_list:
-    itemColor(armF_r, 13)
+    for armF_r in arm_fingers_r_ctrl_list:
+        itemColor(armF_r, 13)
 
-### parent controls
-mc.parent('upperarm_l_masterCtrlSpace', 'clavicle_l_ctrl'), mc.parent('lowerarm_l_masterCtrlSpace', 'upperarm_l_ctrl'), mc.parent('hand_l_masterCtrlSpace', 'lowerarm_l_ctrl')
-mc.parent('pinky_03_l_masterCtrlSpace', 'pinky_02_l_ctrl'), mc.parent('pinky_02_l_masterCtrlSpace', 'pinky_01_l_ctrl'), mc.parent('pinky_01_l_masterCtrlSpace', 'pinky_00_l_ctrl')
-mc.parent('ring_03_l_masterCtrlSpace', 'ring_02_l_ctrl'), mc.parent('ring_02_l_masterCtrlSpace', 'ring_01_l_ctrl'), mc.parent('ring_01_l_masterCtrlSpace', 'ring_00_l_ctrl')
-mc.parent('middle_03_l_masterCtrlSpace', 'middle_02_l_ctrl'), mc.parent('middle_02_l_masterCtrlSpace', 'middle_01_l_ctrl'), mc.parent('middle_01_l_masterCtrlSpace', 'middle_00_l_ctrl')
-mc.parent('index_03_l_masterCtrlSpace', 'index_02_l_ctrl'), mc.parent('index_02_l_masterCtrlSpace', 'index_01_l_ctrl'), mc.parent('index_01_l_masterCtrlSpace', 'index_00_l_ctrl')
-mc.parent('thumb_03_l_masterCtrlSpace', 'thumb_02_l_ctrl'), mc.parent('thumb_02_l_masterCtrlSpace', 'thumb_01_l_ctrl')
-mc.parent('pinky_00_l_masterCtrlSpace', 'ring_00_l_masterCtrlSpace', 'middle_00_l_masterCtrlSpace', 'index_00_l_masterCtrlSpace', 'thumb_01_l_masterCtrlSpace', 'hand_l_ctrl')
+    ### parent controls
+    mc.parent('upperarm_l_masterCtrlSpace', 'clavicle_l_ctrl'), mc.parent('lowerarm_l_masterCtrlSpace', 'upperarm_l_ctrl'), mc.parent('hand_l_masterCtrlSpace', 'lowerarm_l_ctrl')
+    mc.parent('pinky_03_l_masterCtrlSpace', 'pinky_02_l_ctrl'), mc.parent('pinky_02_l_masterCtrlSpace', 'pinky_01_l_ctrl'), mc.parent('pinky_01_l_masterCtrlSpace', 'pinky_00_l_ctrl')
+    mc.parent('ring_03_l_masterCtrlSpace', 'ring_02_l_ctrl'), mc.parent('ring_02_l_masterCtrlSpace', 'ring_01_l_ctrl'), mc.parent('ring_01_l_masterCtrlSpace', 'ring_00_l_ctrl')
+    mc.parent('middle_03_l_masterCtrlSpace', 'middle_02_l_ctrl'), mc.parent('middle_02_l_masterCtrlSpace', 'middle_01_l_ctrl'), mc.parent('middle_01_l_masterCtrlSpace', 'middle_00_l_ctrl')
+    mc.parent('index_03_l_masterCtrlSpace', 'index_02_l_ctrl'), mc.parent('index_02_l_masterCtrlSpace', 'index_01_l_ctrl'), mc.parent('index_01_l_masterCtrlSpace', 'index_00_l_ctrl')
+    mc.parent('thumb_03_l_masterCtrlSpace', 'thumb_02_l_ctrl'), mc.parent('thumb_02_l_masterCtrlSpace', 'thumb_01_l_ctrl')
+    mc.parent('pinky_00_l_masterCtrlSpace', 'ring_00_l_masterCtrlSpace', 'middle_00_l_masterCtrlSpace', 'index_00_l_masterCtrlSpace', 'thumb_01_l_masterCtrlSpace', 'hand_l_ctrl')
 
-mc.parent('upperarm_r_masterCtrlSpace', 'clavicle_r_ctrl'), mc.parent('lowerarm_r_masterCtrlSpace', 'upperarm_r_ctrl'), mc.parent('hand_r_masterCtrlSpace', 'lowerarm_r_ctrl')
-mc.parent('pinky_03_r_masterCtrlSpace', 'pinky_02_r_ctrl'), mc.parent('pinky_02_r_masterCtrlSpace', 'pinky_01_r_ctrl'), mc.parent('pinky_01_r_masterCtrlSpace', 'pinky_00_r_ctrl')
-mc.parent('ring_03_r_masterCtrlSpace', 'ring_02_r_ctrl'), mc.parent('ring_02_r_masterCtrlSpace', 'ring_01_r_ctrl'), mc.parent('ring_01_r_masterCtrlSpace', 'ring_00_r_ctrl')
-mc.parent('middle_03_r_masterCtrlSpace', 'middle_02_r_ctrl'), mc.parent('middle_02_r_masterCtrlSpace', 'middle_01_r_ctrl'), mc.parent('middle_01_r_masterCtrlSpace', 'middle_00_r_ctrl')
-mc.parent('index_03_r_masterCtrlSpace', 'index_02_r_ctrl'), mc.parent('index_02_r_masterCtrlSpace', 'index_01_r_ctrl'), mc.parent('index_01_r_masterCtrlSpace', 'index_00_r_ctrl')
-mc.parent('thumb_03_r_masterCtrlSpace', 'thumb_02_r_ctrl'), mc.parent('thumb_02_r_masterCtrlSpace', 'thumb_01_r_ctrl')
-mc.parent('pinky_00_r_masterCtrlSpace', 'ring_00_r_masterCtrlSpace', 'middle_00_r_masterCtrlSpace', 'index_00_r_masterCtrlSpace', 'thumb_01_r_masterCtrlSpace', 'hand_r_ctrl')
+    mc.parent('upperarm_r_masterCtrlSpace', 'clavicle_r_ctrl'), mc.parent('lowerarm_r_masterCtrlSpace', 'upperarm_r_ctrl'), mc.parent('hand_r_masterCtrlSpace', 'lowerarm_r_ctrl')
+    mc.parent('pinky_03_r_masterCtrlSpace', 'pinky_02_r_ctrl'), mc.parent('pinky_02_r_masterCtrlSpace', 'pinky_01_r_ctrl'), mc.parent('pinky_01_r_masterCtrlSpace', 'pinky_00_r_ctrl')
+    mc.parent('ring_03_r_masterCtrlSpace', 'ring_02_r_ctrl'), mc.parent('ring_02_r_masterCtrlSpace', 'ring_01_r_ctrl'), mc.parent('ring_01_r_masterCtrlSpace', 'ring_00_r_ctrl')
+    mc.parent('middle_03_r_masterCtrlSpace', 'middle_02_r_ctrl'), mc.parent('middle_02_r_masterCtrlSpace', 'middle_01_r_ctrl'), mc.parent('middle_01_r_masterCtrlSpace', 'middle_00_r_ctrl')
+    mc.parent('index_03_r_masterCtrlSpace', 'index_02_r_ctrl'), mc.parent('index_02_r_masterCtrlSpace', 'index_01_r_ctrl'), mc.parent('index_01_r_masterCtrlSpace', 'index_00_r_ctrl')
+    mc.parent('thumb_03_r_masterCtrlSpace', 'thumb_02_r_ctrl'), mc.parent('thumb_02_r_masterCtrlSpace', 'thumb_01_r_ctrl')
+    mc.parent('pinky_00_r_masterCtrlSpace', 'ring_00_r_masterCtrlSpace', 'middle_00_r_masterCtrlSpace', 'index_00_r_masterCtrlSpace', 'thumb_01_r_masterCtrlSpace', 'hand_r_ctrl')
 
-armsGrp = mc.group(n = 'arms_ctrls', em=True)
-mc.parent('clavicle_r_masterCtrlSpace', 'clavicle_l_masterCtrlSpace', armsGrp), mc.select(d=True)
+    armsGrp = mc.group(n = 'arms_ctrls', em=True)
+    mc.parent('clavicle_r_masterCtrlSpace', 'clavicle_l_masterCtrlSpace', armsGrp), mc.select(d=True)
 
-### twist transform
-twist_l_jnt_list = ['upperarm_twist_01_l', 'upperarm_twist_02_l', 'lowerarm_twist_01_l', 'lowerarm_twist_02_l']
+    ######################## twist l_transform
+    upperarmTwist_l_jnt_list = ['upperarm_twist_01_l', 'upperarm_twist_02_l', 'lowerarm_twist_01_l', 'lowerarm_twist_02_l']
+    mc.select(upperarmTwist_l_jnt_list)
+    tranRotScl_const()
+
+    upperarmTwist_l_ctrl_list = ['upperarm_twist_01_l_ctrl', 'upperarm_twist_02_l_ctrl', 'lowerarm_twist_01_l_ctrl', 'lowerarm_twist_02_l_ctrl']
+    upperarmTwist_l_masterGrp_list = ['upperarm_twist_01_l_masterCtrlSpace', 'upperarm_twist_02_l_masterCtrlSpace']
+    lowerarmTwist_l_masterGrp_list = ['lowerarm_twist_01_l_masterCtrlSpace', 'lowerarm_twist_02_l_masterCtrlSpace']
+    mc.parent(upperarmTwist_l_masterGrp_list, 'upperarm_l_ctrl'), mc.parent(lowerarmTwist_l_masterGrp_list, 'lowerarm_l_ctrl')
+    mc.select(d=True)
+
+    mc.disconnectAttr('upperarm_l_ctrl.rx', 'upperarm_l.rx')
+    mc.disconnectAttr('upperarm_twist_01_l_ctrl.rx', 'upperarm_twist_01_l.rx')
+    mc.disconnectAttr('upperarm_twist_02_l_ctrl.rx', 'upperarm_twist_02_l.rx')
+    mc.disconnectAttr('lowerarm_twist_01_l_ctrl.rx', 'lowerarm_twist_01_l.rx')
+    mc.disconnectAttr('lowerarm_twist_02_l_ctrl.rx', 'lowerarm_twist_02_l.rx')
+
+    #### armTwist PB connection
+    mc.select(upperarmTwist_l_jnt_list)
+
+    upperarmT_l_01_PB = mc.createNode('pairBlend', n= 'upperarm_twist_01_l_PB')
+    mc.setAttr(upperarmT_l_01_PB + '.weight', 0.2)
+    mc.connectAttr('upperarm_l_ctrl.rx', upperarmT_l_01_PB + '.inRotateX2')
+    mc.connectAttr(upperarmT_l_01_PB + '.outRotateX', 'upperarm_twist_01_l.rx', f=True)
+
+    upperarmT_l_02_PB = mc.createNode('pairBlend', n= 'upperarm_twist_02_l_PB')
+    mc.setAttr(upperarmT_l_02_PB + '.weight', 0.8)
+    mc.connectAttr('upperarm_l_ctrl.rx', upperarmT_l_02_PB + '.inRotateX2')
+    mc.connectAttr(upperarmT_l_02_PB + '.outRotateX', 'upperarm_twist_02_l.rx', f=True)
+
+    lowerarmT_l_01_PB = mc.createNode('pairBlend', n= 'lowerarm_twist_01_l_PB')
+    mc.setAttr(lowerarmT_l_01_PB + '.weight', 0.4)
+    mc.connectAttr('hand_l_ctrl.rx', lowerarmT_l_01_PB + '.inRotateX2')
+    mc.connectAttr(lowerarmT_l_01_PB + '.outRotateX', 'lowerarm_twist_01_l.rx', f=True)
+
+    lowerarmT_l_02_PB = mc.createNode('pairBlend', n= 'lowerarm_twist_02_l_PB')
+    mc.setAttr(lowerarmT_l_02_PB + '.weight', 0.8)
+    mc.connectAttr('hand_l_ctrl.rx', lowerarmT_l_02_PB + '.inRotateX2')
+    mc.connectAttr(lowerarmT_l_02_PB + '.outRotateX', 'lowerarm_twist_02_l.rx', f=True)
+
+    ######################## twist r_transform
+    upperarmTwist_r_jnt_list = ['upperarm_twist_01_r', 'upperarm_twist_02_r', 'lowerarm_twist_01_r', 'lowerarm_twist_02_r']
+    mc.select(upperarmTwist_r_jnt_list)
+    tranRotScl_const()
+
+    upperarmTwist_r_ctrl_list = ['upperarm_twist_01_r_ctrl', 'upperarm_twist_02_r_ctrl', 'lowerarm_twist_01_r_ctrl', 'lowerarm_twist_02_r_ctrl']
+    upperarmTwist_r_masterGrp_list = ['upperarm_twist_01_r_masterCtrlSpace', 'upperarm_twist_02_r_masterCtrlSpace']
+    lowerarmTwist_r_masterGrp_list = ['lowerarm_twist_01_r_masterCtrlSpace', 'lowerarm_twist_02_r_masterCtrlSpace']
+    mc.parent(upperarmTwist_r_masterGrp_list, 'upperarm_r_ctrl'), mc.parent(lowerarmTwist_r_masterGrp_list, 'lowerarm_r_ctrl')
+    mc.select(d=True)
+
+    mc.disconnectAttr('upperarm_r_ctrl.rx', 'upperarm_r.rx')
+    mc.disconnectAttr('upperarm_twist_01_r_ctrl.rx', 'upperarm_twist_01_r.rx')
+    mc.disconnectAttr('upperarm_twist_02_r_ctrl.rx', 'upperarm_twist_02_r.rx')
+    mc.disconnectAttr('lowerarm_twist_01_r_ctrl.rx', 'lowerarm_twist_01_r.rx')
+    mc.disconnectAttr('lowerarm_twist_02_r_ctrl.rx', 'lowerarm_twist_02_r.rx')
+
+    #### armTwist PB connection
+    mc.select(upperarmTwist_r_jnt_list)
+
+    upperarmT_r_01_PB = mc.createNode('pairBlend', n= 'upperarm_twist_01_r_PB')
+    mc.setAttr(upperarmT_r_01_PB + '.weight', 0.2)
+    mc.connectAttr('upperarm_r_ctrl.rx', upperarmT_r_01_PB + '.inRotateX2')
+    mc.connectAttr(upperarmT_r_01_PB + '.outRotateX', 'upperarm_twist_01_r.rx', f=True)
+
+    upperarmT_r_02_PB = mc.createNode('pairBlend', n= 'upperarm_twist_02_r_PB')
+    mc.setAttr(upperarmT_r_02_PB + '.weight', 0.8)
+    mc.connectAttr('upperarm_r_ctrl.rx', upperarmT_r_02_PB + '.inRotateX2')
+    mc.connectAttr(upperarmT_r_02_PB + '.outRotateX', 'upperarm_twist_02_r.rx', f=True)
+
+    lowerarmT_r_01_PB = mc.createNode('pairBlend', n= 'lowerarm_twist_01_r_PB')
+    mc.setAttr(lowerarmT_r_01_PB + '.weight', 0.4)
+    mc.connectAttr('hand_r_ctrl.rx', lowerarmT_r_01_PB + '.inRotateX2')
+    mc.connectAttr(lowerarmT_r_01_PB + '.outRotateX', 'lowerarm_twist_01_r.rx', f=True)
+
+    lowerarmT_r_02_PB = mc.createNode('pairBlend', n= 'lowerarm_twist_02_r_PB')
+    mc.setAttr(lowerarmT_r_02_PB + '.weight', 0.8)
+    mc.connectAttr('hand_r_ctrl.rx', lowerarmT_r_02_PB + '.inRotateX2')
+    mc.connectAttr(lowerarmT_r_02_PB + '.outRotateX', 'lowerarm_twist_02_r.rx', f=True)
+
+    mc.select(d=True)
+
+##################################################### leg FK transform ##############################################################
+def leg_FK_Transform():
+
+    leg_l_jnt_list = ['thigh_l', 'calf_l', 'foot_l', 'ball_l', 'toe_l']
+
+    for leg_l_jnt in (leg_l_jnt_list):
+        mc.makeIdentity(leg_l_jnt, apply=True, t=True, r=True, s=True)
+        mc.select(d=True)
+
+    ### twist leg
+    thighTwist_01_l = mc.joint('thigh_l', n='thigh_twist_01_l', rad=2)
+    thighTConst_01_l = mc.pointConstraint('thigh_l', 'calf_l', thighTwist_01_l ,mo=False), mc.setAttr('thigh_twist_01_l_pointConstraint1.thigh_lW0', 2)
+    thighTwist_02_l = mc.joint('thigh_l', n='thigh_twist_02_l', rad=2)
+    thighTConst_02_l = mc.pointConstraint('thigh_l', 'calf_l', thighTwist_02_l ,mo=False), mc.setAttr('thigh_twist_02_l_pointConstraint1.calf_lW1', 2)
+    mc.delete('thigh_twist_01_l_pointConstraint1', 'thigh_twist_02_l_pointConstraint1')
+
+    calfTwist_01_l = mc.joint('calf_l', n='calf_twist_01_l', rad=2)
+    calfTConst_01_l = mc.pointConstraint('calf_l', 'foot_l', calfTwist_01_l ,mo=False), mc.setAttr('calf_twist_01_l_pointConstraint1.calf_lW0', 2)
+    calfTwist_02_l = mc.joint('calf_l', n='calf_twist_02_l', rad=2)
+    calfTConst_02_l = mc.pointConstraint('calf_l', 'foot_l', calfTwist_02_l ,mo=False), mc.setAttr('calf_twist_02_l_pointConstraint1.foot_lW1', 2)
+    mc.delete('calf_twist_01_l_pointConstraint1', 'calf_twist_02_l_pointConstraint1')
+    mc.select(d=True)
+
+    mc.mirrorJoint('thigh_l', mirrorYZ=True, mirrorBehavior=True, searchReplace=('_l', '_r')), mc.select(d=True)
+
+    leg_r_jnt_list = ['thigh_r', 'calf_r', 'foot_r', 'ball_r', 'toe_r']
+
+    mc.select(leg_r_jnt_list, leg_l_jnt_list)
+    tranRotScl_const()
+
+    ##### controls
+    leg_l_ctrl_list = ['thigh_l_ctrl', 'calf_l_ctrl', 'foot_l_ctrl', 'ball_l_ctrl', 'toe_l_ctrl']
+    leg_r_ctrl_list = ['thigh_r_ctrl', 'calf_r_ctrl', 'foot_r_ctrl', 'ball_r_ctrl', 'toe_r_ctrl']
+
+    for leg_l_color in leg_l_ctrl_list:
+        itemColor(leg_l_color, 6)
+
+    for leg_r_color in leg_r_ctrl_list:
+        itemColor(leg_r_color, 13)
+
+    mc.parent('toe_l_masterCtrlSpace', 'ball_l_ctrl'), mc.parent('ball_l_masterCtrlSpace', 'foot_l_ctrl'), mc.parent('foot_l_masterCtrlSpace', 'calf_l_ctrl'), mc.parent('calf_l_masterCtrlSpace', 'thigh_l_ctrl')
+    mc.parent('toe_r_masterCtrlSpace', 'ball_r_ctrl'), mc.parent('ball_r_masterCtrlSpace', 'foot_r_ctrl'), mc.parent('foot_r_masterCtrlSpace', 'calf_r_ctrl'), mc.parent('calf_r_masterCtrlSpace', 'thigh_r_ctrl')
+    legGrp = mc.group(n= 'leg_controls', em=True)
+    mc.parent('thigh_r_masterCtrlSpace', 'thigh_l_masterCtrlSpace', legGrp), mc.select(d=True)
+
+    ######################## twist l_transform
+    legTwist_l_jnt_list = ['thigh_twist_01_l', 'thigh_twist_02_l', 'calf_twist_01_l', 'calf_twist_02_l']
+    mc.select(legTwist_l_jnt_list)
+    tranRotScl_const()
+
+    thighTwist_l_ctrl_list = ['thigh_twist_01_l_ctrl', 'thigh_twist_02_l_ctrl', 'calf_twist_01_l_ctrl', 'calf_twist_02_l_ctrl']
+    thighTwist_l_masterGrp_list = ['thigh_twist_01_l_masterCtrlSpace', 'thigh_twist_02_l_masterCtrlSpace']
+    calfTwist_l_masterGrp_list = ['calf_twist_01_l_masterCtrlSpace', 'calf_twist_02_l_masterCtrlSpace']
+    mc.parent(thighTwist_l_masterGrp_list, 'thigh_l_ctrl'), mc.parent(calfTwist_l_masterGrp_list, 'calf_l_ctrl')
+    mc.select(d=True)
+
+    mc.disconnectAttr('thigh_l_ctrl.rx', 'thigh_l.rx')
+    mc.disconnectAttr('thigh_twist_01_l_ctrl.rx', 'thigh_twist_01_l.rx')
+    mc.disconnectAttr('thigh_twist_02_l_ctrl.rx', 'thigh_twist_02_l.rx')
+    mc.disconnectAttr('calf_twist_01_l_ctrl.rx', 'calf_twist_01_l.rx')
+    mc.disconnectAttr('calf_twist_02_l_ctrl.rx', 'calf_twist_02_l.rx')
+
+    ####### legTwist PB transform
+
+    mc.select(legTwist_l_jnt_list)
+    thighT_l_01_PB = mc.createNode('pairBlend', n='thigh_twist_01_l_PB')
+    mc.setAttr(thighT_l_01_PB + '.weight', 0.4)
+    mc.connectAttr('thigh_l_ctrl.rx', thighT_l_01_PB + '.inRotateX2')
+    mc.connectAttr(thighT_l_01_PB + '.outRotateX', 'thigh_twist_01_l.rx', f=True)
+
+    thighT_l_02_PB = mc.createNode('pairBlend', n='thigh_twist_02_l_PB')
+    mc.setAttr(thighT_l_02_PB + '.weight', 0.8)
+    mc.connectAttr('thigh_l_ctrl.rx', thighT_l_02_PB + '.inRotateX2')
+    mc.connectAttr(thighT_l_02_PB + '.outRotateX', 'thigh_twist_02_l.rx', f=True)
+
+    calfT_l_01_PB = mc.createNode('pairBlend', n='calf_twist_01_l_PB')
+    mc.setAttr(calfT_l_01_PB + '.weight', -0.4)
+    mc.connectAttr('foot_l_ctrl.rz', calfT_l_01_PB + '.inRotateX2')
+    mc.connectAttr(calfT_l_01_PB + '.outRotateX', 'calf_twist_01_l.rx', f=True)
+
+    calfT_l_02_PB = mc.createNode('pairBlend', n='calf_twist_02_l_PB')
+    mc.setAttr(calfT_l_02_PB + '.weight', -0.8)
+    mc.connectAttr('foot_l_ctrl.rz', calfT_l_02_PB + '.inRotateX2')
+    mc.connectAttr(calfT_l_02_PB + '.outRotateX', 'calf_twist_02_l.rx', f=True)
+
+    ######################## twist r_transform
+    legTwist_r_jnt_rist = ['thigh_twist_01_r', 'thigh_twist_02_r', 'calf_twist_01_r', 'calf_twist_02_r']
+    mc.select(legTwist_r_jnt_rist)
+    tranRotScl_const()
+
+    thighTwist_r_ctrl_rist = ['thigh_twist_01_r_ctrl', 'thigh_twist_02_r_ctrl', 'calf_twist_01_r_ctrl', 'calf_twist_02_r_ctrl']
+    thighTwist_r_masterGrp_rist = ['thigh_twist_01_r_masterCtrlSpace', 'thigh_twist_02_r_masterCtrlSpace']
+    calfTwist_r_masterGrp_rist = ['calf_twist_01_r_masterCtrlSpace', 'calf_twist_02_r_masterCtrlSpace']
+    mc.parent(thighTwist_r_masterGrp_rist, 'thigh_r_ctrl'), mc.parent(calfTwist_r_masterGrp_rist, 'calf_r_ctrl')
+    mc.select(d=True)
+
+    mc.disconnectAttr('thigh_r_ctrl.rx', 'thigh_r.rx')
+    mc.disconnectAttr('thigh_twist_01_r_ctrl.rx', 'thigh_twist_01_r.rx')
+    mc.disconnectAttr('thigh_twist_02_r_ctrl.rx', 'thigh_twist_02_r.rx')
+    mc.disconnectAttr('calf_twist_01_r_ctrl.rx', 'calf_twist_01_r.rx')
+    mc.disconnectAttr('calf_twist_02_r_ctrl.rx', 'calf_twist_02_r.rx')
+
+    ####### legTwist PB transform
+
+    mc.select(legTwist_r_jnt_rist)
+    thighT_r_01_PB = mc.createNode('pairBlend', n='thigh_twist_01_r_PB')
+    mc.setAttr(thighT_r_01_PB + '.weight', 0.4)
+    mc.connectAttr('thigh_r_ctrl.rx', thighT_r_01_PB + '.inRotateX2')
+    mc.connectAttr(thighT_r_01_PB + '.outRotateX', 'thigh_twist_01_r.rx', f=True)
+
+    thighT_r_02_PB = mc.createNode('pairBlend', n='thigh_twist_02_r_PB')
+    mc.setAttr(thighT_r_02_PB + '.weight', 0.8)
+    mc.connectAttr('thigh_r_ctrl.rx', thighT_r_02_PB + '.inRotateX2')
+    mc.connectAttr(thighT_r_02_PB + '.outRotateX', 'thigh_twist_02_r.rx', f=True)
+
+    calfT_r_01_PB = mc.createNode('pairBlend', n='calf_twist_01_r_PB')
+    mc.setAttr(calfT_r_01_PB + '.weight', -0.4)
+    mc.connectAttr('foot_r_ctrl.rz', calfT_r_01_PB + '.inRotateX2')
+    mc.connectAttr(calfT_r_01_PB + '.outRotateX', 'calf_twist_01_r.rx', f=True)
+
+    calfT_r_02_PB = mc.createNode('pairBlend', n='calf_twist_02_r_PB')
+    mc.setAttr(calfT_r_02_PB + '.weight', -0.8)
+    mc.connectAttr('foot_r_ctrl.rz', calfT_r_02_PB + '.inRotateX2')
+    mc.connectAttr(calfT_r_02_PB + '.outRotateX', 'calf_twist_02_r.rx', f=True)
+
+    mc.select(d=True)
+
+##################################################### biped FK transform #########################################################
+
+def biped_FK_transform():
+
+    ##################################### FK bones
+
+    spine_jnt_list = ['pelvis', 'spine_01', 'spine_02', 'spine_03']
+
+    for spine_jnt in (spine_jnt_list):
+            mc.makeIdentity(spine_jnt, apply=True, t=True, r=True, s=True)
+            mc.select(d=True)
+
+    neckHead_jnt_list = ['neck', 'head']
+
+    for neckHead in (neckHead_jnt_list):
+            mc.makeIdentity(neckHead, apply=True, t=True, r=True, s=True)
+            mc.select(d=True)
+
+    arm_fingers_l_jnt_list = ['clavicle_l', 'upperarm_l', 'lowerarm_l', 'hand_l', 'pinky_00_l', 'pinky_01_l', 'pinky_02_l','pinky_03_l',
+                              'ring_00_l', 'ring_01_l', 'ring_02_l', 'ring_03_l', 'middle_00_l', 'middle_01_l',
+                              'middle_02_l', 'middle_03_l','index_00_l', 'index_01_l', 'index_02_l', 'index_03_l', 'thumb_01_l', 'thumb_02_l','thumb_03_l']
+
+    for arm_fingers_jnt in (arm_fingers_l_jnt_list):
+            mc.makeIdentity(arm_fingers_jnt, apply=True, t=True, r=True, s=True)
+            mc.select(d=True)
+
+    leg_l_jnt_list = ['thigh_l', 'calf_l', 'foot_l', 'ball_l', 'toe_l']
+
+    for leg_l_jnt in (leg_l_jnt_list):
+            mc.makeIdentity(leg_l_jnt, apply=True, t=True, r=True, s=True)
+            mc.select(d=True)
+
+    mc.mirrorJoint('clavicle_l', mirrorYZ=True, mirrorBehavior=True, searchReplace=('_l', '_r')), mc.select(d=True)
+    mc.mirrorJoint('thigh_l', mirrorYZ=True, mirrorBehavior=True, searchReplace=('_l', '_r')), mc.select(d=True)
+
+    ###################################################################### spine FK
+
+    mc.select(spine_jnt_list)
+    tranRotScl_const()
+    mc.parent('spine_03_masterCtrlSpace', 'spine_02_ctrl'), mc.parent('spine_02_masterCtrlSpace', 'spine_01_ctrl')
+    mc.parent('spine_01_masterCtrlSpace', 'pelvis_ctrl')
+    itemColor('pelvis_ctrl', 17)
+    spineCtrlGrp = mc.group(n='spine_controls', em=True)
+    mc.parent('pelvis_masterCtrlSpace', spineCtrlGrp)
+
+    mc.select(d=True)
 
 
+    ################################################################## neck FK
+
+    mc.select(neckHead_jnt_list)
+    tranRotScl_const()
+    itemColor('neck_ctrl', 17)
+    mc.parent('head_masterCtrlSpace', 'neck_ctrl')
+    neckCtrl = mc.group(n= 'neck_controls', em=True)
+    mc.parent('neck_masterCtrlSpace', neckCtrl)
+
+    ### neck twist
+    neckTwist = mc.joint('neck', n= 'neck_twist', rad=2)
+    mc.delete(mc.pointConstraint('neck', 'head', neckTwist, mo=False))
+    neck_PB = mc.createNode('pairBlend', n= 'neck_twist_PB')
+    mc.setAttr(neck_PB + '.weight', 0.5)
+    mc.connectAttr('head_ctrl.rotateX', neck_PB + '.inRotateX2')
+    mc.connectAttr(neck_PB + '.outRotateX', neckTwist + '.rx')
+
+    mc.select(d=True)
+
+    ############################################################################# arm FK
 
 
+    ### twist arm
+    upperarmTwist_01_l = mc.joint('upperarm_l', n='upperarm_twist_01_l', rad=2)
+    upperarmTConst_01_l = mc.pointConstraint('upperarm_l', 'lowerarm_l', upperarmTwist_01_l, mo=False), mc.setAttr('upperarm_twist_01_l_pointConstraint1.upperarm_lW0', 2)
+    upperarmTwist_02_l = mc.joint('upperarm_l', n='upperarm_twist_02_l', rad=2)
+    upperarmTConst_02_l = mc.pointConstraint('upperarm_l', 'lowerarm_l', upperarmTwist_02_l, mo=False), mc.setAttr('upperarm_twist_02_l_pointConstraint1.lowerarm_lW1', 2)
+    mc.delete('upperarm_twist_01_l_pointConstraint1', 'upperarm_twist_02_l_pointConstraint1')
 
+    lowerarmTwist_01_l = mc.joint('lowerarm_l', n='lowerarm_twist_01_l', rad=2)
+    lowerarmTConst_01_l = mc.pointConstraint('lowerarm_l', 'hand_l', lowerarmTwist_01_l, mo=False), mc.setAttr('lowerarm_twist_01_l_pointConstraint1.lowerarm_lW0', 1.5)
+    lowerarmTwist_02_l = mc.joint('lowerarm_l', n='lowerarm_twist_02_l', rad=2)
+    lowerarmTConst_02_l = mc.pointConstraint('lowerarm_l', 'hand_l', lowerarmTwist_02_l, mo=False), mc.setAttr('lowerarm_twist_02_l_pointConstraint1.hand_lW1', 3)
+    mc.delete('lowerarm_twist_01_l_pointConstraint1', 'lowerarm_twist_02_l_pointConstraint1')
+    mc.select(d=True)
 
+    arm_fingers_r_jnt_list = ['clavicle_r', 'upperarm_r', 'lowerarm_r', 'hand_r', 'pinky_00_r', 'pinky_01_r', 'pinky_02_r',
+                              'pinky_03_r','ring_00_r', 'ring_01_r', 'ring_02_r', 'ring_03_r', 'middle_00_r', 'middle_01_r',
+                              'middle_02_r', 'middle_03_r','index_00_r', 'index_01_r', 'index_02_r', 'index_03_r', 'thumb_01_r', 'thumb_02_r','thumb_03_r']
 
+    mc.select(arm_fingers_l_jnt_list, arm_fingers_r_jnt_list)
+    tranRotScl_const()
 
+    ### controls
+    arm_fingers_l_ctrl_list = ['clavicle_l_ctrl', 'upperarm_l_ctrl', 'lowerarm_l_ctrl', 'hand_l_ctrl', 'pinky_00_l_ctrl',
+                               'pinky_01_l_ctrl', 'pinky_02_l_ctrl', 'pinky_03_l_ctrl','ring_00_l_ctrl', 'ring_01_l_ctrl', 'ring_02_l_ctrl', 'ring_03_l_ctrl', 'middle_00_l_ctrl',
+                               'middle_01_l_ctrl', 'middle_02_l_ctrl', 'middle_03_l_ctrl','index_00_l_ctrl', 'index_01_l_ctrl', 'index_02_l_ctrl', 'index_03_l_ctrl',
+                               'thumb_01_l_ctrl', 'thumb_02_l_ctrl', 'thumb_03_l_ctrl']
 
+    arm_fingers_r_ctrl_list = ['clavicle_r_ctrl', 'upperarm_r_ctrl', 'lowerarm_r_ctrl', 'hand_r_ctrl', 'pinky_00_r_ctrl','pinky_01_r_ctrl', 'pinky_02_r_ctrl', 'pinky_03_r_ctrl',
+                               'ring_00_r_ctrl', 'ring_01_r_ctrl', 'ring_02_r_ctrl', 'ring_03_r_ctrl', 'middle_00_r_ctrl',
+                               'middle_01_r_ctrl', 'middle_02_r_ctrl', 'middle_03_r_ctrl','index_00_r_ctrl', 'index_01_r_ctrl', 'index_02_r_ctrl', 'index_03_r_ctrl',
+                               'thumb_01_r_ctrl', 'thumb_02_r_ctrl', 'thumb_03_r_ctrl']
+
+    for armF_l in arm_fingers_l_ctrl_list:
+            itemColor(armF_l, 6)
+
+    for armF_r in arm_fingers_r_ctrl_list:
+            itemColor(armF_r, 13)
+
+    ### parent controls
+    mc.parent('upperarm_l_masterCtrlSpace', 'clavicle_l_ctrl'), mc.parent('lowerarm_l_masterCtrlSpace','upperarm_l_ctrl'), mc.parent('hand_l_masterCtrlSpace', 'lowerarm_l_ctrl')
+    mc.parent('pinky_03_l_masterCtrlSpace', 'pinky_02_l_ctrl'), mc.parent('pinky_02_l_masterCtrlSpace','pinky_01_l_ctrl'), mc.parent('pinky_01_l_masterCtrlSpace', 'pinky_00_l_ctrl')
+    mc.parent('ring_03_l_masterCtrlSpace', 'ring_02_l_ctrl'), mc.parent('ring_02_l_masterCtrlSpace','ring_01_l_ctrl'), mc.parent('ring_01_l_masterCtrlSpace', 'ring_00_l_ctrl')
+    mc.parent('middle_03_l_masterCtrlSpace', 'middle_02_l_ctrl'), mc.parent('middle_02_l_masterCtrlSpace','middle_01_l_ctrl'), mc.parent('middle_01_l_masterCtrlSpace', 'middle_00_l_ctrl')
+    mc.parent('index_03_l_masterCtrlSpace', 'index_02_l_ctrl'), mc.parent('index_02_l_masterCtrlSpace','index_01_l_ctrl'), mc.parent('index_01_l_masterCtrlSpace', 'index_00_l_ctrl')
+    mc.parent('thumb_03_l_masterCtrlSpace', 'thumb_02_l_ctrl'), mc.parent('thumb_02_l_masterCtrlSpace', 'thumb_01_l_ctrl')
+    mc.parent('pinky_00_l_masterCtrlSpace', 'ring_00_l_masterCtrlSpace', 'middle_00_l_masterCtrlSpace', 'index_00_l_masterCtrlSpace', 'thumb_01_l_masterCtrlSpace', 'hand_l_ctrl')
+
+    mc.parent('upperarm_r_masterCtrlSpace', 'clavicle_r_ctrl'), mc.parent('lowerarm_r_masterCtrlSpace','upperarm_r_ctrl'), mc.parent('hand_r_masterCtrlSpace', 'lowerarm_r_ctrl')
+    mc.parent('pinky_03_r_masterCtrlSpace', 'pinky_02_r_ctrl'), mc.parent('pinky_02_r_masterCtrlSpace','pinky_01_r_ctrl'), mc.parent('pinky_01_r_masterCtrlSpace', 'pinky_00_r_ctrl')
+    mc.parent('ring_03_r_masterCtrlSpace', 'ring_02_r_ctrl'), mc.parent('ring_02_r_masterCtrlSpace','ring_01_r_ctrl'), mc.parent('ring_01_r_masterCtrlSpace', 'ring_00_r_ctrl')
+    mc.parent('middle_03_r_masterCtrlSpace', 'middle_02_r_ctrl'), mc.parent('middle_02_r_masterCtrlSpace','middle_01_r_ctrl'), mc.parent('middle_01_r_masterCtrlSpace', 'middle_00_r_ctrl')
+    mc.parent('index_03_r_masterCtrlSpace', 'index_02_r_ctrl'), mc.parent('index_02_r_masterCtrlSpace','index_01_r_ctrl'), mc.parent('index_01_r_masterCtrlSpace', 'index_00_r_ctrl')
+    mc.parent('thumb_03_r_masterCtrlSpace', 'thumb_02_r_ctrl'), mc.parent('thumb_02_r_masterCtrlSpace', 'thumb_01_r_ctrl')
+    mc.parent('pinky_00_r_masterCtrlSpace', 'ring_00_r_masterCtrlSpace', 'middle_00_r_masterCtrlSpace','index_00_r_masterCtrlSpace', 'thumb_01_r_masterCtrlSpace', 'hand_r_ctrl')
+
+    armsGrp = mc.group(n='arms_ctrls', em=True)
+    mc.parent('clavicle_r_masterCtrlSpace', 'clavicle_l_masterCtrlSpace', armsGrp), mc.select(d=True)
+
+    ######################## twist l_transform
+    upperarmTwist_l_jnt_list = ['upperarm_twist_01_l', 'upperarm_twist_02_l', 'lowerarm_twist_01_l', 'lowerarm_twist_02_l']
+    mc.select(upperarmTwist_l_jnt_list)
+    tranRotScl_const()
+
+    upperarmTwist_l_ctrl_list = ['upperarm_twist_01_l_ctrl', 'upperarm_twist_02_l_ctrl', 'lowerarm_twist_01_l_ctrl','lowerarm_twist_02_l_ctrl']
+    upperarmTwist_l_masterGrp_list = ['upperarm_twist_01_l_masterCtrlSpace', 'upperarm_twist_02_l_masterCtrlSpace']
+    lowerarmTwist_l_masterGrp_list = ['lowerarm_twist_01_l_masterCtrlSpace', 'lowerarm_twist_02_l_masterCtrlSpace']
+    mc.parent(upperarmTwist_l_masterGrp_list, 'upperarm_l_ctrl'), mc.parent(lowerarmTwist_l_masterGrp_list,'lowerarm_l_ctrl')
+    mc.select(d=True)
+
+    mc.disconnectAttr('upperarm_l_ctrl.rx', 'upperarm_l.rx')
+    mc.disconnectAttr('upperarm_twist_01_l_ctrl.rx', 'upperarm_twist_01_l.rx')
+    mc.disconnectAttr('upperarm_twist_02_l_ctrl.rx', 'upperarm_twist_02_l.rx')
+    mc.disconnectAttr('lowerarm_twist_01_l_ctrl.rx', 'lowerarm_twist_01_l.rx')
+    mc.disconnectAttr('lowerarm_twist_02_l_ctrl.rx', 'lowerarm_twist_02_l.rx')
+
+    #### armTwist PB connection
+    mc.select(upperarmTwist_l_jnt_list)
+
+    upperarmT_l_01_PB = mc.createNode('pairBlend', n='upperarm_twist_01_l_PB')
+    mc.setAttr(upperarmT_l_01_PB + '.weight', 0.2)
+    mc.connectAttr('upperarm_l_ctrl.rx', upperarmT_l_01_PB + '.inRotateX2')
+    mc.connectAttr(upperarmT_l_01_PB + '.outRotateX', 'upperarm_twist_01_l.rx', f=True)
+
+    upperarmT_l_02_PB = mc.createNode('pairBlend', n='upperarm_twist_02_l_PB')
+    mc.setAttr(upperarmT_l_02_PB + '.weight', 0.8)
+    mc.connectAttr('upperarm_l_ctrl.rx', upperarmT_l_02_PB + '.inRotateX2')
+    mc.connectAttr(upperarmT_l_02_PB + '.outRotateX', 'upperarm_twist_02_l.rx', f=True)
+
+    lowerarmT_l_01_PB = mc.createNode('pairBlend', n='lowerarm_twist_01_l_PB')
+    mc.setAttr(lowerarmT_l_01_PB + '.weight', 0.4)
+    mc.connectAttr('hand_l_ctrl.rx', lowerarmT_l_01_PB + '.inRotateX2')
+    mc.connectAttr(lowerarmT_l_01_PB + '.outRotateX', 'lowerarm_twist_01_l.rx', f=True)
+
+    lowerarmT_l_02_PB = mc.createNode('pairBlend', n='lowerarm_twist_02_l_PB')
+    mc.setAttr(lowerarmT_l_02_PB + '.weight', 0.8)
+    mc.connectAttr('hand_l_ctrl.rx', lowerarmT_l_02_PB + '.inRotateX2')
+    mc.connectAttr(lowerarmT_l_02_PB + '.outRotateX', 'lowerarm_twist_02_l.rx', f=True)
+
+    ######################## twist r_transform
+    upperarmTwist_r_jnt_list = ['upperarm_twist_01_r', 'upperarm_twist_02_r', 'lowerarm_twist_01_r', 'lowerarm_twist_02_r']
+    mc.select(upperarmTwist_r_jnt_list)
+    tranRotScl_const()
+
+    upperarmTwist_r_ctrl_list = ['upperarm_twist_01_r_ctrl', 'upperarm_twist_02_r_ctrl', 'lowerarm_twist_01_r_ctrl','lowerarm_twist_02_r_ctrl']
+    upperarmTwist_r_masterGrp_list = ['upperarm_twist_01_r_masterCtrlSpace', 'upperarm_twist_02_r_masterCtrlSpace']
+    lowerarmTwist_r_masterGrp_list = ['lowerarm_twist_01_r_masterCtrlSpace', 'lowerarm_twist_02_r_masterCtrlSpace']
+    mc.parent(upperarmTwist_r_masterGrp_list, 'upperarm_r_ctrl'), mc.parent(lowerarmTwist_r_masterGrp_list, 'lowerarm_r_ctrl')
+    mc.select(d=True)
+
+    mc.disconnectAttr('upperarm_r_ctrl.rx', 'upperarm_r.rx')
+    mc.disconnectAttr('upperarm_twist_01_r_ctrl.rx', 'upperarm_twist_01_r.rx')
+    mc.disconnectAttr('upperarm_twist_02_r_ctrl.rx', 'upperarm_twist_02_r.rx')
+    mc.disconnectAttr('lowerarm_twist_01_r_ctrl.rx', 'lowerarm_twist_01_r.rx')
+    mc.disconnectAttr('lowerarm_twist_02_r_ctrl.rx', 'lowerarm_twist_02_r.rx')
+
+    #### armTwist PB connection
+    mc.select(upperarmTwist_r_jnt_list)
+
+    upperarmT_r_01_PB = mc.createNode('pairBlend', n='upperarm_twist_01_r_PB')
+    mc.setAttr(upperarmT_r_01_PB + '.weight', 0.2)
+    mc.connectAttr('upperarm_r_ctrl.rx', upperarmT_r_01_PB + '.inRotateX2')
+    mc.connectAttr(upperarmT_r_01_PB + '.outRotateX', 'upperarm_twist_01_r.rx', f=True)
+
+    upperarmT_r_02_PB = mc.createNode('pairBlend', n='upperarm_twist_02_r_PB')
+    mc.setAttr(upperarmT_r_02_PB + '.weight', 0.8)
+    mc.connectAttr('upperarm_r_ctrl.rx', upperarmT_r_02_PB + '.inRotateX2')
+    mc.connectAttr(upperarmT_r_02_PB + '.outRotateX', 'upperarm_twist_02_r.rx', f=True)
+
+    lowerarmT_r_01_PB = mc.createNode('pairBlend', n='lowerarm_twist_01_r_PB')
+    mc.setAttr(lowerarmT_r_01_PB + '.weight', 0.4)
+    mc.connectAttr('hand_r_ctrl.rx', lowerarmT_r_01_PB + '.inRotateX2')
+    mc.connectAttr(lowerarmT_r_01_PB + '.outRotateX', 'lowerarm_twist_01_r.rx', f=True)
+
+    lowerarmT_r_02_PB = mc.createNode('pairBlend', n='lowerarm_twist_02_r_PB')
+    mc.setAttr(lowerarmT_r_02_PB + '.weight', 0.8)
+    mc.connectAttr('hand_r_ctrl.rx', lowerarmT_r_02_PB + '.inRotateX2')
+    mc.connectAttr(lowerarmT_r_02_PB + '.outRotateX', 'lowerarm_twist_02_r.rx', f=True)
+
+    mc.select(d=True)
+
+    ##################################################################################### leg FK
+
+    ### twist leg
+    thighTwist_01_l = mc.joint('thigh_l', n='thigh_twist_01_l', rad=2)
+    thighTConst_01_l = mc.pointConstraint('thigh_l', 'calf_l', thighTwist_01_l, mo=False), mc.setAttr('thigh_twist_01_l_pointConstraint1.thigh_lW0', 2)
+    thighTwist_02_l = mc.joint('thigh_l', n='thigh_twist_02_l', rad=2)
+    thighTConst_02_l = mc.pointConstraint('thigh_l', 'calf_l', thighTwist_02_l, mo=False), mc.setAttr('thigh_twist_02_l_pointConstraint1.calf_lW1', 2)
+    mc.delete('thigh_twist_01_l_pointConstraint1', 'thigh_twist_02_l_pointConstraint1')
+
+    calfTwist_01_l = mc.joint('calf_l', n='calf_twist_01_l', rad=2)
+    calfTConst_01_l = mc.pointConstraint('calf_l', 'foot_l', calfTwist_01_l, mo=False), mc.setAttr('calf_twist_01_l_pointConstraint1.calf_lW0', 2)
+    calfTwist_02_l = mc.joint('calf_l', n='calf_twist_02_l', rad=2)
+    calfTConst_02_l = mc.pointConstraint('calf_l', 'foot_l', calfTwist_02_l, mo=False), mc.setAttr('calf_twist_02_l_pointConstraint1.foot_lW1', 2)
+    mc.delete('calf_twist_01_l_pointConstraint1', 'calf_twist_02_l_pointConstraint1')
+    mc.select(d=True)
+
+    leg_r_jnt_list = ['thigh_r', 'calf_r', 'foot_r', 'ball_r', 'toe_r']
+
+    mc.select(leg_r_jnt_list, leg_l_jnt_list)
+    tranRotScl_const()
+
+    ##### controls
+    leg_l_ctrl_list = ['thigh_l_ctrl', 'calf_l_ctrl', 'foot_l_ctrl', 'ball_l_ctrl', 'toe_l_ctrl']
+    leg_r_ctrl_list = ['thigh_r_ctrl', 'calf_r_ctrl', 'foot_r_ctrl', 'ball_r_ctrl', 'toe_r_ctrl']
+
+    for leg_l_color in leg_l_ctrl_list:
+            itemColor(leg_l_color, 6)
+
+    for leg_r_color in leg_r_ctrl_list:
+            itemColor(leg_r_color, 13)
+
+    mc.parent('toe_l_masterCtrlSpace', 'ball_l_ctrl'), mc.parent('ball_l_masterCtrlSpace', 'foot_l_ctrl'), mc.parent('foot_l_masterCtrlSpace', 'calf_l_ctrl'), mc.parent('calf_l_masterCtrlSpace', 'thigh_l_ctrl')
+    mc.parent('toe_r_masterCtrlSpace', 'ball_r_ctrl'), mc.parent('ball_r_masterCtrlSpace', 'foot_r_ctrl'), mc.parent('foot_r_masterCtrlSpace', 'calf_r_ctrl'), mc.parent('calf_r_masterCtrlSpace', 'thigh_r_ctrl')
+    legGrp = mc.group(n='leg_controls', em=True)
+    mc.parent('thigh_r_masterCtrlSpace', 'thigh_l_masterCtrlSpace', legGrp), mc.select(d=True)
+
+    ######################## twist l_transform
+    legTwist_l_jnt_list = ['thigh_twist_01_l', 'thigh_twist_02_l', 'calf_twist_01_l', 'calf_twist_02_l']
+    mc.select(legTwist_l_jnt_list)
+    tranRotScl_const()
+
+    thighTwist_l_ctrl_list = ['thigh_twist_01_l_ctrl', 'thigh_twist_02_l_ctrl', 'calf_twist_01_l_ctrl','calf_twist_02_l_ctrl']
+    thighTwist_l_masterGrp_list = ['thigh_twist_01_l_masterCtrlSpace', 'thigh_twist_02_l_masterCtrlSpace']
+    calfTwist_l_masterGrp_list = ['calf_twist_01_l_masterCtrlSpace', 'calf_twist_02_l_masterCtrlSpace']
+    mc.parent(thighTwist_l_masterGrp_list, 'thigh_l_ctrl'), mc.parent(calfTwist_l_masterGrp_list, 'calf_l_ctrl')
+    mc.select(d=True)
+
+    mc.disconnectAttr('thigh_l_ctrl.rx', 'thigh_l.rx')
+    mc.disconnectAttr('thigh_twist_01_l_ctrl.rx', 'thigh_twist_01_l.rx')
+    mc.disconnectAttr('thigh_twist_02_l_ctrl.rx', 'thigh_twist_02_l.rx')
+    mc.disconnectAttr('calf_twist_01_l_ctrl.rx', 'calf_twist_01_l.rx')
+    mc.disconnectAttr('calf_twist_02_l_ctrl.rx', 'calf_twist_02_l.rx')
+
+    ####### legTwist PB transform
+
+    mc.select(legTwist_l_jnt_list)
+    thighT_l_01_PB = mc.createNode('pairBlend', n='thigh_twist_01_l_PB')
+    mc.setAttr(thighT_l_01_PB + '.weight', 0.4)
+    mc.connectAttr('thigh_l_ctrl.rx', thighT_l_01_PB + '.inRotateX2')
+    mc.connectAttr(thighT_l_01_PB + '.outRotateX', 'thigh_twist_01_l.rx', f=True)
+
+    thighT_l_02_PB = mc.createNode('pairBlend', n='thigh_twist_02_l_PB')
+    mc.setAttr(thighT_l_02_PB + '.weight', 0.8)
+    mc.connectAttr('thigh_l_ctrl.rx', thighT_l_02_PB + '.inRotateX2')
+    mc.connectAttr(thighT_l_02_PB + '.outRotateX', 'thigh_twist_02_l.rx', f=True)
+
+    calfT_l_01_PB = mc.createNode('pairBlend', n='calf_twist_01_l_PB')
+    mc.setAttr(calfT_l_01_PB + '.weight', -0.4)
+    mc.connectAttr('foot_l_ctrl.rz', calfT_l_01_PB + '.inRotateX2')
+    mc.connectAttr(calfT_l_01_PB + '.outRotateX', 'calf_twist_01_l.rx', f=True)
+
+    calfT_l_02_PB = mc.createNode('pairBlend', n='calf_twist_02_l_PB')
+    mc.setAttr(calfT_l_02_PB + '.weight', -0.8)
+    mc.connectAttr('foot_l_ctrl.rz', calfT_l_02_PB + '.inRotateX2')
+    mc.connectAttr(calfT_l_02_PB + '.outRotateX', 'calf_twist_02_l.rx', f=True)
+
+    ######################## twist r_transform
+    legTwist_r_jnt_rist = ['thigh_twist_01_r', 'thigh_twist_02_r', 'calf_twist_01_r', 'calf_twist_02_r']
+    mc.select(legTwist_r_jnt_rist)
+    tranRotScl_const()
+
+    thighTwist_r_ctrl_rist = ['thigh_twist_01_r_ctrl', 'thigh_twist_02_r_ctrl', 'calf_twist_01_r_ctrl','calf_twist_02_r_ctrl']
+    thighTwist_r_masterGrp_rist = ['thigh_twist_01_r_masterCtrlSpace', 'thigh_twist_02_r_masterCtrlSpace']
+    calfTwist_r_masterGrp_rist = ['calf_twist_01_r_masterCtrlSpace', 'calf_twist_02_r_masterCtrlSpace']
+    mc.parent(thighTwist_r_masterGrp_rist, 'thigh_r_ctrl'), mc.parent(calfTwist_r_masterGrp_rist, 'calf_r_ctrl')
+    mc.select(d=True)
+
+    mc.disconnectAttr('thigh_r_ctrl.rx', 'thigh_r.rx')
+    mc.disconnectAttr('thigh_twist_01_r_ctrl.rx', 'thigh_twist_01_r.rx')
+    mc.disconnectAttr('thigh_twist_02_r_ctrl.rx', 'thigh_twist_02_r.rx')
+    mc.disconnectAttr('calf_twist_01_r_ctrl.rx', 'calf_twist_01_r.rx')
+    mc.disconnectAttr('calf_twist_02_r_ctrl.rx', 'calf_twist_02_r.rx')
+
+    ####### legTwist PB transform
+
+    mc.select(legTwist_r_jnt_rist)
+    thighT_r_01_PB = mc.createNode('pairBlend', n='thigh_twist_01_r_PB')
+    mc.setAttr(thighT_r_01_PB + '.weight', 0.4)
+    mc.connectAttr('thigh_r_ctrl.rx', thighT_r_01_PB + '.inRotateX2')
+    mc.connectAttr(thighT_r_01_PB + '.outRotateX', 'thigh_twist_01_r.rx', f=True)
+
+    thighT_r_02_PB = mc.createNode('pairBlend', n='thigh_twist_02_r_PB')
+    mc.setAttr(thighT_r_02_PB + '.weight', 0.8)
+    mc.connectAttr('thigh_r_ctrl.rx', thighT_r_02_PB + '.inRotateX2')
+    mc.connectAttr(thighT_r_02_PB + '.outRotateX', 'thigh_twist_02_r.rx', f=True)
+
+    calfT_r_01_PB = mc.createNode('pairBlend', n='calf_twist_01_r_PB')
+    mc.setAttr(calfT_r_01_PB + '.weight', -0.4)
+    mc.connectAttr('foot_r_ctrl.rz', calfT_r_01_PB + '.inRotateX2')
+    mc.connectAttr(calfT_r_01_PB + '.outRotateX', 'calf_twist_01_r.rx', f=True)
+
+    calfT_r_02_PB = mc.createNode('pairBlend', n='calf_twist_02_r_PB')
+    mc.setAttr(calfT_r_02_PB + '.weight', -0.8)
+    mc.connectAttr('foot_r_ctrl.rz', calfT_r_02_PB + '.inRotateX2')
+    mc.connectAttr(calfT_r_02_PB + '.outRotateX', 'calf_twist_02_r.rx', f=True)
+
+    mc.select(d=True)
