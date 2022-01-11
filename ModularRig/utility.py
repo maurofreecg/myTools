@@ -577,50 +577,6 @@ def biped_FK_transform():
             mc.makeIdentity(arm_fingers_jnt, apply=True, t=True, r=True, s=True)
             mc.select(d=True)
 
-    leg_l_jnt_list = ['thigh_l', 'calf_l', 'foot_l', 'ball_l', 'toe_l']
-
-    for leg_l_jnt in (leg_l_jnt_list):
-            mc.makeIdentity(leg_l_jnt, apply=True, t=True, r=True, s=True)
-            mc.select(d=True)
-
-    mc.mirrorJoint('clavicle_l', mirrorYZ=True, mirrorBehavior=True, searchReplace=('_l', '_r')), mc.select(d=True)
-    mc.mirrorJoint('thigh_l', mirrorYZ=True, mirrorBehavior=True, searchReplace=('_l', '_r')), mc.select(d=True)
-
-    ###################################################################### spine FK
-
-    mc.select(spine_jnt_list)
-    tranRotScl_const()
-    mc.parent('spine_03_masterCtrlSpace', 'spine_02_ctrl'), mc.parent('spine_02_masterCtrlSpace', 'spine_01_ctrl')
-    mc.parent('spine_01_masterCtrlSpace', 'pelvis_ctrl')
-    itemColor('pelvis_ctrl', 17)
-    spineCtrlGrp = mc.group(n='spine_controls', em=True)
-    mc.parent('pelvis_masterCtrlSpace', spineCtrlGrp)
-
-    mc.select(d=True)
-
-
-    ################################################################## neck FK
-
-    mc.select(neckHead_jnt_list)
-    tranRotScl_const()
-    itemColor('neck_ctrl', 17)
-    mc.parent('head_masterCtrlSpace', 'neck_ctrl')
-    neckCtrl = mc.group(n= 'neck_controls', em=True)
-    mc.parent('neck_masterCtrlSpace', neckCtrl)
-
-    ### neck twist
-    neckTwist = mc.joint('neck', n= 'neck_twist', rad=2)
-    mc.delete(mc.pointConstraint('neck', 'head', neckTwist, mo=False))
-    neck_PB = mc.createNode('pairBlend', n= 'neck_twist_PB')
-    mc.setAttr(neck_PB + '.weight', 0.5)
-    mc.connectAttr('head_ctrl.rotateX', neck_PB + '.inRotateX2')
-    mc.connectAttr(neck_PB + '.outRotateX', neckTwist + '.rx')
-
-    mc.select(d=True)
-
-    ############################################################################# arm FK
-
-
     ### twist arm
     upperarmTwist_01_l = mc.joint('upperarm_l', n='upperarm_twist_01_l', rad=2)
     upperarmTConst_01_l = mc.pointConstraint('upperarm_l', 'lowerarm_l', upperarmTwist_01_l, mo=False), mc.setAttr('upperarm_twist_01_l_pointConstraint1.upperarm_lW0', 2)
@@ -634,6 +590,63 @@ def biped_FK_transform():
     lowerarmTConst_02_l = mc.pointConstraint('lowerarm_l', 'hand_l', lowerarmTwist_02_l, mo=False), mc.setAttr('lowerarm_twist_02_l_pointConstraint1.hand_lW1', 3)
     mc.delete('lowerarm_twist_01_l_pointConstraint1', 'lowerarm_twist_02_l_pointConstraint1')
     mc.select(d=True)
+
+    leg_l_jnt_list = ['thigh_l', 'calf_l', 'foot_l', 'ball_l', 'toe_l']
+
+    for leg_l_jnt in (leg_l_jnt_list):
+            mc.makeIdentity(leg_l_jnt, apply=True, t=True, r=True, s=True)
+            mc.select(d=True)
+
+    ### twist leg
+    thighTwist_01_l = mc.joint('thigh_l', n='thigh_twist_01_l', rad=2)
+    thighTConst_01_l = mc.pointConstraint('thigh_l', 'calf_l', thighTwist_01_l, mo=False), mc.setAttr('thigh_twist_01_l_pointConstraint1.thigh_lW0', 2)
+    thighTwist_02_l = mc.joint('thigh_l', n='thigh_twist_02_l', rad=2)
+    thighTConst_02_l = mc.pointConstraint('thigh_l', 'calf_l', thighTwist_02_l, mo=False), mc.setAttr('thigh_twist_02_l_pointConstraint1.calf_lW1', 2)
+    mc.delete('thigh_twist_01_l_pointConstraint1', 'thigh_twist_02_l_pointConstraint1')
+
+    calfTwist_01_l = mc.joint('calf_l', n='calf_twist_01_l', rad=2)
+    calfTConst_01_l = mc.pointConstraint('calf_l', 'foot_l', calfTwist_01_l, mo=False), mc.setAttr('calf_twist_01_l_pointConstraint1.calf_lW0', 2)
+    calfTwist_02_l = mc.joint('calf_l', n='calf_twist_02_l', rad=2)
+    calfTConst_02_l = mc.pointConstraint('calf_l', 'foot_l', calfTwist_02_l, mo=False), mc.setAttr('calf_twist_02_l_pointConstraint1.foot_lW1', 2)
+    mc.delete('calf_twist_01_l_pointConstraint1', 'calf_twist_02_l_pointConstraint1')
+    mc.select(d=True)
+
+    mc.mirrorJoint('clavicle_l', mirrorYZ=True, mirrorBehavior=True, searchReplace=('_l', '_r')), mc.select(d=True)
+    mc.mirrorJoint('thigh_l', mirrorYZ=True, mirrorBehavior=True, searchReplace=('_l', '_r')), mc.select(d=True)
+
+    ###################################################################### spine FK
+
+    mc.select(spine_jnt_list)
+    tranRotScl_const()
+    mc.parent('spine_03_masterCtrlSpace', 'spine_02_ctrl'), mc.parent('spine_02_masterCtrlSpace', 'spine_01_ctrl')
+    mc.parent('spine_01_masterCtrlSpace', 'pelvis_ctrl')
+    itemColor('pelvis_ctrl', 17)
+    spineGrp = mc.group(n='spine_controls', em=True)
+    mc.parent('pelvis_masterCtrlSpace', spineGrp)
+
+    mc.select(d=True)
+
+    ################################################################## neck FK
+
+    mc.select(neckHead_jnt_list)
+    tranRotScl_const()
+    itemColor('neck_ctrl', 17)
+    mc.parent('head_masterCtrlSpace', 'neck_ctrl')
+    neckHeadGrp = mc.group(n= 'neck_controls', em=True)
+    mc.parent('neck_masterCtrlSpace', neckHeadGrp)
+
+    ### neck twist
+    neckTwist = mc.joint('neck', n= 'neck_twist', rad=2)
+    mc.delete(mc.pointConstraint('neck', 'head', neckTwist, mo=False))
+    neck_PB = mc.createNode('pairBlend', n= 'neck_twist_PB')
+    mc.setAttr(neck_PB + '.weight', 0.5)
+    mc.connectAttr('head_ctrl.rotateX', neck_PB + '.inRotateX2')
+    mc.connectAttr(neck_PB + '.outRotateX', neckTwist + '.rx')
+
+    mc.select(d=True)
+
+    ############################################################################# arm FK
+
 
     arm_fingers_r_jnt_list = ['clavicle_r', 'upperarm_r', 'lowerarm_r', 'hand_r', 'pinky_00_r', 'pinky_01_r', 'pinky_02_r',
                               'pinky_03_r','ring_00_r', 'ring_01_r', 'ring_02_r', 'ring_03_r', 'middle_00_r', 'middle_01_r',
@@ -763,20 +776,6 @@ def biped_FK_transform():
 
     ##################################################################################### leg FK
 
-    ### twist leg
-    thighTwist_01_l = mc.joint('thigh_l', n='thigh_twist_01_l', rad=2)
-    thighTConst_01_l = mc.pointConstraint('thigh_l', 'calf_l', thighTwist_01_l, mo=False), mc.setAttr('thigh_twist_01_l_pointConstraint1.thigh_lW0', 2)
-    thighTwist_02_l = mc.joint('thigh_l', n='thigh_twist_02_l', rad=2)
-    thighTConst_02_l = mc.pointConstraint('thigh_l', 'calf_l', thighTwist_02_l, mo=False), mc.setAttr('thigh_twist_02_l_pointConstraint1.calf_lW1', 2)
-    mc.delete('thigh_twist_01_l_pointConstraint1', 'thigh_twist_02_l_pointConstraint1')
-
-    calfTwist_01_l = mc.joint('calf_l', n='calf_twist_01_l', rad=2)
-    calfTConst_01_l = mc.pointConstraint('calf_l', 'foot_l', calfTwist_01_l, mo=False), mc.setAttr('calf_twist_01_l_pointConstraint1.calf_lW0', 2)
-    calfTwist_02_l = mc.joint('calf_l', n='calf_twist_02_l', rad=2)
-    calfTConst_02_l = mc.pointConstraint('calf_l', 'foot_l', calfTwist_02_l, mo=False), mc.setAttr('calf_twist_02_l_pointConstraint1.foot_lW1', 2)
-    mc.delete('calf_twist_01_l_pointConstraint1', 'calf_twist_02_l_pointConstraint1')
-    mc.select(d=True)
-
     leg_r_jnt_list = ['thigh_r', 'calf_r', 'foot_r', 'ball_r', 'toe_r']
 
     mc.select(leg_r_jnt_list, leg_l_jnt_list)
@@ -878,3 +877,53 @@ def biped_FK_transform():
     mc.connectAttr(calfT_r_02_PB + '.outRotateX', 'calf_twist_02_r.rx', f=True)
 
     mc.select(d=True)
+
+    bipedGrp = mc.group(n='biped_controls', em=True)
+    mc.parent(armsGrp, legGrp, neckHeadGrp, spineGrp, bipedGrp), mc.select(d=True)
+
+#######################################################################
+#
+#
+#                           IK System
+#
+#
+#######################################################################
+
+######################################################### spine IK transform #############################################################
+
+# create an ikSpline solver using the 'Spine' joint through to 'Spine2'...
+# ... Adjust Advanced Twist Controls of the ikSpline based off Advanced Skeleton Setup ...
+# ...then create a cluster on cv 0, cv 1&2, and cv3
+mc.ikHandle(n='spine_ik', sj='pelvis', ee='spine_03', sol='ikSplineSolver')
+
+cv_list = ['curve1.cv[0]', 'curve1.cv[1:2]', 'curve1.cv[3]']
+for each in cv_list:
+    mc.cluster(each)
+mc.select(d=True)
+
+# for each cluster rename it, create a control and snap it to its location then delete the Pcon
+clusters = ['cluster1Handle', 'cluster2Handle', 'cluster3Handle']
+for each in clusters:
+    mc.rename(each, 'spine_cl')
+
+clustersNodes = ['spine_cl', 'spine_cl1', 'spine_cl2']
+for each in clustersNodes:
+    cluster_ctrl = mc.circle(nr=(0, 1, 0), c=(0, 0, 0), r=5, n=each + '_ctrl', ch=False)
+    cluster_grp = mc.group(n= each + '_ctrlSpace', em=True)
+    cluster_masterGrp = mc.group(n= each + '_master_ctrSpace', em=True)
+    mc.parent(cluster_ctrl, cluster_grp)
+    mc.parent(cluster_grp, cluster_masterGrp)
+    mc.delete(mc.parentConstraint(each, cluster_masterGrp, mo=False))
+mc.select(d=True)
+
+# parent the cluster under the controllers
+mc.parent('spine_cl', 'spine_cl_ctrl'), mc.parent('spine_cl1', 'spine_cl1_ctrl'), mc.parent('spine_cl2', 'spine_cl2_ctrl')
+
+mc.setAttr("spine_ik.dTwistControlEnable", 1)
+mc.setAttr("spine_ik.dWorldUpType", 4)
+mc.setAttr("spine_ik.dForwardAxis", 0)
+mc.setAttr("spine_ik.dWorldUpAxis", 3)
+mc.setAttr("spine_ik.dTwistValueType", 1)
+mc.setAttr('spine_ik.dWorldUpVectorZ', 1)
+mc.setAttr('spine_ik.dWorldUpVectorEndZ', 1)
+
