@@ -891,39 +891,79 @@ def biped_FK_transform():
 
 ######################################################### spine IK transform #############################################################
 
-# create an ikSpline solver using the 'Spine' joint through to 'Spine2'...
-# ... Adjust Advanced Twist Controls of the ikSpline based off Advanced Skeleton Setup ...
-# ...then create a cluster on cv 0, cv 1&2, and cv3
-mc.ikHandle(n='spine_ik', sj='pelvis', ee='spine_03', sol='ikSplineSolver')
+def spine_IK_transform():
+    # create an ikSpline solver using the 'Spine' joint through to 'Spine2'...
+    # ... Adjust Advanced Twist Controls of the ikSpline based off Advanced Skeleton Setup ...
+    # ...then create a cluster on cv 0, cv 1&2, and cv3
+    mc.ikHandle(n='spine_ik', sj='pelvis', ee='spine_03', sol='ikSplineSolver')
 
-cv_list = ['curve1.cv[0]', 'curve1.cv[1:2]', 'curve1.cv[3]']
-for each in cv_list:
-    mc.cluster(each)
-mc.select(d=True)
+    spine_jnt_list = ['pelvis', 'spine_01', 'spine_02', 'spine_03']
 
-# for each cluster rename it, create a control and snap it to its location then delete the Pcon
-clusters = ['cluster1Handle', 'cluster2Handle', 'cluster3Handle']
-for each in clusters:
-    mc.rename(each, 'spine_cl')
+    cv_list = ['curve1.cv[0]', 'curve1.cv[1:2]', 'curve1.cv[3]']
+    for each in cv_list:
+        mc.cluster(each)
+    mc.select(d=True)
 
-clustersNodes = ['spine_cl', 'spine_cl1', 'spine_cl2']
-for each in clustersNodes:
-    cluster_ctrl = mc.circle(nr=(0, 1, 0), c=(0, 0, 0), r=5, n=each + '_ctrl', ch=False)
-    cluster_grp = mc.group(n= each + '_ctrlSpace', em=True)
-    cluster_masterGrp = mc.group(n= each + '_master_ctrSpace', em=True)
-    mc.parent(cluster_ctrl, cluster_grp)
-    mc.parent(cluster_grp, cluster_masterGrp)
-    mc.delete(mc.parentConstraint(each, cluster_masterGrp, mo=False))
-mc.select(d=True)
+    # for each cluster rename it, create a control and snap it to its location then delete the Pcon
+    clusters = ['cluster1Handle', 'cluster2Handle', 'cluster3Handle']
+    for each in clusters:
+        mc.rename(each, 'spine_cl')
 
-# parent the cluster under the controllers
-mc.parent('spine_cl', 'spine_cl_ctrl'), mc.parent('spine_cl1', 'spine_cl1_ctrl'), mc.parent('spine_cl2', 'spine_cl2_ctrl')
+    clustersNodes = ['spine_cl', 'spine_cl1', 'spine_cl2']
+    for each in clustersNodes:
+        cluster_ctrl = mc.circle(nr=(0, 1, 0), c=(0, 0, 0), r=5, n=each + '_ctrl', ch=False)
+        cluster_grp = mc.group(n= each + '_ctrlSpace', em=True)
+        cluster_masterGrp = mc.group(n= each + '_master_ctrSpace', em=True)
+        mc.parent(cluster_ctrl, cluster_grp)
+        mc.parent(cluster_grp, cluster_masterGrp)
+        mc.delete(mc.parentConstraint(each, cluster_masterGrp, mo=False))
+    mc.select(d=True)
 
-mc.setAttr("spine_ik.dTwistControlEnable", 1)
-mc.setAttr("spine_ik.dWorldUpType", 4)
-mc.setAttr("spine_ik.dForwardAxis", 0)
-mc.setAttr("spine_ik.dWorldUpAxis", 3)
-mc.setAttr("spine_ik.dTwistValueType", 1)
-mc.setAttr('spine_ik.dWorldUpVectorZ', 1)
-mc.setAttr('spine_ik.dWorldUpVectorEndZ', 1)
+    spine_ctrl_list = ['spine_cl_ctrl', 'spine_cl1_ctrl', 'spine_cl2_ctrl']
+    for item in spine_ctrl_list:
+        itemColor(item, 17)
+
+    # parent the cluster under the controllers
+    mc.parent('spine_cl', 'spine_cl_ctrl'), mc.parent('spine_cl1', 'spine_cl1_ctrl'), mc.parent('spine_cl2', 'spine_cl2_ctrl')
+    mc.select(d=True)
+
+    # advance twist controls setup
+    mc.setAttr("spine_ik.dTwistControlEnable", 1)
+    mc.setAttr("spine_ik.dWorldUpType", 4)
+    mc.setAttr("spine_ik.dForwardAxis", 0)
+    mc.setAttr("spine_ik.dWorldUpAxis", 3)
+    mc.setAttr("spine_ik.dTwistValueType", 1)
+    mc.setAttr('spine_ik.dWorldUpVectorZ', 1)
+    mc.setAttr('spine_ik.dWorldUpVectorEndZ', 1)
+    mc.setAttr('spine_ik.dWorldUpVectorY', 0)
+    mc.setAttr('spine_ik.dWorldUpVectorEndY', 0)
+    mc.connectAttr('spine_cl2_ctrl.worldMatrix', 'spine_ik.dWorldUpMatrixEnd')
+    mc.connectAttr('spine_cl_ctrl.worldMatrix', 'spine_ik.dWorldUpMatrix')
+
+    # S&S
+    spine_arcLength_MD = mc.createNode('multiplyDivide', n='spine_arcLength_MD')
+    mc.setAttr(spine_arcLength_MD + '.operation', 2)
+    spine_arcLength_div_MD = mc.createNode('multiplyDivide', n='spine_arcLength_div_MD')
+    mc.setAttr(spine_arcLength_div_MD + '.operation', 2)
+    crvInfo = mc.createNode('curveInfo', n='spine_crvInfo')
+    mc.connectAttr('curveShape1.worldSpace', crvInfo + '.inputCurve', f=True)
+    arcLengh_data = mc.getAttr(crvInfo + '.arcLength')
+    mc.setAttr(spine_arcLength_MD + '.input2X', arcLengh_data)
+    mc.connectAttr(crvInfo + '.arcLength', spine_arcLength_MD + '.input1X', f=True)
+    mc.connectAttr(spine_arcLength_MD + '.outputX', spine_arcLength_div_MD + '.input1X', f=True)
+
+    for spineJnt in (spine_jnt_list):
+        mc.connectAttr(spine_arcLength_div_MD + '.outputX', spineJnt + '.sx')
+
+    # COG control
+    cog_ctrl = mc.circle(nr=(0, 1, 0), r=20, n='cog_ctrl', ch=False)
+    cog_ctrlSpace = mc.group(cog_ctrl, n='cog_ctrlSpace')
+    cog_ctrlSpaceMaster = mc.group(cog_ctrlSpace, n='cog_masterSpace')
+    mc.delete(mc.parentConstraint('pelvis', cog_ctrlSpaceMaster))
+    mc.setAttr(cog_ctrlSpaceMaster + '.rx', 0), mc.setAttr(cog_ctrlSpaceMaster + '.ry', 0), mc.setAttr(cog_ctrlSpaceMaster + '.rz', 0)
+
+    # clean
+    spineIK_grp = mc.group(n='spine_IK_controls', em=True)
+    mc.parent('spine_cl_master_ctrSpace', 'spine_cl1_master_ctrSpace', 'spine_cl2_master_ctrSpace', cog_ctrl), mc.parent(cog_ctrlSpaceMaster, spineIK_grp)
+    mc.select(d=True)
 
