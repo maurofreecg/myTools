@@ -967,3 +967,61 @@ def spine_IK_transform():
     mc.parent('spine_cl_master_ctrSpace', 'spine_cl1_master_ctrSpace', 'spine_cl2_master_ctrSpace', cog_ctrl), mc.parent(cog_ctrlSpaceMaster, spineIK_grp)
     mc.select(d=True)
 
+######################################################### arm IK transform ################################################################
+
+''''# create joints at specified positions and orients, values taken from bind skeleton creation
+upperarmP = (16.535, 146.853, -5.454)
+upperarmO = (-0.059, -6.599, -56.457)
+lowerarmP = (32.645, 123.032, -6.348)
+lowerarmO = (4.677, -6.859, -0.671)
+handP = (47.297, 103.560, -0.915)
+handO = (4.283, -2.541, 0.593)
+
+mc.joint(p=(upperarmP), o=(upperarmO), n="upperarm_ik_l")
+mc.joint(p=(lowerarmP), o=(lowerarmO), n="lowerarm_ik_l")
+mc.joint(p=(handP), o=(handO), n="hand_ik_l")'''
+
+
+### twist arm
+upperarmTwist_01_l = mc.joint('upperarm_l', n='upperarm_twist_01_l', rad=2)
+upperarmTConst_01_l = mc.pointConstraint('upperarm_l', 'lowerarm_l', upperarmTwist_01_l, mo=False), mc.setAttr('upperarm_twist_01_l_pointConstraint1.upperarm_lW0', 2)
+upperarmTwist_02_l = mc.joint('upperarm_l', n='upperarm_twist_02_l', rad=2)
+upperarmTConst_02_l = mc.pointConstraint('upperarm_l', 'lowerarm_l', upperarmTwist_02_l, mo=False), mc.setAttr('upperarm_twist_02_l_pointConstraint1.lowerarm_lW1', 2)
+mc.delete('upperarm_twist_01_l_pointConstraint1', 'upperarm_twist_02_l_pointConstraint1')
+
+lowerarmTwist_01_l = mc.joint('lowerarm_l', n='lowerarm_twist_01_l', rad=2)
+lowerarmTConst_01_l = mc.pointConstraint('lowerarm_l', 'hand_l', lowerarmTwist_01_l, mo=False), mc.setAttr('lowerarm_twist_01_l_pointConstraint1.lowerarm_lW0', 1.5)
+lowerarmTwist_02_l = mc.joint('lowerarm_l', n='lowerarm_twist_02_l', rad=2)
+lowerarmTConst_02_l = mc.pointConstraint('lowerarm_l', 'hand_l', lowerarmTwist_02_l, mo=False), mc.setAttr('lowerarm_twist_02_l_pointConstraint1.hand_lW1', 3)
+mc.delete('lowerarm_twist_01_l_pointConstraint1', 'lowerarm_twist_02_l_pointConstraint1')
+mc.select(d=True)
+
+arm_fingers_l_jnt_list = ['clavicle_l', 'upperarm_l', 'lowerarm_l', 'hand_l', 'pinky_00_l', 'pinky_01_l', 'pinky_02_l', 'pinky_03_l',
+                          'ring_00_l', 'ring_01_l', 'ring_02_l', 'ring_03_l', 'middle_00_l', 'middle_01_l', 'middle_02_l', 'middle_03_l', 'thumb_03_l',
+                          'upperarm_twist_01_l', 'upperarm_twist_02_l', 'lowerarm_twist_01_l', 'lowerarm_twist_02_l']
+
+for arm_fingers_jnt in (arm_fingers_l_jnt_list):
+    mc.makeIdentity(arm_fingers_jnt, apply=True, t=True, r=True, s=True)
+    mc.select(d=True)
+
+for i in arm_fingers_l_jnt_list:
+    mc.rename(i, i + '%ik')
+
+# mirror the joint so there is a left arm, assumes character center is at 0
+mc.mirrorJoint('clavicle_l_ik', mirrorYZ=True, mirrorBehavior=True, searchReplace=('_l', '_r'))
+
+# create ikhandle that is a rotate plane solver & controls
+ikArm_l = mc.ikHandle(n='ikArm_l', sj='upperarm_l_ik', ee='hand_l_ik', sol='ikRPsolver')
+ikArm_r = mc.ikHandle(n='ikArm_r', sj='upperarm_r_ik', ee='hand_r_ik', sol='ikRPsolver')
+
+ikHand_ctrl_list = ['hand_l_ik', 'hand_r_ik']
+for each in ikHand_ctrl_list:
+    ikHand_ctrl = mc.circle(nr=(1, 0, 0), c=(0, 0, 0), r=5, n=each + '_ctrl', ch=False)
+    ikHand_grp = mc.group(n=each + '_ctrlSpace', em=True)
+    ikHand_masterGrp = mc.group(n=each + '_master_ctrSpace', em=True)
+    mc.parent(ikHand_ctrl, ikHand_grp)
+    mc.parent(ikHand_grp, ikHand_masterGrp)
+    mc.delete(mc.parentConstraint(each, ikHand_masterGrp, mo=False))
+mc.select(d=True)
+
+
