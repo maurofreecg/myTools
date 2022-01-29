@@ -7,27 +7,15 @@
 #######################################################################
 
 import maya.cmds as mc
+import maya.mel as mel
 
-#################################################### color ##############################################################################
-def itemColor(s, c):  # yellow 17, red 13, blue 6, light blue 18
-    mc.setAttr(s + '.overrideEnabled', 1)
-    mc.setAttr(s + '.overrideColor', c)
-
-########################################### controls shapes ###########################################################
-
-############### celta cross
-
-def celtCross_crv():
-    selO = mc.ls(sl=True)
-
-    for item in (selO):
-        celtCrossGrpMaster = mc.group(n=item + '_masterCtrlSpace')
-        celtCrossGrp = mc.group(n=item + '_ctrlSpace', em=True)
-        celtCross_ctrl = mc.curve(d=1, p=[(0, 1.108194, 0), (0, 0.693935, 0.108972), (0, -0.134583, 0.326917), (0, -0.0517824, -1.82575), (0, 0.341712, 0.326917),
-                          (0, -1.833147, 0), (0, 0.341712, -0.326917), (0, -0.0517824, 1.82575), (0, -0.134583, -0.326917), (0, 0.693935, -0.108972,),
-                          (0, 1.108194, 0)], n=item + '_ctrl')
-        mc.parent(celtCross_ctrl, celtCrossGrp), mc.parent(celtCrossGrp, celtCrossGrpMaster)
-        mc.delete(mc.parentConstraint(item, celtCrossGrpMaster, mo=False))
+#######################################################################
+#
+#
+#                            TEMPLETES
+#
+#
+#######################################################################
 
 ############################################## neckHead templete #########################################################################
 def neckHead_jntT(neckP = (0, 155.256, -5.945), neckO = (0, -1.638, 90.000),
@@ -207,10 +195,50 @@ def biped_jntT(neckP = (0, 155.256, -5.945), neckO = (0, -1.638, 90.000), headP 
     ### parent
     mc.parent(neck, clavicle_l, spine_03), mc.parent(thigh_l, pelvis), mc.select(d=True)
 
-################################################ translate / rotate / scale - Constraint ###############################################################
+
+########################################### controls shapes ###########################################################
+
+#######################################################################
+#
+#
+#                           Controls
+#
+#
+#######################################################################
+
+#################################################### color ##############################################################################
+def itemColor(s, c):  # yellow 17, red 13, blue 6, light blue 18
+    mc.setAttr(s + '.overrideEnabled', 1)
+    mc.setAttr(s + '.overrideColor', c)
+
+##################################################### square #############################################################
+class sqr_ctrl:
+    def __init__(self):
+        self.sqr = mc.ls(sl=True)
+        for square in self.sqr:
+            square_ctrl = mc.curve(d=True, p=((4.364857, 4.364857, 4.364857), (4.364857, -4.364857, 4.364857), (4.364857, -4.364857, -4.364857), (4.364857, 4.364857, -4.364857),
+                                              (4.364857, 4.364857, 4.364857), (-4.364857, 4.364857, 4.364857), (-4.364857, -4.364857, 4.364857), (4.364857, -4.364857, 4.364857),
+                                              (4.364857, 4.364857, 4.364857), (4.364857, 4.364857, -4.364857), (-4.364857, 4.364857, -4.364857), (-4.364857, 4.364857, 4.364857),
+                                              (-4.364857, -4.364857, 4.364857), (-4.364857, -4.364857, -4.364857), (-4.364857, 4.364857, -4.364857), (4.364857, 4.364857, -4.364857),
+                                              (4.364857, -4.364857, -4.364857), (-4.364857, -4.364857, -4.364857)), n=square + '_ctrl')
+
+            square_space = mc.group(n=square + '_space', em=True)
+            square_masterSpace = mc.group(n=square + '_masterSpace', em=True)
+            mc.parent(square_ctrl, square_space), mc.parent(square_space, square_masterSpace)
+            mc.delete(mc.parentConstraint(square, square_masterSpace, mo=False))
+            mc.select(d=True)
+
+#######################################################################
+#
+#
+#                           Controls
+#
+#
+#######################################################################
+
+################################################ translate / rotate / scale - Matrix Constraint #######################################
 def tranRotScl_const():
     selO = mc.ls(sl=True)
-
     for i in (selO):
         masterGrp = mc.group(n= i + '_masterCtrlSpace', em=True)
         grp = mc.group(n= i + '_ctrlSpace', em=True)
@@ -229,6 +257,21 @@ def tranRotScl_const():
         mc.connectAttr(('%s.worldMatrix[0]'%crv[0]), ('%s.matrixIn[0]'%multM), f=True)
         mc.connectAttr(str(i) + '.parentInverseMatrix[0]', multM + '.matrixIn[1]', f=True)
         mc.connectAttr(decM + '.outputTranslate', i + '.t')
+
+################################################ Point Matrix constraint ##############################################################
+
+selO = mc.ls(sl=True)
+for pMC in (selO):
+
+
+
+#######################################################################
+#
+#
+#                          FK System
+#
+#
+#######################################################################
 
 ################################################# neck head fk transform ###################################################################
 def neck_FK_transform():
@@ -968,20 +1011,6 @@ def spine_IK_transform():
     mc.select(d=True)
 
 ######################################################### arm IK transform ################################################################
-
-''''# create joints at specified positions and orients, values taken from bind skeleton creation
-upperarmP = (16.535, 146.853, -5.454)
-upperarmO = (-0.059, -6.599, -56.457)
-lowerarmP = (32.645, 123.032, -6.348)
-lowerarmO = (4.677, -6.859, -0.671)
-handP = (47.297, 103.560, -0.915)
-handO = (4.283, -2.541, 0.593)
-
-mc.joint(p=(upperarmP), o=(upperarmO), n="upperarm_ik_l")
-mc.joint(p=(lowerarmP), o=(lowerarmO), n="lowerarm_ik_l")
-mc.joint(p=(handP), o=(handO), n="hand_ik_l")'''
-
-
 ### twist arm
 upperarmTwist_01_l = mc.joint('upperarm_l', n='upperarm_twist_01_l', rad=2)
 upperarmTConst_01_l = mc.pointConstraint('upperarm_l', 'lowerarm_l', upperarmTwist_01_l, mo=False), mc.setAttr('upperarm_twist_01_l_pointConstraint1.upperarm_lW0', 2)
@@ -996,16 +1025,23 @@ lowerarmTConst_02_l = mc.pointConstraint('lowerarm_l', 'hand_l', lowerarmTwist_0
 mc.delete('lowerarm_twist_01_l_pointConstraint1', 'lowerarm_twist_02_l_pointConstraint1')
 mc.select(d=True)
 
-arm_fingers_l_jnt_list = ['clavicle_l', 'upperarm_l', 'lowerarm_l', 'hand_l', 'pinky_00_l', 'pinky_01_l', 'pinky_02_l', 'pinky_03_l',
-                          'ring_00_l', 'ring_01_l', 'ring_02_l', 'ring_03_l', 'middle_00_l', 'middle_01_l', 'middle_02_l', 'middle_03_l', 'thumb_03_l',
-                          'upperarm_twist_01_l', 'upperarm_twist_02_l', 'lowerarm_twist_01_l', 'lowerarm_twist_02_l']
+arm_fingers_l_jnt_list = ['clavicle_l', 'upperarm_l', 'lowerarm_l', 'hand_l', 'pinky_00_l', 'pinky_01_l', 'pinky_02_l', 'pinky_03_l', 'ring_00_l', 'ring_01_l',
+                          'ring_02_l', 'ring_03_l', 'index_00_l', 'index_01_l', 'index_02_l', 'index_03_l', 'middle_00_l', 'middle_01_l', 'middle_02_l', 'middle_03_l',
+                          'thumb_03_l', 'upperarm_twist_01_l', 'upperarm_twist_02_l', 'lowerarm_twist_01_l', 'lowerarm_twist_02_l']
 
 for arm_fingers_jnt in (arm_fingers_l_jnt_list):
     mc.makeIdentity(arm_fingers_jnt, apply=True, t=True, r=True, s=True)
     mc.select(d=True)
 
-for i in arm_fingers_l_jnt_list:
-    mc.rename(i, i + '%ik')
+mc.duplicate('clavicle_l')
+mel.eval('searchReplaceNames "_l" "_l2" "hierarchy"')
+mc.rename('clavicle_l21', 'clavicle_l2')
+mc.select('clavicle_l2', hi=True)
+ikJnt = mc.ls(sl=True)
+
+for i in ikJnt:
+    name = i.replace('l2', 'l_ik')
+    mc.rename(i, name)
 
 # mirror the joint so there is a left arm, assumes character center is at 0
 mc.mirrorJoint('clavicle_l_ik', mirrorYZ=True, mirrorBehavior=True, searchReplace=('_l', '_r'))
@@ -1013,15 +1049,10 @@ mc.mirrorJoint('clavicle_l_ik', mirrorYZ=True, mirrorBehavior=True, searchReplac
 # create ikhandle that is a rotate plane solver & controls
 ikArm_l = mc.ikHandle(n='ikArm_l', sj='upperarm_l_ik', ee='hand_l_ik', sol='ikRPsolver')
 ikArm_r = mc.ikHandle(n='ikArm_r', sj='upperarm_r_ik', ee='hand_r_ik', sol='ikRPsolver')
-
-ikHand_ctrl_list = ['hand_l_ik', 'hand_r_ik']
-for each in ikHand_ctrl_list:
-    ikHand_ctrl = mc.circle(nr=(1, 0, 0), c=(0, 0, 0), r=5, n=each + '_ctrl', ch=False)
-    ikHand_grp = mc.group(n=each + '_ctrlSpace', em=True)
-    ikHand_masterGrp = mc.group(n=each + '_master_ctrSpace', em=True)
-    mc.parent(ikHand_ctrl, ikHand_grp)
-    mc.parent(ikHand_grp, ikHand_masterGrp)
-    mc.delete(mc.parentConstraint(each, ikHand_masterGrp, mo=False))
 mc.select(d=True)
+
+ikHand_jnt_list = ['hand_l_ik', 'hand_r_ik']
+sqr_ctrl(ikHand_jnt_list)
+
 
 
