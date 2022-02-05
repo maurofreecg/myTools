@@ -8,6 +8,7 @@
 
 import maya.cmds as mc
 import maya.mel as mel
+from maya import cmds, OpenMaya
 import controls
 import hierarchyJntTempletes
 import importlib
@@ -800,8 +801,10 @@ def spine_IK_transform():
 
 ######################################################### arm IK transform ################################################################
 
-hJntTemp.armT()
+################################# call arm templete ############################################################
+myHJntTemp.armT()
 
+############################### freeze transformation of bones rotation #####################################
 arm_fingers_l_jnt_list = ['clavicle_l', 'upperarm_l', 'lowerarm_l', 'hand_l', 'pinky_00_l', 'pinky_01_l', 'pinky_02_l', 'pinky_03_l', 'ring_00_l', 'ring_01_l',
                           'ring_02_l', 'ring_03_l', 'index_00_l', 'index_01_l', 'index_02_l', 'index_03_l', 'middle_00_l', 'middle_01_l', 'middle_02_l', 'middle_03_l',
                           'thumb_03_l', 'upperarm_twist_01_l', 'upperarm_twist_02_l', 'lowerarm_twist_01_l', 'lowerarm_twist_02_l']
@@ -827,6 +830,7 @@ for arm_fingers_jnt in (arm_fingers_l_jnt_list):
 # mirror base arm skeleton
 mc.mirrorJoint('clavicle_l', mirrorYZ=True, mirrorBehavior=True, searchReplace=('_l', '_r'))
 
+###################################################### IK SYSTEM ############################################################
 mc.duplicate('upperarm_l')
 mc.select('upperarm_l1')
 mel.eval('searchReplaceNames "_l" "_l2" "hierarchy"')
@@ -840,12 +844,34 @@ for i in ikJnt:
 mc.parent('upperarm_l_ik', w=True), mc.select(d=True)
 
 # pole vector templete
+
+mc.select('upperarm_l_ik', 'lowerarm_l_ik', 'hand_l_ik')
+selO = mc.ls(sl=True)
+
+start = mc.xform(selO[0], q=True, ws=True, t=True)
+mid = mc.xform(selO[1], q=True, ws=True, t=True)
+end = mc.xform(selO[2], q=True, ws=True, t=True)
+
+startV = OpenMaya.MVector(start[0], start[1], start[2])
+midV = OpenMaya.MVector(mid[0], mid[1], mid[2])
+endV = OpenMaya.MVector(end[0], end[1], end[2])
+
+startEnd = endV - startV
+startMid = midV - startV
+
+dotP = startMid * startEnd
+proj = float(dotP) / float(startEnd.length())
+startEndN = startEnd.normal()
+projV = startEndN * proj
+
+arrowV = startMid - projV
+arrowV*=10
+finalV = arrowV + midV
+
 loc_PV = mc.spaceLocator(n='arm_PV_l')
 loc_PVSpace = mc.group(loc_PV, n='PV_locSpace'), mc.select(d=True)
-mc.pointConstraint('upperarm_l_ik', 'lowerarm_l_ik', 'hand_l_ik', loc_PVSpace, mo=False)
-mc.setAttr('arm_PV_l.tz', -30)
+mc.xform(loc_PVSpace, ws=True, t=(finalV.x, finalV.y, finalV.z))
 mc.parent(loc_PVSpace, 'lowerarm_l_ik')
-mc.delete('PV_locSpace_pointConstraint1')
 
 # mirror ik chain
 mc.mirrorJoint('upperarm_l_ik', mirrorYZ=True, mirrorBehavior=True, searchReplace=('_l', '_r'))
