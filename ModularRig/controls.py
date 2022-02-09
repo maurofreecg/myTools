@@ -51,5 +51,41 @@ class myControls():
         mc.parent(rectangleCtrl, rectangleCtrlSpace), mc.parent(rectangleCtrlSpace, rectangleCtrlSpaceMaster)
         mc.select(d=True)
 
+    ##################################################### gear control ###########################################################
+    def gear_ctrl(self, name='gear', itemColor=8):
+        gearCtrl = mc.curve(d=True, p=((1.724336, 7.352745, 3.448672), (1.724336, 5.973276, 3.448672), (4.310841, 4.479957, 3.448672), (5.505496, 5.169692, 3.448672), (7.229832, 2.183053, 3.448672),
+                                       (6.035176, 1.493319, 3.448672), (6.035176, -1.493319, 3.448672), (7.229832, -2.183053, 3.448672), (5.505496, -5.169692, 3.448672), (4.310841, -4.479957, 3.448672),
+                                       (1.724336, -5.973276, 3.448672), (1.724336, -7.352745, 3.448672), (-1.724337, -7.352745, 3.448672), (-1.724337, -5.973276, 3.448672), (-4.310841, -4.479957, 3.448672),
+                                       (-5.505496, -5.169692, 3.448672), (-7.229832, -2.183054, 3.448672), (-6.035176, -1.49332, 3.448672), (-6.035176, 1.493318, 3.448672), (-7.229832, 2.183052, 3.448672),
+                                       (-5.505496, 5.16969, 3.448672), (-4.310841, 4.479956, 3.448672), (-1.724337, 5.973276, 3.448672), (-1.724337, 7.352745, 3.448672), (1.724336, 7.352745, 3.448672)), n=name + '_ctrl')
+        gearCtrlSpace = mc.group(em=True, n=name + '_ctrlSpace')
+        print(gearCtrl)
+        gearCtrlSpaceMaster = mc.group(em=True, n=name + '_ctrlSpaceMaster')
+        mc.parent(gearCtrl, gearCtrlSpace), mc.parent(gearCtrlSpace, gearCtrlSpaceMaster)
+        mc.select(d=True)
+
+    #################################################### diamondLow control #####################################################
+    def diamondLow_ctrl(self, name='diamondLow', itemColor=8):
+        diamondLowCtrl = mc.curve(d=True, p=((0, 6.092856, 0.473397), (0, 6.092856, 0.473397), (0, 6.092856, -0.473397), (6.092856, 0, -0.473397), (6.092856, 0, 0.473397), (0, 6.092856, 0.473397),
+                                             (-6.092856, 0, 0.473397), (-6.092856, 0, -0.473397), (0, 6.092856, -0.473397), (6.092856, 0, -0.473397), (0, -6.092856, -0.473397), (0, -6.092856, 0.473397),
+                                             (6.092856, 0, 0.473397), (6.092856, 0, -0.473397), (0, -6.092856, -0.473397), (-6.092856, 0, -0.473397), (-6.092856, 0, 0.473397), (0, -6.092856, 0.473397),
+                                             (0, -6.092856, -0.473397)), n=name + '_ctrl')
+        diamondLowCtrlSpace = mc.group(em=True, n=name + '_ctrlSpace')
+        print(diamondLowCtrl)
+        diamondLowCtrlSpaceMaster = mc.group(em=True, n=name + '_ctrlSpaceMaster')
+        mc.parent(diamondLowCtrl, diamondLowCtrlSpace), mc.parent(diamondLowCtrlSpace, diamondLowCtrlSpaceMaster)
+        mc.select(d=True)
+
+    ################################################ diamondMid control #########################################################
+    def diamondMid_ctrl(self, name='diamondMid', itemColor=8):
+        diamondMidCtrl = mc.curve(d=True, p=((0, 0, 6.86093), (0, 6.86093, 0), (6.86093, 0, 0), (0, 0, 6.86093), (0, -6.86093, 0), (6.86093, 0, 0), (0, 6.86093, 0), (0, 0, -6.86093), (6.86093, 0, 0), (0, -6.86093, 0),
+                                             (0, 0, -6.86093), (0, 6.86093, 0), (-6.86093, 0, 0), (0, 0, -6.86093), (0, -6.86093, 0), (-6.86093, 0, 0), (0, 6.86093, 0), (0, 0, 6.86093), (-6.86093, 0, 0), (0, -6.86093, 0),
+                                             (0, 0, 6.86093)), n=name + '_ctrl')
+        diamondMidCtrlSpace = mc.group(em=True, n=name + '_ctrlSpace')
+        print(diamondMidCtrl)
+        diamondMidCtrlSpaceMaster = mc.group(em=True, n=name + '_ctrlSpaceMaster')
+        mc.parent(diamondMidCtrl, diamondMidCtrlSpace), mc.parent(diamondMidCtrlSpace, diamondMidCtrlSpaceMaster)
+        mc.select(d=True)
 
 myCtrl = myControls()
+
