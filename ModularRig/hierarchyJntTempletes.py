@@ -14,12 +14,12 @@ class myHierarchyJntTempletes():
         self.name = name
 
     ############################################## neckHead templete #########################################################################
-    def neckHeadT(self, name=''):
+    def neckHeadT(self, name='', *args):
         neck = mc.joint(p=(0, 155.256, -5.945), rad=2, o=(0, -1.638, 90.000), n='neck'), mc.select(d=True)
         head = mc.joint(neck, p=(0, 163.244, -5.717), rad=2, o=(1.638, 0, 0), n='head'), mc.select(d=True)
 
     ############################################## arm templete #########################################################################
-    def armT(self, name=''):
+    def armT(self, name='', *args):
         clavicle_l = mc.joint(p=(2.663, 146.853, -1.658), rad=2, o=(0, 15, 0), n='clavicle_l'), mc.select(d=True)
         upperarm_l = mc.joint(clavicle_l, p=(16.535, 146.853, -5.454), rad=2, o=(-0.059, -6.599, -56.457), n='upperarm_l'), mc.select(d=True)
         lowerarm_l = mc.joint(upperarm_l, p=(32.645, 123.032, -6.348), rad=2, o=(4.422, -14.629, -0.336), n='lowerarm_l'), mc.select(d=True)
@@ -54,16 +54,15 @@ class myHierarchyJntTempletes():
         thumb_02_l = mc.joint(thumb_01_l, p=(46.761, 100.272, 5.341), rad=1, o=(-1.148, 5.425, -11.966), n='thumb_02_l'), mc.select(d=True)
         thumb_03_l = mc.joint(thumb_02_l, p=(47.470, 97.104, 7.638), rad=1, o=(0, 0, 0), n='thumb_03_l'), mc.select(d=True)
 
-
     ########################################### spine templete ############################################################
-    def spineT(self, name=''):
+    def spineT(self, name='', *args):
         pelvis = mc.joint(p=(0, 97.546, -2.303), rad=2, o=(0, 0.849, 90), n='pelvis'), mc.select(d=True)
         spine_01 = mc.joint(pelvis, p=(0, 108.888, -2.417), rad=2, o=(-0.578, -2.703, 0.027), n='spine_01'), mc.select(d=True)
         spine_02 = mc.joint(spine_01, p=(0, 120.295, -2.532), rad=2, o=(0, 0.124, 0), n='spine_02'), mc.select(d=True)
         spine_03 = mc.joint(spine_02, p=(0, 131.688, -2.646), rad=2, o=(0.577, 0.534, -0.015), n='spine_03'), mc.select(d=True)
 
     ######################################## leg templete ########################################################
-    def legT(self, name=''):
+    def legT(self, name='', *args):
         thigh_l = mc.joint(p=(10.431, 95.474, -2.290), rad=2, o=(0, -5.546, -90.000), n='thigh_l'), mc.select(d=True)
         calf_l = mc.joint(thigh_l, p=(10.431, 54.838, 1.656), rad=2, o=(0, 15.067, 0), n='calf_l'), mc.select(d=True)
         foot_l = mc.joint(calf_l, p=(10.431, 12.113, -5.511), rad=2, o=(0, 260.979, 0), n='foot_l'), mc.select(d=True)
@@ -71,7 +70,7 @@ class myHierarchyJntTempletes():
         toe_l = mc.joint(ball_l, p=(10.431, -0.113, 12.968), rad=2, o=(0, 0, 0), n='toe_l'), mc.select(d=True)
 
     ######################################### biped templete ##########################################################
-    def bipedT(self, name=''):
+    def bipedT(self, name='', *args):
         ### neckHead
         neck = mc.joint(p=(0, 155.256, -5.945), rad=2, o=(0, -1.638, 90.000), n='neck'), mc.select(d=True)
         head = mc.joint(neck, p=(0, 163.244, -5.717), rad=2, o=(1.638, 0, 0), n='head'), mc.select(d=True)

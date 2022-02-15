@@ -64,6 +64,15 @@ class myControls():
         mc.parent(gearCtrl, gearCtrlSpace), mc.parent(gearCtrlSpace, gearCtrlSpaceMaster)
         mc.select(d=True)
 
+    ############################################### line cross control ############################################################
+    def lineCross_ctrl(self, name='lineCross', itemColor=8):
+        lineCrossCtrl = mc.curve(d=True, p=((0, 6, 0), (0, -6, 0), (0, 0, 0), (0, 0, 6), (0, 0, -6), (0, 0, 0), (-6, 0, 0), (6, 0, 0)), n=name + '_ctrl')
+        lineCrossCtrlSpace = mc.group(em=True, n=name + '_ctrlSPace')
+        print(lineCrossCtrl)
+        lineCrossCtrlSpaceMaster = mc.group(em=True, n=name + '_ctrlSpaceMaster')
+        mc.parent(lineCrossCtrl, lineCrossCtrlSpace), mc.parent(lineCrossCtrlSpace, lineCrossCtrlSpaceMaster)
+        mc.select(d=True)
+
     #################################################### diamondLow control #####################################################
     def diamondLow_ctrl(self, name='diamondLow', itemColor=8):
         diamondLowCtrl = mc.curve(d=True, p=((0, 6.092856, 0.473397), (0, 6.092856, 0.473397), (0, 6.092856, -0.473397), (6.092856, 0, -0.473397), (6.092856, 0, 0.473397), (0, 6.092856, 0.473397),
@@ -86,6 +95,7 @@ class myControls():
         diamondMidCtrlSpaceMaster = mc.group(em=True, n=name + '_ctrlSpaceMaster')
         mc.parent(diamondMidCtrl, diamondMidCtrlSpace), mc.parent(diamondMidCtrlSpace, diamondMidCtrlSpaceMaster)
         mc.select(d=True)
+
 
 myCtrl = myControls()
 
