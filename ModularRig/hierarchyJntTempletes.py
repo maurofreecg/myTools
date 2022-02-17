@@ -122,5 +122,3 @@ class myHierarchyJntTempletes():
         foot_l = mc.joint(calf_l, p=(10.431, 12.113, -5.511), rad=2, o=(0, 260.979, 0), n='foot_l'), mc.select(d=True)
         ball_l = mc.joint(foot_l, p=(10.431, -0.050, 5.758), rad=2, o=(-90, -90, 0), n='ball_l'), mc.select(d=True)
         toe_l = mc.joint(ball_l, p=(10.431, -0.113, 12.968), rad=2, o=(0, 0, 0), n='toe_l'), mc.select(d=True)
-
-myHJntTemp = myHierarchyJntTempletes()

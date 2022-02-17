@@ -135,9 +135,9 @@ def arm_fingers_FK_transform(*args):
 
     mc.mirrorJoint('clavicle_l', mirrorYZ=True, mirrorBehavior=True, searchReplace=('_l', '_r')), mc.select(d=True)
 
-    arm_fingers_r_jnt_list = ['clavicle_r', 'upperarm_r', 'lowerarm_r', 'hand_r', 'pinky_00_r', 'pinky_01_r', 'pinky_02_r', 'pinky_03_r',
-                              'ring_00_r', 'ring_01_r', 'ring_02_r', 'ring_03_r', 'middle_00_r', 'middle_01_r', 'middle_02_r', 'middle_03_r',
-                              'index_00_r', 'index_01_r', 'index_02_r', 'index_03_r', 'thumb_01_r', 'thumb_02_r', 'thumb_03_r']
+    arm_fingers_r_jnt_list = ['clavicle_r', 'upperarm_r', 'lowerarm_r', 'hand_r', 'hand_r', 'pinky_00_r', 'pinky_01_r', 'pinky_02_r', 'pinky_03_r',
+                               'ring_00_r', 'ring_01_r', 'ring_02_r', 'ring_03_r', 'middle_00_r', 'middle_01_r', 'middle_02_r', 'middle_03_r',
+                               'index_00_r', 'index_01_r', 'index_02_r', 'index_03_r', 'thumb_01_r', 'thumb_02_r', 'thumb_03_r']
 
     mc.select(arm_fingers_l_jnt_list, arm_fingers_r_jnt_list)
     tranRotScl_const()
@@ -808,10 +808,7 @@ def spine_IK_transform(*args):
     mc.setAttr('spine_ik.v', 0)
 
 ######################################################### arm IK transform ################################################################
-'''
-################################# call arm templete ############################################################
-myHJntTemp.armT()
-'''
+
 def arm_fingers_IK_transform(*args):
 
     ############################### freeze transformation of bones rotation #####################################
@@ -1331,3 +1328,629 @@ def arm_fingers_IK_transform(*args):
     ### arm master group
     ik_arm_grp = mc.group(em=True, n='arms_ik_grp')
     mc.parent(ikHandle_arm_grp, 'arm_PV_r_ctrlSpaceMaster', 'arm_PV_l_ctrlSpaceMaster', 'hand_r_ik_ctrlSpaceMaster', 'hand_l_ik_ctrlSpaceMaster', ik_arm_grp), mc.select(d=True)
+
+##########################################################################################################################################################
+'''
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+arm_fingers_l_jnt_list = ['clavicle_l', 'upperarm_l', 'lowerarm_l', 'hand_l', 'pinky_00_l', 'pinky_01_l', 'pinky_02_l', 'pinky_03_l', 'ring_00_l', 'ring_01_l',
+                          'ring_02_l', 'ring_03_l', 'index_00_l', 'index_01_l', 'index_02_l', 'index_03_l', 'middle_00_l', 'middle_01_l', 'middle_02_l', 'middle_03_l',
+                          'thumb_03_l', 'upperarm_twist_01_l', 'upperarm_twist_02_l', 'lowerarm_twist_01_l', 'lowerarm_twist_02_l']
+
+# twist arm
+upperarmTwist_01_l = mc.joint('upperarm_l', n='upperarm_twist_01_l', rad=2)
+upperarmTConst_01_l = mc.pointConstraint('upperarm_l', 'lowerarm_l', upperarmTwist_01_l, mo=False), mc.setAttr('upperarm_twist_01_l_pointConstraint1.upperarm_lW0', 2)
+upperarmTwist_02_l = mc.joint('upperarm_l', n='upperarm_twist_02_l', rad=2)
+upperarmTConst_02_l = mc.pointConstraint('upperarm_l', 'lowerarm_l', upperarmTwist_02_l, mo=False), mc.setAttr('upperarm_twist_02_l_pointConstraint1.lowerarm_lW1', 2)
+mc.delete('upperarm_twist_01_l_pointConstraint1', 'upperarm_twist_02_l_pointConstraint1')
+
+lowerarmTwist_01_l = mc.joint('lowerarm_l', n='lowerarm_twist_01_l', rad=2)
+lowerarmTConst_01_l = mc.pointConstraint('lowerarm_l', 'hand_l', lowerarmTwist_01_l, mo=False), mc.setAttr('lowerarm_twist_01_l_pointConstraint1.lowerarm_lW0', 1.5)
+lowerarmTwist_02_l = mc.joint('lowerarm_l', n='lowerarm_twist_02_l', rad=2)
+lowerarmTConst_02_l = mc.pointConstraint('lowerarm_l', 'hand_l', lowerarmTwist_02_l, mo=False), mc.setAttr('lowerarm_twist_02_l_pointConstraint1.hand_lW1', 3)
+mc.delete('lowerarm_twist_01_l_pointConstraint1', 'lowerarm_twist_02_l_pointConstraint1')
+mc.select(d=True)
+
+for arm_jnt in arm_fingers_l_jnt_list:
+    mc.makeIdentity(arm_jnt, apply=True, t=True, r=True, s=True)
+    mc.select(d=True)
+
+# mirror base arm skeleton
+mc.mirrorJoint('clavicle_l', mirrorYZ=True, mirrorBehavior=True, searchReplace=('_l', '_r'))
+mc.select(d=True)
+
+###################################################### IK SYSTEM ############################################################
+mc.duplicate('upperarm_l')
+mc.select('upperarm_l1')
+mel.eval('searchReplaceNames "_l" "_l2" "hierarchy"')
+mc.rename('upperarm_l21', 'upperarm_l2')
+mc.select('upperarm_l2', hi=True)
+ikJnt = mc.ls(sl=True)
+
+for i in ikJnt:
+    name = i.replace('l2', 'l_ik')
+    mc.rename(i, name)
+mc.parent('upperarm_l_ik', w=True), mc.select(d=True)
+
+################################################################### pole vector templete
+mc.select('upperarm_l_ik', 'lowerarm_l_ik', 'hand_l_ik')
+selO = mc.ls(sl=True)
+
+upperarmIK = mc.xform(selO[0], q=True, ws=True, t=True)
+lowerarmIK = mc.xform(selO[1], q=True, ws=True, t=True)
+handIK = mc.xform(selO[2], q=True, ws=True, t=True)
+
+upperarmIKV = OpenMaya.MVector(upperarmIK[0], upperarmIK[1], upperarmIK[2])
+lowerarmIKV = OpenMaya.MVector(lowerarmIK[0], lowerarmIK[1], lowerarmIK[2])
+handIKV = OpenMaya.MVector(handIK[0], handIK[1], handIK[2])
+
+startEnd = handIKV - upperarmIKV
+startMid = lowerarmIKV - upperarmIKV
+
+dotP = startMid * startEnd
+proj = float(dotP) / float(startEnd.length())
+startEndN = startEnd.normal()
+projV = startEndN * proj
+
+arrowV = startMid - projV
+arrowV*=5
+finalV = arrowV + lowerarmIKV
+
+loc_PV = mc.spaceLocator(n='arm_PV_l')
+loc_PVSpace = mc.group(loc_PV, n='PV_locSpace'), mc.select(d=True)
+mc.xform(loc_PVSpace, ws=True, t=(finalV.x, finalV.y, finalV.z))
+mc.parent(loc_PVSpace, 'lowerarm_l_ik')
+
+################################################################################## mirror ik chain
+mc.mirrorJoint('upperarm_l_ik', mirrorYZ=True, mirrorBehavior=True, searchReplace=('_l', '_r'))
+mc.rename('arm_PV_l1', 'arm_PV_r')
+
+########################################################## create ikhandle rotate plane solver, PV & controls
+ikArm_l = mc.ikHandle(n='ikArm_l', sj='upperarm_l_ik', ee='hand_l_ik', sol='ikRPsolver')
+ikArm_r = mc.ikHandle(n='ikArm_r', sj='upperarm_r_ik', ee='hand_r_ik', sol='ikRPsolver')
+ikArms_list = [ikArm_r, ikArm_r]
+mc.select(d=True)
+
+ikHand_jnt_list = ['hand_l_ik', 'hand_r_ik']
+for ikH in ikHand_jnt_list:
+    myCtrl.square_ctrl(ikH)
+
+ikHand_ctrl_list = ['hand_l_ik_ctrl', 'hand_r_ik_ctrl']
+for ikHand_ctrl in ikHand_ctrl_list:
+    mc.setAttr(ikHand_ctrl + '.sx', l=True, k=False, ch=False)
+    mc.setAttr(ikHand_ctrl + '.sy', l=True, k=False, ch=False)
+    mc.setAttr(ikHand_ctrl + '.sz', l=True, k=False, ch=False)
+    mc.setAttr(ikHand_ctrl + '.v', l=True, k=False, ch=False)
+
+########################################################################## ik gimbal control setup
+ikHand_gimbalCtrl_list = ['hand_l_ik', 'hand_r_ik']
+for ikHGimbal in ikHand_gimbalCtrl_list:
+    myCtrl.diamondLow_ctrl(ikHGimbal)
+mc.select('hand_l_ik_ctrlSpaceMaster1', 'hand_r_ik_ctrlSpaceMaster1', hi=True)
+ikHGimbalCtrlSpaceMaster = mc.ls(sl=True)
+
+for gimbal in ikHGimbalCtrlSpaceMaster:
+    mel.eval('searchReplaceNames "ik_ctrl" "ik_gimbal_ctrl" "hierarchy"')
+mc.rename('hand_l_ik_gimbal_ctrlSpaceMaster1', 'hand_l_ik_gimbal_ctrlSpaceMaster'), mc.rename('hand_r_ik_gimbal_ctrlSpaceMaster1', 'hand_r_ik_gimbal_ctrlSpaceMaster')
+mc.select(d=True)
+
+mc.delete(mc.parentConstraint('hand_r_ik', 'hand_r_ik_ctrlSpaceMaster')), mc.delete(mc.parentConstraint('hand_l_ik', 'hand_l_ik_ctrlSpaceMaster'))
+mc.delete(mc.parentConstraint('hand_l_ik', 'hand_l_ik_gimbal_ctrlSpaceMaster')), mc.delete(mc.parentConstraint('hand_r_ik', 'hand_r_ik_gimbal_ctrlSpaceMaster')), mc.select(d=True)
+
+mc.select('hand_l_ik_gimbal_ctrl.cv[0:18]', 'hand_r_ik_gimbal_ctrl.cv[0:18]')
+mc.rotate(0,90,0, fo=True), mc.select(d=True)
+
+mc.parent('hand_l_ik_gimbal_ctrlSpaceMaster', 'hand_l_ik_ctrl'), mc.parent('hand_r_ik_gimbal_ctrlSpaceMaster', 'hand_r_ik_ctrl'), mc.select(d=True)
+
+ikHGimbalCtrl_list = ['hand_l_ik_gimbal_ctrl', 'hand_r_ik_gimbal_ctrl']
+for ikRot in ikHGimbalCtrl_list:
+    mc.setAttr(ikRot + '.tx', l=True, k=False, ch=False)
+    mc.setAttr(ikRot + '.ty', l=True, k=False, ch=False)
+    mc.setAttr(ikRot + '.tz', l=True, k=False, ch=False)
+    mc.setAttr(ikRot + '.sx', l=True, k=False, ch=False)
+    mc.setAttr(ikRot + '.sy', l=True, k=False, ch=False)
+    mc.setAttr(ikRot + '.sz', l=True, k=False, ch=False)
+    mc.setAttr(ikRot + '.v', l=True, k=False, ch=False)
+
+########################################################################## pole vector ctrl setup
+PV_arm_loc_list = ['arm_PV_l', 'arm_PV_r']
+for armPV in PV_arm_loc_list:
+    myCtrl.cone_ctrl(armPV)
+
+mc.delete(mc.parentConstraint('arm_PV_l', 'arm_PV_l_ctrlSpaceMaster')), mc.delete(mc.parentConstraint('arm_PV_r', 'arm_PV_r_ctrlSpaceMaster'))
+
+mc.setAttr('arm_PV_l_ctrlSpaceMaster.rx', -90)
+mc.setAttr('arm_PV_r_ctrlSpaceMaster.rx', 270)
+mc.setAttr('arm_PV_r_ctrlSpaceMaster.sx', -1)
+mc.delete('PV_locSpace1', 'PV_locSpace')
+
+armPV_ctrl_list = ['arm_PV_l_ctrl', 'arm_PV_r_ctrl']
+for armPV_lockAt in armPV_ctrl_list:
+    mc.setAttr(armPV_lockAt + '.rx', l=True, k=False, ch=False)
+    mc.setAttr(armPV_lockAt + '.ry', l=True, k=False, ch=False)
+    mc.setAttr(armPV_lockAt + '.rz', l=True, k=False, ch=False)
+    mc.setAttr(armPV_lockAt + '.sx', l=True, k=False, ch=False)
+    mc.setAttr(armPV_lockAt + '.sy', l=True, k=False, ch=False)
+    mc.setAttr(armPV_lockAt + '.sz', l=True, k=False, ch=False)
+    mc.setAttr(armPV_lockAt + '.v', l=True, k=False, ch=False)
+
+################################################################## PV / point / orient constraint
+mc.poleVectorConstraint('arm_PV_l_ctrl', 'ikArm_l', w=1), mc.poleVectorConstraint('arm_PV_r_ctrl', 'ikArm_r', w=1)
+mc.pointConstraint('hand_l_ik_ctrl', 'ikArm_l', mo=True), mc.pointConstraint('hand_r_ik_ctrl', 'ikArm_r', mo=True)
+mc.orientConstraint('hand_l_ik_gimbal_ctrl', 'hand_l_ik', mo=True), mc.orientConstraint('hand_r_ik_gimbal_ctrl', 'hand_r_ik', mo=True)
+
+###################################################################################################
+#
+#                                                   ik twist setup
+#
+###################################################################################################
+############################# lef side ik twist setup
+leftUpperarmT_ikJnt_list = ['upperarm_twist_01_l_ik', 'upperarm_twist_02_l_ik']
+for leftUpperT_ik in leftUpperarmT_ikJnt_list:
+    upperarmPB = mc.createNode('pairBlend', n= leftUpperT_ik + '_PB')
+    mc.connectAttr('upperarm_l_ik.rx', upperarmPB + '.inRotateX2', f=True)
+    mc.connectAttr(upperarmPB + '.outRotateX', leftUpperT_ik + '.rx', f=True)
+mc.setAttr('upperarm_twist_01_l_ik_PB.weight', 0.2), mc.setAttr('upperarm_twist_02_l_ik_PB.weight', 0.8)
+
+leftLowerarmT_ikJnt_list = ['lowerarm_twist_01_l_ik', 'lowerarm_twist_02_l_ik']
+for leftLowerT_ik in leftLowerarmT_ikJnt_list:
+    lowerarmPB = mc.createNode('pairBlend', n= leftLowerT_ik + '_PB')
+    mc.connectAttr('hand_l_ik.rx', lowerarmPB + '.inRotateX2', f=True)
+    mc.connectAttr(lowerarmPB + '.outRotateX', leftLowerT_ik + '.rx', f=True)
+mc.setAttr('lowerarm_twist_01_l_ik_PB.weight', 0.4), mc.setAttr('lowerarm_twist_02_l_ik_PB.weight', 0.8)
+
+############################# right side ik twist setup
+rightUpperarmT_ikJnt_list = ['upperarm_twist_01_r_ik', 'upperarm_twist_02_r_ik']
+for rightUpperT_ik in rightUpperarmT_ikJnt_list:
+    upperarmPB = mc.createNode('pairBlend', n= rightUpperT_ik + '_PB')
+    mc.connectAttr('upperarm_r_ik.rx', upperarmPB + '.inRotateX2', f=True)
+    mc.connectAttr(upperarmPB + '.outRotateX', rightUpperT_ik + '.rx', f=True)
+mc.setAttr('upperarm_twist_01_r_ik_PB.weight', 0.2), mc.setAttr('upperarm_twist_02_r_ik_PB.weight', 0.8)
+
+rightLowerarmT_ikJnt_list = ['lowerarm_twist_01_r_ik', 'lowerarm_twist_02_r_ik']
+for rightLowerT_ik in rightLowerarmT_ikJnt_list:
+    lowerarmPB = mc.createNode('pairBlend', n= rightLowerT_ik + '_PB')
+    mc.connectAttr('hand_r_ik.rx', lowerarmPB + '.inRotateX2', f=True)
+    mc.connectAttr(lowerarmPB + '.outRotateX', rightLowerT_ik + '.rx', f=True)
+mc.setAttr('lowerarm_twist_01_r_ik_PB.weight', 0.4), mc.setAttr('lowerarm_twist_02_r_ik_PB.weight', 0.8)
+
+######################################################### IK fingers system ###############################
+
+########################## fingers 00
+finger00_list = ['pinky_00_l_ik', 'ring_00_l_ik', 'middle_00_l_ik', 'index_00_l_ik', 'pinky_00_r_ik', 'ring_00_r_ik', 'middle_00_r_ik', 'index_00_r_ik']
+mc.select(finger00_list)
+tranRotScl_const()
+mc.select('ring_00_l_ik_ctrl.cv[0:7]', 'index_00_l_ik_ctrl.cv[0:7]', 'middle_00_l_ik_ctrl.cv[0:7]', 'pinky_00_l_ik_ctrl.cv[0:7]',
+          'ring_00_r_ik_ctrl.cv[0:7]', 'index_00_r_ik_ctrl.cv[0:7]', 'middle_00_r_ik_ctrl.cv[0:7]', 'pinky_00_r_ik_ctrl.cv[0:7]')
+mc.scale(1, 1, 0.27, ocp=True), mc.select(d=True)
+
+### lock scale att
+finger00_ctrl_list = ['pinky_00_l_ik_ctrl', 'ring_00_l_ik_ctrl', 'middle_00_l_ik_ctrl', 'index_00_l_ik_ctrl', 'pinky_00_r_ik_ctrl', 'ring_00_r_ik_ctrl', 'middle_00_r_ik_ctrl', 'index_00_r_ik_ctrl']
+for f00_ctrl in finger00_ctrl_list:
+    mc.setAttr(f00_ctrl + '.sx', l=True, k=False, ch=False)
+    mc.setAttr(f00_ctrl + '.sy', l=True, k=False, ch=False)
+    mc.setAttr(f00_ctrl + '.sz', l=True, k=False, ch=False)
+    mc.setAttr(f00_ctrl + '.v', l=True, k=False, ch=False)
+########################################################################################################
+#
+#                                      finger IK system setup
+#
+######################################################################################################
+
+# delete right fingers to make mirror with correct pole vector on each left finger
+mc.delete('pinky_01_r_ik', 'ring_01_r_ik', 'middle_01_r_ik', 'index_01_r_ik', 'thumb_01_r_ik')
+
+# un parent left fingers to make mirror finger with correct pole vector position
+mc.parent('pinky_01_l_ik', 'ring_01_l_ik', 'middle_01_l_ik', 'index_01_l_ik', 'thumb_01_l_ik', w=True), mc.select(d=True)
+
+########################## pinky l ik setup
+mc.select('pinky_01_l_ik', 'pinky_02_l_ik', 'pinky_03_l_ik')
+fingersPSel = mc.ls(sl=True)
+
+fingPSel01_IK = mc.xform(fingersPSel[0], q=True, ws=True, t=True)
+fingPSel02_IK = mc.xform(fingersPSel[1], q=True, ws=True, t=True)
+fingPSel03_IK = mc.xform(fingersPSel[2], q=True, ws=True, t=True)
+
+fingP01_IKV = OpenMaya.MVector(fingPSel01_IK[0], fingPSel01_IK[1], fingPSel01_IK[2])
+fingP02_IKV = OpenMaya.MVector(fingPSel02_IK[0], fingPSel02_IK[1], fingPSel02_IK[2])
+fingP03_IKV = OpenMaya.MVector(fingPSel03_IK[0], fingPSel03_IK[1], fingPSel03_IK[2])
+
+startEndP = fingP03_IKV - fingP01_IKV
+startMidP = fingP02_IKV - fingP01_IKV
+
+dotPP = startMidP * startEndP
+projP = float(dotPP) / float(startEndP.length())
+startEndPN = startEndP.normal()
+projPV = startEndPN * projP
+
+arrowPV = startMidP - projPV
+arrowPV *= 5
+finalPV = arrowPV + fingP02_IKV
+
+locP_PV = mc.spaceLocator(n='pinky_l_PV')
+locP_PVSpace = mc.group(locP_PV, n='pinky_l_ik_locSpace'), mc.select(d=True)
+mc.xform(locP_PVSpace, ws=True, t=(finalPV.x, finalPV.y, finalPV.z))
+mc.parent(locP_PVSpace, 'pinky_02_l_ik')
+mc.orientConstraint('pinky_02_l_ik', 'pinky_l_ik_locSpace', mo=False)
+
+mc.mirrorJoint('pinky_01_l_ik', mirrorYZ=True, mirrorBehavior=True, searchReplace=('_l', '_r')), mc.rename('pinky_l_PV1', 'pinky_r_PV')
+mc.parent('pinky_01_r_ik', 'pinky_00_r_ik'), mc.parent('pinky_01_l_ik', 'pinky_00_l_ik')
+mc.orientConstraint('pinky_02_r_ik', 'pinky_l_ik_locSpace1', mo=False), mc.select(d=True)
+
+############################################# ring l ik setup
+mc.select('ring_01_l_ik', 'ring_02_l_ik', 'ring_03_l_ik')
+fingersRSel = mc.ls(sl=True)
+
+fingRSel01_IK = mc.xform(fingersRSel[0], q=True, ws=True, t=True)
+fingRSel02_IK = mc.xform(fingersRSel[1], q=True, ws=True, t=True)
+fingRSel03_IK = mc.xform(fingersRSel[2], q=True, ws=True, t=True)
+
+fingR01_IKV = OpenMaya.MVector(fingRSel01_IK[0], fingRSel01_IK[1], fingRSel01_IK[2])
+fingR02_IKV = OpenMaya.MVector(fingRSel02_IK[0], fingRSel02_IK[1], fingRSel02_IK[2])
+fingR03_IKV = OpenMaya.MVector(fingRSel03_IK[0], fingRSel03_IK[1], fingRSel03_IK[2])
+
+startEndR = fingR03_IKV - fingR01_IKV
+startMidR = fingR02_IKV - fingR01_IKV
+
+dotRR = startMidR * startEndR
+projR = float(dotRR) / float(startEndR.length())
+startEndRN = startEndR.normal()
+projRV = startEndRN * projR
+
+arrowRV = startMidR - projRV
+arrowRV *= 4
+finalRV = arrowRV + fingR02_IKV
+
+locR_PV = mc.spaceLocator(n='ring_l_PV')
+locR_PVSpace = mc.group(locR_PV, n='ring_l_ik_locSpace'), mc.select(d=True)
+mc.xform(locR_PVSpace, ws=True, t=(finalRV.x, finalRV.y, finalRV.z))
+mc.parent(locR_PVSpace, 'ring_02_l_ik')
+mc.orientConstraint('ring_02_l_ik', 'ring_l_ik_locSpace', mo=False)
+
+mc.mirrorJoint('ring_01_l_ik', mirrorYZ=True, mirrorBehavior=True, searchReplace=('_l', '_r')), mc.rename('ring_l_PV1', 'ring_r_PV')
+mc.parent('ring_01_r_ik', 'ring_00_r_ik'), mc.parent('ring_01_l_ik', 'ring_00_l_ik')
+mc.orientConstraint('ring_02_r_ik', 'ring_l_ik_locSpace1', mo=False), mc.select(d=True)
+
+###################################################### middle l ik setup
+mc.select('middle_01_l_ik', 'middle_02_l_ik', 'middle_03_l_ik')
+fingersMSel = mc.ls(sl=True)
+
+fingMSel01_IK = mc.xform(fingersMSel[0], q=True, ws=True, t=True)
+fingMSel02_IK = mc.xform(fingersMSel[1], q=True, ws=True, t=True)
+fingMSel03_IK = mc.xform(fingersMSel[2], q=True, ws=True, t=True)
+
+fingM01_IKV = OpenMaya.MVector(fingMSel01_IK[0], fingMSel01_IK[1], fingMSel01_IK[2])
+fingM02_IKV = OpenMaya.MVector(fingMSel02_IK[0], fingMSel02_IK[1], fingMSel02_IK[2])
+fingM03_IKV = OpenMaya.MVector(fingMSel03_IK[0], fingMSel03_IK[1], fingMSel03_IK[2])
+
+startEndM = fingM03_IKV - fingM01_IKV
+startMidM = fingM02_IKV - fingM01_IKV
+
+dotMP = startMidM * startEndM
+projM = float(dotMP) / float(startEndM.length())
+startEndMN = startEndM.normal()
+projMV = startEndMN * projM
+
+arrowMV = startMidM - projMV
+arrowMV *= 4
+finalMV = arrowMV + fingM02_IKV
+
+locM_PV = mc.spaceLocator(n='middle_l_PV')
+locM_PVSpace = mc.group(locM_PV, n='middle_l_ik_locSpace'), mc.select(d=True)
+mc.xform(locM_PVSpace, ws=True, t=(finalMV.x, finalMV.y, finalMV.z))
+mc.parent(locM_PVSpace, 'middle_02_l_ik')
+mc.orientConstraint('middle_02_l_ik', 'middle_l_ik_locSpace', mo=False)
+
+mc.mirrorJoint('middle_01_l_ik', mirrorYZ=True, mirrorBehavior=True, searchReplace=('_l', '_r')), mc.rename('middle_l_PV1', 'middle_r_PV')
+mc.parent('middle_01_r_ik', 'middle_00_r_ik'), mc.parent('middle_01_l_ik', 'middle_00_l_ik')
+mc.orientConstraint('middle_02_r_ik', 'middle_l_ik_locSpace1', mo=False), mc.select(d=True)
+
+############################################################ index l ik setup
+mc.select('index_01_l_ik', 'index_02_l_ik', 'index_03_l_ik')
+fingersISel = mc.ls(sl=True)
+
+fingISel01_IK = mc.xform(fingersISel[0], q=True, ws=True, t=True)
+fingISel02_IK = mc.xform(fingersISel[1], q=True, ws=True, t=True)
+fingISel03_IK = mc.xform(fingersISel[2], q=True, ws=True, t=True)
+
+fingI01_IKV = OpenMaya.MVector(fingISel01_IK[0], fingISel01_IK[1], fingISel01_IK[2])
+fingI02_IKV = OpenMaya.MVector(fingISel02_IK[0], fingISel02_IK[1], fingISel02_IK[2])
+fingI03_IKV = OpenMaya.MVector(fingISel03_IK[0], fingISel03_IK[1], fingISel03_IK[2])
+
+startEndI = fingI03_IKV - fingI01_IKV
+startMidI = fingI02_IKV - fingI01_IKV
+
+dotIP = startMidI * startEndI
+projI = float(dotIP) / float(startEndI.length())
+startEndIN = startEndI.normal()
+projIV = startEndIN * projI
+
+arrowIV = startMidI - projIV
+arrowIV *= 8
+finalIV = arrowIV + fingI02_IKV
+
+locI_PV = mc.spaceLocator(n='index_l_PV')
+locI_PVSpace = mc.group(locI_PV, n='index_l_ik_locSpace'), mc.select(d=True)
+mc.xform(locI_PVSpace, ws=True, t=(finalIV.x, finalIV.y, finalIV.z))
+mc.parent(locI_PVSpace, 'index_02_l_ik')
+mc.orientConstraint('index_02_l_ik', 'index_l_ik_locSpace', mo=False)
+
+mc.mirrorJoint('index_01_l_ik', mirrorYZ=True, mirrorBehavior=True, searchReplace=('_l', '_r')), mc.rename('index_l_PV1', 'index_r_PV')
+mc.parent('index_01_r_ik', 'index_00_r_ik'), mc.parent('index_01_l_ik', 'index_00_l_ik')
+mc.orientConstraint('index_02_r_ik', 'index_l_ik_locSpace1', mo=False), mc.select(d=True)
+
+########################################################## thumb l ik setup
+mc.select('thumb_01_l_ik', 'thumb_02_l_ik', 'thumb_03_l_ik')
+fingersTSel = mc.ls(sl=True)
+
+fingTSel01_IK = mc.xform(fingersTSel[0], q=True, ws=True, t=True)
+fingTSel02_IK = mc.xform(fingersTSel[1], q=True, ws=True, t=True)
+fingTSel03_IK = mc.xform(fingersTSel[2], q=True, ws=True, t=True)
+
+fingT01_IKV = OpenMaya.MVector(fingTSel01_IK[0], fingTSel01_IK[1], fingTSel01_IK[2])
+fingT02_IKV = OpenMaya.MVector(fingTSel02_IK[0], fingTSel02_IK[1], fingTSel02_IK[2])
+fingT03_IKV = OpenMaya.MVector(fingTSel03_IK[0], fingTSel03_IK[1], fingTSel03_IK[2])
+
+startEndT = fingT03_IKV - fingT01_IKV
+startMidT = fingT02_IKV - fingT01_IKV
+
+dotTP = startMidT * startEndT
+projT = float(dotTP) / float(startEndT.length())
+startEndTN = startEndT.normal()
+projTV = startEndTN * projT
+
+arrowTV = startMidT - projTV
+arrowTV *= 8
+finalTV = arrowTV + fingT02_IKV
+
+locT_PV = mc.spaceLocator(n='thumb_l_PV')
+locT_PVSpace = mc.group(locT_PV, n='thumb_l_ik_locSpace'), mc.select(d=True)
+mc.xform(locT_PVSpace, ws=True, t=(finalTV.x, finalTV.y, finalTV.z))
+mc.parent(locT_PVSpace, 'thumb_02_l_ik')
+mc.orientConstraint('thumb_02_l_ik', 'thumb_l_ik_locSpace', mo=False)
+
+mc.mirrorJoint('thumb_01_l_ik', mirrorYZ=True, mirrorBehavior=True, searchReplace=('_l', '_r')), mc.rename('thumb_l_PV1', 'thumb_r_PV')
+mc.parent('thumb_01_r_ik', 'hand_r_ik'), mc.parent('thumb_01_l_ik', 'hand_l_ik')
+mc.orientConstraint('thumb_02_r_ik', 'thumb_l_ik_locSpace1', mo=False), mc.select(d=True)
+
+######################################## fingers IK handle setup - Left side
+
+ikPinky_l = mc.ikHandle(n='pinky_l_ik', sj='pinky_01_l_ik', ee='pinky_03_l_ik', sol='ikRPsolver')
+ikRing_l = mc.ikHandle(n='ring_l_ik', sj='ring_01_l_ik', ee='ring_03_l_ik', sol='ikRPsolver')
+ikMiddle_l = mc.ikHandle(n='middle_l_ik', sj='middle_01_l_ik', ee='middle_03_l_ik', sol='ikRPsolver')
+ikIndex_l = mc.ikHandle(n='index_l_ik', sj='index_01_l_ik', ee='index_03_l_ik', sol='ikRPsolver')
+ikThumb_l = mc.ikHandle(n='thumb_l_ik', sj='thumb_01_l_ik', ee='thumb_03_l_ik', sol='ikRPsolver')
+
+######################################## fingers IK handle setup - Right side
+
+ikPinky_r = mc.ikHandle(n='pinky_r_ik', sj='pinky_01_r_ik', ee='pinky_03_r_ik', sol='ikRPsolver')
+ikRing_r = mc.ikHandle(n='ring_r_ik', sj='ring_01_r_ik', ee='ring_03_r_ik', sol='ikRPsolver')
+ikMiddle_r = mc.ikHandle(n='middle_r_ik', sj='middle_01_r_ik', ee='middle_03_r_ik', sol='ikRPsolver')
+ikIndex_r = mc.ikHandle(n='index_r_ik', sj='index_01_r_ik', ee='index_03_r_ik', sol='ikRPsolver')
+ikThumb_r = mc.ikHandle(n='thumb_r_ik', sj='thumb_01_r_ik', ee='thumb_03_r_ik', sol='ikRPsolver')
+
+mc.select(d=True)
+
+########################################### fingers ik handle & PV setup - Controls
+
+fingerIK_list = ['pinky_l_ik', 'ring_l_ik', 'middle_l_ik', 'index_l_ik', 'thumb_l_ik', 'pinky_r_ik', 'ring_r_ik', 'middle_r_ik', 'index_r_ik', 'thumb_r_ik']
+for finIkH in fingerIK_list:
+    myCtrl.diamondMid_ctrl(finIkH)
+
+finger03_IK_ctrlSpaceMaster_list = ['pinky_l_ik_ctrlSpaceMaster', 'ring_l_ik_ctrlSpaceMaster', 'middle_l_ik_ctrlSpaceMaster', 'index_l_ik_ctrlSpaceMaster', 'thumb_l_ik_ctrlSpaceMaster', 'pinky_r_ik_ctrlSpaceMaster',
+                                    'ring_r_ik_ctrlSpaceMaster', 'middle_r_ik_ctrlSpaceMaster', 'index_r_ik_ctrlSpaceMaster', 'thumb_r_ik_ctrlSpaceMaster']
+
+finger03_IK_jnts_list = ['pinky_03_l_ik', 'ring_03_l_ik', 'middle_03_l_ik', 'index_03_l_ik', 'thumb_03_l_ik', 'pinky_03_r_ik', 'ring_03_r_ik', 'middle_03_r_ik', 'index_03_r_ik', 'thumb_03_r_ik']
+
+for i, item in enumerate(finger03_IK_jnts_list):
+    mc.delete(mc.parentConstraint(item, finger03_IK_ctrlSpaceMaster_list[i]))
+
+fingerPV_list = ['pinky_l_PV', 'ring_l_PV', 'middle_l_PV', 'index_l_PV', 'thumb_l_PV', 'pinky_r_PV', 'ring_r_PV', 'middle_r_PV', 'index_r_PV', 'thumb_r_PV']
+for finPV in fingerPV_list:
+    myCtrl.lineCross_ctrl(finPV)
+
+finger_PV_ctrlSpaceMaster_list = ['pinky_l_PV_ctrlSpaceMaster', 'ring_l_PV_ctrlSpaceMaster', 'middle_l_PV_ctrlSpaceMaster', 'index_l_PV_ctrlSpaceMaster', 'thumb_l_PV_ctrlSpaceMaster', 'pinky_r_PV_ctrlSpaceMaster',
+                                    'ring_r_PV_ctrlSpaceMaster', 'middle_r_PV_ctrlSpaceMaster', 'index_r_PV_ctrlSpaceMaster', 'thumb_r_PV_ctrlSpaceMaster']
+
+finger_PV_loc_list = ['pinky_l_PV', 'ring_l_PV', 'middle_l_PV', 'index_l_PV', 'thumb_l_PV', 'pinky_r_PV', 'ring_r_PV', 'middle_r_PV', 'index_r_PV', 'thumb_r_PV']
+
+for i, item in enumerate(finger_PV_loc_list):
+    mc.delete(mc.parentConstraint(item, finger_PV_ctrlSpaceMaster_list[i]))
+
+mc.select(d=True)
+
+### finger IK scale CV's
+mc.select('pinky_l_ik_ctrl.cv[0:20]', 'ring_l_ik_ctrl.cv[0:20]', 'middle_l_ik_ctrl.cv[0:20]', 'index_l_ik_ctrl.cv[0:20]', 'thumb_l_ik_ctrl.cv[0:20]', 'pinky_r_ik_ctrl.cv[0:20]',
+          'ring_r_ik_ctrl.cv[0:20]', 'middle_r_ik_ctrl.cv[0:20]', 'index_r_ik_ctrl.cv[0:20]', 'thumb_r_ik_ctrl.cv[0:20]')
+mc.scale(0.188324, 0.188324, 0.188324, ocp=True), mc.select(d=True)
+
+mc.select('pinky_l_PV_ctrl.cv[0:7]', 'ring_l_PV_ctrl.cv[0:7]', 'middle_l_PV_ctrl.cv[0:7]', 'index_l_PV_ctrl.cv[0:7]', 'thumb_l_PV_ctrl.cv[0:7]', 'pinky_r_PV_ctrl.cv[0:7]', 'ring_r_PV_ctrl.cv[0:7]',
+          'middle_r_PV_ctrl.cv[0:7]', 'index_r_PV_ctrl.cv[0:7]', 'thumb_r_PV_ctrl.cv[0:7]')
+mc.scale(0.156885, 0.156885, 0.156885, ocp=True), mc.select(d=True)
+
+### fingers setup - Point / PV constraint
+
+pinkiesIK_ctrl_list = ['pinky_l_ik_ctrl', 'ring_l_ik_ctrl', 'middle_l_ik_ctrl', 'index_l_ik_ctrl', 'thumb_l_ik_ctrl', 'pinky_r_ik_ctrl', 'ring_r_ik_ctrl', 'middle_r_ik_ctrl', 'index_r_ik_ctrl', 'thumb_r_ik_ctrl']
+pinkiesIK_handles_list = ['pinky_l_ik', 'ring_l_ik', 'middle_l_ik', 'index_l_ik', 'thumb_l_ik', 'pinky_r_ik', 'ring_r_ik', 'middle_r_ik', 'index_r_ik', 'thumb_r_ik']
+
+for i, item in enumerate(pinkiesIK_ctrl_list):
+    mc.pointConstraint(item, pinkiesIK_handles_list[i])
+
+fingers_PV_ctrl_list = ['pinky_l_PV_ctrl', 'ring_l_PV_ctrl', 'middle_l_PV_ctrl', 'index_l_PV_ctrl', 'thumb_l_PV_ctrl', 'pinky_r_PV_ctrl', 'ring_r_PV_ctrl', 'middle_r_PV_ctrl', 'index_r_PV_ctrl', 'thumb_r_PV_ctrl']
+
+for i, item in enumerate(fingers_PV_ctrl_list):
+    mc.poleVectorConstraint(item, pinkiesIK_handles_list[i])
+
+mc.delete('pinky_l_ik_locSpace', 'ring_l_ik_locSpace', 'middle_l_ik_locSpace', 'index_l_ik_locSpace', 'thumb_l_ik_locSpace', 'pinky_l_ik_locSpace1', 'ring_l_ik_locSpace1', 'middle_l_ik_locSpace1',
+          'index_l_ik_locSpace1', 'thumb_l_ik_locSpace1')
+
+### finger IK lock scale attrs
+for finIK_ctrl in pinkiesIK_ctrl_list:
+    mc.setAttr(finIK_ctrl + '.sx', l=True, k=False, ch=False)
+    mc.setAttr(finIK_ctrl + '.sy', l=True, k=False, ch=False)
+    mc.setAttr(finIK_ctrl + '.sz', l=True, k=False, ch=False)
+    mc.setAttr(finIK_ctrl + '.v', l=True, k=False, ch=False)
+
+########################################################### ik fingers control orient constraint
+
+finger03_ik_list = ['pinky_03_l_ik', 'ring_03_l_ik', 'middle_03_l_ik', 'index_03_l_ik', 'thumb_03_l_ik', 'pinky_03_r_ik', 'ring_03_r_ik', 'middle_03_r_ik', 'index_03_r_ik', 'thumb_03_r_ik']
+
+for i, item in enumerate(pinkiesIK_ctrl_list):
+    pm.orientConstraint(item, finger03_ik_list[i])
+
+###################################################### control colors and cleanup
+
+### colors
+leftSideIK_ctrl_list =['pinky_l_ik_ctrl', 'ring_l_ik_ctrl', 'middle_l_ik_ctrl', 'index_l_ik_ctrl', 'thumb_l_ik_ctrl', 'pinky_l_PV_ctrl', 'ring_l_PV_ctrl', 'middle_l_PV_ctrl', 'index_l_PV_ctrl',
+                       'thumb_l_PV_ctrl', 'pinky_00_l_ik_ctrl', 'ring_00_l_ik_ctrl', 'middle_00_l_ik_ctrl', 'index_00_l_ik_ctrl', 'hand_l_ik_ctrl', 'hand_l_ik_gimbal_ctrl', 'arm_PV_l_ctrl']
+for lIK_ctrl in leftSideIK_ctrl_list:
+    itemColor(lIK_ctrl, 6)
+
+rightSideIK_ctrl_list =['pinky_r_ik_ctrl', 'ring_r_ik_ctrl', 'middle_r_ik_ctrl', 'index_r_ik_ctrl', 'thumb_r_ik_ctrl', 'pinky_r_PV_ctrl', 'ring_r_PV_ctrl', 'middle_r_PV_ctrl', 'index_r_PV_ctrl',
+                       'thumb_r_PV_ctrl', 'pinky_00_r_ik_ctrl', 'ring_00_r_ik_ctrl', 'middle_00_r_ik_ctrl', 'index_00_r_ik_ctrl', 'hand_r_ik_ctrl', 'hand_r_ik_gimbal_ctrl', 'arm_PV_r_ctrl']
+for rIK_ctrl in rightSideIK_ctrl_list:
+    itemColor(rIK_ctrl, 13)
+
+######################### cleanup
+#### ik's
+ikHandle_arm_grp = mc.group(em=True, n= 'ikHandle_arms_grp')
+ikHandle_arm_list = ['ikArm_l', 'ikArm_r', 'pinky_l_ik', 'ring_l_ik', 'middle_l_ik', 'index_l_ik', 'thumb_l_ik', 'pinky_r_ik', 'ring_r_ik', 'middle_r_ik', 'index_r_ik', 'thumb_r_ik']
+mc.parent(ikHandle_arm_list, ikHandle_arm_grp), mc.select(d=True)
+mc.setAttr(ikHandle_arm_grp + '.v', 0)
+
+### left ik controls
+leftIKFinger_ctrlMaster_list = ['pinky_00_l_ik_ctrlSpaceMaster', 'ring_00_l_ik_ctrlSpaceMaster', 'middle_00_l_ik_ctrlSpaceMaster', 'index_00_l_ik_ctrlSpaceMaster', 'pinky_00_r_ik_ctrlSpaceMaster',
+                                'pinky_l_ik_ctrlSpaceMaster', 'ring_l_ik_ctrlSpaceMaster', 'middle_l_ik_ctrlSpaceMaster', 'index_l_ik_ctrlSpaceMaster', 'thumb_l_ik_ctrlSpaceMaster',
+                                'pinky_l_PV_ctrlSpaceMaster', 'ring_l_PV_ctrlSpaceMaster', 'middle_l_PV_ctrlSpaceMaster', 'index_l_PV_ctrlSpaceMaster', 'thumb_l_PV_ctrlSpaceMaster']
+left_fingerIK_ctrl_grp = mc.group(em=True, n= 'left_finger_ik_ctrl_grp')
+mc.parent(leftIKFinger_ctrlMaster_list, left_fingerIK_ctrl_grp)
+
+### parent ik / PV fionger to phalange 00 -> just for presentation -> need think the best rig via
+mc.parent('pinky_l_ik_ctrlSpaceMaster', 'pinky_l_PV_ctrlSpaceMaster', 'pinky_00_l_ik_ctrl'), mc.parent('ring_l_ik_ctrlSpaceMaster', 'ring_l_PV_ctrlSpaceMaster', 'ring_00_l_ik_ctrl')
+mc.parent('middle_l_ik_ctrlSpaceMaster', 'middle_l_PV_ctrlSpaceMaster', 'middle_00_l_ik_ctrl'), mc.parent('index_l_ik_ctrlSpaceMaster', 'index_l_PV_ctrlSpaceMaster', 'index_00_l_ik_ctrl'), mc.select(d=True)
+
+### right ik controls
+rightIKFinger_ctrlMaster_list = ['pinky_00_r_ik_ctrlSpaceMaster', 'ring_00_r_ik_ctrlSpaceMaster', 'middle_00_r_ik_ctrlSpaceMaster', 'index_00_r_ik_ctrlSpaceMaster', 'pinky_00_r_ik_ctrlSpaceMaster',
+                                'pinky_r_ik_ctrlSpaceMaster', 'ring_r_ik_ctrlSpaceMaster', 'middle_r_ik_ctrlSpaceMaster', 'index_r_ik_ctrlSpaceMaster', 'thumb_r_ik_ctrlSpaceMaster',
+                                'pinky_r_PV_ctrlSpaceMaster', 'ring_r_PV_ctrlSpaceMaster', 'middle_r_PV_ctrlSpaceMaster', 'index_r_PV_ctrlSpaceMaster', 'thumb_r_PV_ctrlSpaceMaster']
+right_fingerIK_ctrl_grp = mc.group(em=True, n= 'right_finger_ik_ctrl_grp')
+mc.parent(rightIKFinger_ctrlMaster_list, right_fingerIK_ctrl_grp), mc.select(d=True)
+
+mc.parent(left_fingerIK_ctrl_grp, 'hand_l_ik_gimbal_ctrl'), mc.parent(right_fingerIK_ctrl_grp, 'hand_r_ik_gimbal_ctrl'), mc.select(d=True)
+
+### parent ik / PV fionger to phalange 00 -> just for presentation -> need think the best rig via
+mc.parent('pinky_r_ik_ctrlSpaceMaster', 'pinky_r_PV_ctrlSpaceMaster', 'pinky_00_r_ik_ctrl'), mc.parent('ring_r_ik_ctrlSpaceMaster', 'ring_r_PV_ctrlSpaceMaster', 'ring_00_r_ik_ctrl')
+mc.parent('middle_r_ik_ctrlSpaceMaster', 'middle_r_PV_ctrlSpaceMaster', 'middle_00_r_ik_ctrl'), mc.parent('index_r_ik_ctrlSpaceMaster', 'index_r_PV_ctrlSpaceMaster', 'index_00_r_ik_ctrl'), mc.select(d=True)
+
+### arm master group
+ik_arm_grp = mc.group(em=True, n='arms_ik_grp')
+mc.parent(ikHandle_arm_grp, 'arm_PV_r_ctrlSpaceMaster', 'arm_PV_l_ctrlSpaceMaster', 'hand_r_ik_ctrlSpaceMaster', 'hand_l_ik_ctrlSpaceMaster', ik_arm_grp), mc.select(d=True)
+
+##########################################################################################################################################################################################################
+###
+
+
+
+
+
+
+
+
+
+###
+################################################ FK SYSTEM
+
+mc.duplicate('upperarm_l')
+mc.select('upperarm_l1')
+mel.eval('searchReplaceNames "_l" "_l2" "hierarchy"')
+mc.rename('upperarm_l21', 'upperarm_l2')
+mc.select('upperarm_l2', hi=True)
+ikJnt = mc.ls(sl=True)
+
+for i in ikJnt:
+    name = i.replace('l2', 'l_fk')
+    mc.rename(i, name)
+mc.parent('upperarm_l_fk', w=True), mc.select(d=True)
+
+mc.mirrorJoint('upperarm_l_fk', mirrorYZ=True, mirrorBehavior=True, searchReplace=('_l', '_r')), mc.select(d=True)
+
+##################################################### fk fingers controls
+
+fingerFK_jnts_list = ['pinky_00_l_fk', 'pinky_01_l_fk', 'pinky_02_l_fk', 'pinky_03_l_fk', 'ring_00_l_fk', 'ring_01_l_fk', 'ring_02_l_fk', 'ring_03_l_fk', 'middle_00_l_fk', 'middle_01_l_fk', 'middle_02_l_fk',
+                       'middle_03_l_fk', 'index_00_l_fk', 'index_01_l_fk', 'index_02_l_fk', 'index_03_l_fk', 'thumb_01_l_fk', 'thumb_02_l_fk', 'thumb_03_l_fk', 'pinky_00_r_fk', 'pinky_01_r_fk', 'pinky_02_r_fk',
+                       'pinky_03_r_fk', 'ring_00_r_fk', 'ring_01_r_fk', 'ring_02_r_fk', 'ring_03_r_fk', 'middle_00_r_fk', 'middle_01_r_fk', 'middle_02_r_fk', 'middle_03_r_fk', 'index_00_r_fk', 'index_01_r_fk', 
+                       'index_02_r_fk', 'index_03_r_fk', 'thumb_01_r_fk', 'thumb_02_r_fk', 'thumb_03_r_fk']
+for fingerfkJ in fingerFK_jnts_lits:
+    myCtrl.fk_ctrl(fingerfkJ)
+
+fingerFK_ctrlSpaceMaster_list = ['pinky_00_l_fk_ctrlSpaceMaster', 'pinky_01_l_fk_ctrlSpaceMaster', 'pinky_02_l_fk_ctrlSpaceMaster', 'pinky_03_l_fk_ctrlSpaceMaster', 'ring_00_l_fk_ctrlSpaceMaster',
+                                 'ring_01_l_fk_ctrlSpaceMaster', 'ring_02_l_fk_ctrlSpaceMaster', 'ring_03_l_fk_ctrlSpaceMaster', 'middle_00_l_fk_ctrlSpaceMaster', 'middle_01_l_fk_ctrlSpaceMaster',
+                                 'middle_02_l_fk_ctrlSpaceMaster', 'middle_03_l_fk_ctrlSpaceMaster', 'index_00_l_fk_ctrlSpaceMaster', 'index_01_l_fk_ctrlSpaceMaster', 'index_02_l_fk_ctrlSpaceMaster',
+                                 'index_03_l_fk_ctrlSpaceMaster', 'thumb_01_l_fk_ctrlSpaceMaster', 'thumb_02_l_fk_ctrlSpaceMaster', 'thumb_03_l_fk_ctrlSpaceMaster', 'pinky_00_r_fk_ctrlSpaceMaster', 
+                                 'pinky_01_r_fk_ctrlSpaceMaster', 'pinky_02_r_fk_ctrlSpaceMaster', 'pinky_03_r_fk_ctrlSpaceMaster', 'ring_00_r_fk_ctrlSpaceMaster', 'ring_01_r_fk_ctrlSpaceMaster', 
+                                 'ring_02_r_fk_ctrlSpaceMaster', 'ring_03_r_fk_ctrlSpaceMaster', 'middle_00_r_fk_ctrlSpaceMaster', 'middle_01_r_fk_ctrlSpaceMaster', 'middle_02_r_fk_ctrlSpaceMaster', 
+                                 'middle_03_r_fk_ctrlSpaceMaster', 'index_00_r_fk_ctrlSpaceMaster', 'index_01_r_fk_ctrlSpaceMaster', 'index_02_r_fk_ctrlSpaceMaster', 'index_03_r_fk_ctrlSpaceMaster', 
+                                 'thumb_01_r_fk_ctrlSpaceMaster', 'thumb_02_r_fk_ctrlSpaceMaster', 'thumb_03_r_fk_ctrlSpaceMaster']
+
+fingerFK_ctrlSpace_list = ['pinky_00_l_fk_ctrlSpace', 'pinky_01_l_fk_ctrlSpace', 'pinky_02_l_fk_ctrlSpace', 'pinky_03_l_fk_ctrlSpace', 'ring_00_l_fk_ctrlSpace', 'ring_01_l_fk_ctrlSpace', 'ring_02_l_fk_ctrlSpace',
+                           'ring_03_l_fk_ctrlSpace', 'middle_00_l_fk_ctrlSpace', 'middle_01_l_fk_ctrlSpace', 'middle_02_l_fk_ctrlSpace', 'middle_03_l_fk_ctrlSpace', 'index_00_l_fk_ctrlSpace', 'index_01_l_fk_ctrlSpace',
+                           'index_02_l_fk_ctrlSpace', 'index_03_l_fk_ctrlSpace', 'thumb_01_l_fk_ctrlSpace', 'thumb_02_l_fk_ctrlSpace', 'thumb_03_l_fk_ctrlSpace', 'pinky_00_r_fk_ctrlSpace', 'pinky_01_r_fk_ctrlSpace',
+                           'pinky_02_r_fk_ctrlSpace', 'pinky_03_r_fk_ctrlSpace', 'ring_00_r_fk_ctrlSpace', 'ring_01_r_fk_ctrlSpace', 'ring_02_r_fk_ctrlSpace', 'ring_03_r_fk_ctrlSpace', 'middle_00_r_fk_ctrlSpace',
+                           'middle_01_r_fk_ctrlSpace', 'middle_02_r_fk_ctrlSpace', 'middle_03_r_fk_ctrlSpace', 'index_00_r_fk_ctrlSpace', 'index_01_r_fk_ctrlSpace', 'index_02_r_fk_ctrlSpace', 'index_03_r_fk_ctrlSpace',
+                           'thumb_01_r_fk_ctrlSpace', 'thumb_02_r_fk_ctrlSpace', 'thumb_03_r_fk_ctrlSpace']
+
+fingerFK_ctrl_list = ['pinky_00_l_fk_ctrl', 'pinky_01_l_fk_ctrl', 'pinky_02_l_fk_ctrl', 'pinky_03_l_fk_ctrl', 'ring_00_l_fk_ctrl', 'ring_01_l_fk_ctrl', 'ring_02_l_fk_ctrl', 'ring_03_l_fk_ctrl', 'middle_00_l_fk_ctrl',
+                      'middle_01_l_fk_ctrl', 'middle_02_l_fk_ctrl', 'middle_03_l_fk_ctrl', 'index_00_l_fk_ctrl', 'index_01_l_fk_ctrl', 'index_02_l_fk_ctrl', 'index_03_l_fk_ctrl', 'thumb_01_l_fk_ctrl', 'thumb_02_l_fk_ctrl',
+                      'thumb_03_l_fk_ctrl', 'pinky_00_r_fk_ctrl', 'pinky_01_r_fk_ctrl', 'pinky_02_r_fk_ctrl', 'pinky_03_r_fk_ctrl', 'ring_00_r_fk_ctrl', 'ring_01_r_fk_ctrl', 'ring_02_r_fk_ctrl', 'ring_03_r_fk_ctrl',
+                      'middle_00_r_fk_ctrl', 'middle_01_r_fk_ctrl', 'middle_02_r_fk_ctrl',  'middle_03_r_fk_ctrl', 'index_00_r_fk_ctrl', 'index_01_r_fk_ctrl', 'index_02_r_fk_ctrl', 'index_03_r_fk_ctrl',  'thumb_01_r_fk_ctrl',
+                      'thumb_02_r_fk_ctrl', 'thumb_03_r_fk_ctrl']
+
+######################################################## move pivots
+selFingerFk_master = mc.select(fingerFK_ctrlSpaceMaster_list)
+for movePivot in fingerFK_ctrlSpaceMaster_list:
+    mc.move(-0.35, 0, 0, movePivot + '.scalePivot', '.rotatePivot', r=True)
+
+selFingerFk_space = mc.select(fingerFK_ctrlSpace_list)
+for movePivot in fingerFK_ctrlSpace_list:
+    mc.move(-0.35, 0, 0, movePivot + '.scalePivot', '.rotatePivot', r=True)
+
+selFingerFk_ctrl = mc.select(fingerFK_ctrl_list)
+for movePivot in fingerFK_ctrl_list:
+    mc.move(-0.35, 0, 0, movePivot + '.scalePivot', '.rotatePivot', r=True)
+
+################################################################# postion on bones
+for i, item in enumerate(fingerFK_jnts_list):
+    mc.delete(mc.parentConstraint(item, fingerFK_ctrlSpaceMaster_list[i]))
+
+######################################## finger fk control scale
+fingerFK_cv_list = ['pinky_00_l_fk_ctrl.cv[0:26]', 'pinky_01_l_fk_ctrl.cv[0:26]', 'pinky_02_l_fk_ctrl.cv[0:26]', 'pinky_03_l_fk_ctrl.cv[0:26]', 'ring_00_l_fk_ctrl.cv[0:26]', 'ring_01_l_fk_ctrl.cv[0:26]',
+                    'ring_02_l_fk_ctrl.cv[0:26]', 'ring_03_l_fk_ctrl.cv[0:26]', 'middle_00_l_fk_ctrl.cv[0:26]','middle_01_l_fk_ctrl.cv[0:26]', 'middle_02_l_fk_ctrl.cv[0:26]', 'middle_03_l_fk_ctrl.cv[0:26]',
+                    'index_00_l_fk_ctrl.cv[0:26]', 'index_01_l_fk_ctrl.cv[0:26]', 'index_02_l_fk_ctrl.cv[0:26]', 'index_03_l_fk_ctrl.cv[0:26]', 'thumb_01_l_fk_ctrl.cv[0:26]', 'thumb_02_l_fk_ctrl.cv[0:26]',
+                    'thumb_03_l_fk_ctrl.cv[0:26]', 'pinky_00_r_fk_ctrl.cv[0:26]', 'pinky_01_r_fk_ctrl.cv[0:26]', 'pinky_02_r_fk_ctrl.cv[0:26]', 'pinky_03_r_fk_ctrl.cv[0:26]', 'ring_00_r_fk_ctrl.cv[0:26]',
+                    'ring_01_r_fk_ctrl.cv[0:26]', 'ring_02_r_fk_ctrl.cv[0:26]', 'ring_03_r_fk_ctrl.cv[0:26]','middle_00_r_fk_ctrl.cv[0:26]', 'middle_01_r_fk_ctrl.cv[0:26]', 'middle_02_r_fk_ctrl.cv[0:26]',
+                    'middle_03_r_fk_ctrl.cv[0:26]', 'index_00_r_fk_ctrl.cv[0:26]', 'index_01_r_fk_ctrl.cv[0:26]', 'index_02_r_fk_ctrl.cv[0:26]', 'index_03_r_fk_ctrl.cv[0:26]',  'thumb_01_r_fk_ctrl.cv[0:26]',
+                    'thumb_02_r_fk_ctrl.cv[0:26]', 'thumb_03_r_fk_ctrl.cv[0:26]']
+
+'''
+
+
+
+
+
+
+
+
+
