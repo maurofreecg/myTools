@@ -1889,65 +1889,68 @@ mc.mirrorJoint('upperarm_l_fk', mirrorYZ=True, mirrorBehavior=True, searchReplac
 
 ##################################################### fk fingers controls
 
-fingerFK_jnts_list = ['pinky_00_l_fk', 'pinky_01_l_fk', 'pinky_02_l_fk', 'pinky_03_l_fk', 'ring_00_l_fk', 'ring_01_l_fk', 'ring_02_l_fk', 'ring_03_l_fk', 'middle_00_l_fk', 'middle_01_l_fk', 'middle_02_l_fk',
-                       'middle_03_l_fk', 'index_00_l_fk', 'index_01_l_fk', 'index_02_l_fk', 'index_03_l_fk', 'thumb_01_l_fk', 'thumb_02_l_fk', 'thumb_03_l_fk', 'pinky_00_r_fk', 'pinky_01_r_fk', 'pinky_02_r_fk',
-                       'pinky_03_r_fk', 'ring_00_r_fk', 'ring_01_r_fk', 'ring_02_r_fk', 'ring_03_r_fk', 'middle_00_r_fk', 'middle_01_r_fk', 'middle_02_r_fk', 'middle_03_r_fk', 'index_00_r_fk', 'index_01_r_fk', 
-                       'index_02_r_fk', 'index_03_r_fk', 'thumb_01_r_fk', 'thumb_02_r_fk', 'thumb_03_r_fk']
-for fingerfkJ in fingerFK_jnts_lits:
+fingerFK_l_jnts_list = ['pinky_00_l_fk', 'pinky_01_l_fk', 'pinky_02_l_fk', 'pinky_03_l_fk', 'ring_00_l_fk', 'ring_01_l_fk', 'ring_02_l_fk', 'ring_03_l_fk', 'middle_00_l_fk', 'middle_01_l_fk', 'middle_02_l_fk',
+                       'middle_03_l_fk', 'index_00_l_fk', 'index_01_l_fk', 'index_02_l_fk', 'index_03_l_fk', 'thumb_01_l_fk', 'thumb_02_l_fk', 'thumb_03_l_fk']
+for fingerfkJ in fingerFK_l_jnts_list:
     myCtrl.fk_ctrl(fingerfkJ)
 
-fingerFK_ctrlSpaceMaster_list = ['pinky_00_l_fk_ctrlSpaceMaster', 'pinky_01_l_fk_ctrlSpaceMaster', 'pinky_02_l_fk_ctrlSpaceMaster', 'pinky_03_l_fk_ctrlSpaceMaster', 'ring_00_l_fk_ctrlSpaceMaster',
+fingerFK_l_ctrlSpaceMaster_list = ['pinky_00_l_fk_ctrlSpaceMaster', 'pinky_01_l_fk_ctrlSpaceMaster', 'pinky_02_l_fk_ctrlSpaceMaster', 'pinky_03_l_fk_ctrlSpaceMaster', 'ring_00_l_fk_ctrlSpaceMaster',
                                  'ring_01_l_fk_ctrlSpaceMaster', 'ring_02_l_fk_ctrlSpaceMaster', 'ring_03_l_fk_ctrlSpaceMaster', 'middle_00_l_fk_ctrlSpaceMaster', 'middle_01_l_fk_ctrlSpaceMaster',
                                  'middle_02_l_fk_ctrlSpaceMaster', 'middle_03_l_fk_ctrlSpaceMaster', 'index_00_l_fk_ctrlSpaceMaster', 'index_01_l_fk_ctrlSpaceMaster', 'index_02_l_fk_ctrlSpaceMaster',
-                                 'index_03_l_fk_ctrlSpaceMaster', 'thumb_01_l_fk_ctrlSpaceMaster', 'thumb_02_l_fk_ctrlSpaceMaster', 'thumb_03_l_fk_ctrlSpaceMaster', 'pinky_00_r_fk_ctrlSpaceMaster', 
-                                 'pinky_01_r_fk_ctrlSpaceMaster', 'pinky_02_r_fk_ctrlSpaceMaster', 'pinky_03_r_fk_ctrlSpaceMaster', 'ring_00_r_fk_ctrlSpaceMaster', 'ring_01_r_fk_ctrlSpaceMaster', 
-                                 'ring_02_r_fk_ctrlSpaceMaster', 'ring_03_r_fk_ctrlSpaceMaster', 'middle_00_r_fk_ctrlSpaceMaster', 'middle_01_r_fk_ctrlSpaceMaster', 'middle_02_r_fk_ctrlSpaceMaster', 
-                                 'middle_03_r_fk_ctrlSpaceMaster', 'index_00_r_fk_ctrlSpaceMaster', 'index_01_r_fk_ctrlSpaceMaster', 'index_02_r_fk_ctrlSpaceMaster', 'index_03_r_fk_ctrlSpaceMaster', 
-                                 'thumb_01_r_fk_ctrlSpaceMaster', 'thumb_02_r_fk_ctrlSpaceMaster', 'thumb_03_r_fk_ctrlSpaceMaster']
+                                 'index_03_l_fk_ctrlSpaceMaster', 'thumb_01_l_fk_ctrlSpaceMaster', 'thumb_02_l_fk_ctrlSpaceMaster', 'thumb_03_l_fk_ctrlSpaceMaster']
 
-fingerFK_ctrlSpace_list = ['pinky_00_l_fk_ctrlSpace', 'pinky_01_l_fk_ctrlSpace', 'pinky_02_l_fk_ctrlSpace', 'pinky_03_l_fk_ctrlSpace', 'ring_00_l_fk_ctrlSpace', 'ring_01_l_fk_ctrlSpace', 'ring_02_l_fk_ctrlSpace',
+fingerFK_l_ctrlSpace_list = ['pinky_00_l_fk_ctrlSpace', 'pinky_01_l_fk_ctrlSpace', 'pinky_02_l_fk_ctrlSpace', 'pinky_03_l_fk_ctrlSpace', 'ring_00_l_fk_ctrlSpace', 'ring_01_l_fk_ctrlSpace', 'ring_02_l_fk_ctrlSpace',
                            'ring_03_l_fk_ctrlSpace', 'middle_00_l_fk_ctrlSpace', 'middle_01_l_fk_ctrlSpace', 'middle_02_l_fk_ctrlSpace', 'middle_03_l_fk_ctrlSpace', 'index_00_l_fk_ctrlSpace', 'index_01_l_fk_ctrlSpace',
-                           'index_02_l_fk_ctrlSpace', 'index_03_l_fk_ctrlSpace', 'thumb_01_l_fk_ctrlSpace', 'thumb_02_l_fk_ctrlSpace', 'thumb_03_l_fk_ctrlSpace', 'pinky_00_r_fk_ctrlSpace', 'pinky_01_r_fk_ctrlSpace',
-                           'pinky_02_r_fk_ctrlSpace', 'pinky_03_r_fk_ctrlSpace', 'ring_00_r_fk_ctrlSpace', 'ring_01_r_fk_ctrlSpace', 'ring_02_r_fk_ctrlSpace', 'ring_03_r_fk_ctrlSpace', 'middle_00_r_fk_ctrlSpace',
-                           'middle_01_r_fk_ctrlSpace', 'middle_02_r_fk_ctrlSpace', 'middle_03_r_fk_ctrlSpace', 'index_00_r_fk_ctrlSpace', 'index_01_r_fk_ctrlSpace', 'index_02_r_fk_ctrlSpace', 'index_03_r_fk_ctrlSpace',
-                           'thumb_01_r_fk_ctrlSpace', 'thumb_02_r_fk_ctrlSpace', 'thumb_03_r_fk_ctrlSpace']
+                           'index_02_l_fk_ctrlSpace', 'index_03_l_fk_ctrlSpace', 'thumb_01_l_fk_ctrlSpace', 'thumb_02_l_fk_ctrlSpace', 'thumb_03_l_fk_ctrlSpace']
 
-fingerFK_ctrl_list = ['pinky_00_l_fk_ctrl', 'pinky_01_l_fk_ctrl', 'pinky_02_l_fk_ctrl', 'pinky_03_l_fk_ctrl', 'ring_00_l_fk_ctrl', 'ring_01_l_fk_ctrl', 'ring_02_l_fk_ctrl', 'ring_03_l_fk_ctrl', 'middle_00_l_fk_ctrl',
+fingerFK_l_ctrl_list = ['pinky_00_l_fk_ctrl', 'pinky_01_l_fk_ctrl', 'pinky_02_l_fk_ctrl', 'pinky_03_l_fk_ctrl', 'ring_00_l_fk_ctrl', 'ring_01_l_fk_ctrl', 'ring_02_l_fk_ctrl', 'ring_03_l_fk_ctrl', 'middle_00_l_fk_ctrl',
                       'middle_01_l_fk_ctrl', 'middle_02_l_fk_ctrl', 'middle_03_l_fk_ctrl', 'index_00_l_fk_ctrl', 'index_01_l_fk_ctrl', 'index_02_l_fk_ctrl', 'index_03_l_fk_ctrl', 'thumb_01_l_fk_ctrl', 'thumb_02_l_fk_ctrl',
-                      'thumb_03_l_fk_ctrl', 'pinky_00_r_fk_ctrl', 'pinky_01_r_fk_ctrl', 'pinky_02_r_fk_ctrl', 'pinky_03_r_fk_ctrl', 'ring_00_r_fk_ctrl', 'ring_01_r_fk_ctrl', 'ring_02_r_fk_ctrl', 'ring_03_r_fk_ctrl',
-                      'middle_00_r_fk_ctrl', 'middle_01_r_fk_ctrl', 'middle_02_r_fk_ctrl',  'middle_03_r_fk_ctrl', 'index_00_r_fk_ctrl', 'index_01_r_fk_ctrl', 'index_02_r_fk_ctrl', 'index_03_r_fk_ctrl',  'thumb_01_r_fk_ctrl',
-                      'thumb_02_r_fk_ctrl', 'thumb_03_r_fk_ctrl']
+                      'thumb_03_l_fk_ctrl']
 
-######################################################## move pivots
-selFingerFk_master = mc.select(fingerFK_ctrlSpaceMaster_list)
-for movePivot in fingerFK_ctrlSpaceMaster_list:
-    mc.move(-0.35, 0, 0, movePivot + '.scalePivot', '.rotatePivot', r=True)
-
-selFingerFk_space = mc.select(fingerFK_ctrlSpace_list)
-for movePivot in fingerFK_ctrlSpace_list:
-    mc.move(-0.35, 0, 0, movePivot + '.scalePivot', '.rotatePivot', r=True)
-
-selFingerFk_ctrl = mc.select(fingerFK_ctrl_list)
-for movePivot in fingerFK_ctrl_list:
-    mc.move(-0.35, 0, 0, movePivot + '.scalePivot', '.rotatePivot', r=True)
-
-################################################################# postion on bones
-for i, item in enumerate(fingerFK_jnts_list):
-    mc.delete(mc.parentConstraint(item, fingerFK_ctrlSpaceMaster_list[i]))
+################################################################# position on bones
+for i, item in enumerate(fingerFK_l_jnts_list):
+    mc.delete(mc.parentConstraint(item, fingerFK_l_ctrlSpaceMaster_list[i]))
 
 ######################################## finger fk control scale
-fingerFK_cv_list = ['pinky_00_l_fk_ctrl.cv[0:26]', 'pinky_01_l_fk_ctrl.cv[0:26]', 'pinky_02_l_fk_ctrl.cv[0:26]', 'pinky_03_l_fk_ctrl.cv[0:26]', 'ring_00_l_fk_ctrl.cv[0:26]', 'ring_01_l_fk_ctrl.cv[0:26]',
+fingerFK_l_cv_list = ['pinky_00_l_fk_ctrl.cv[0:26]', 'pinky_01_l_fk_ctrl.cv[0:26]', 'pinky_02_l_fk_ctrl.cv[0:26]', 'pinky_03_l_fk_ctrl.cv[0:26]', 'ring_00_l_fk_ctrl.cv[0:26]', 'ring_01_l_fk_ctrl.cv[0:26]',
                     'ring_02_l_fk_ctrl.cv[0:26]', 'ring_03_l_fk_ctrl.cv[0:26]', 'middle_00_l_fk_ctrl.cv[0:26]','middle_01_l_fk_ctrl.cv[0:26]', 'middle_02_l_fk_ctrl.cv[0:26]', 'middle_03_l_fk_ctrl.cv[0:26]',
                     'index_00_l_fk_ctrl.cv[0:26]', 'index_01_l_fk_ctrl.cv[0:26]', 'index_02_l_fk_ctrl.cv[0:26]', 'index_03_l_fk_ctrl.cv[0:26]', 'thumb_01_l_fk_ctrl.cv[0:26]', 'thumb_02_l_fk_ctrl.cv[0:26]',
-                    'thumb_03_l_fk_ctrl.cv[0:26]', 'pinky_00_r_fk_ctrl.cv[0:26]', 'pinky_01_r_fk_ctrl.cv[0:26]', 'pinky_02_r_fk_ctrl.cv[0:26]', 'pinky_03_r_fk_ctrl.cv[0:26]', 'ring_00_r_fk_ctrl.cv[0:26]',
-                    'ring_01_r_fk_ctrl.cv[0:26]', 'ring_02_r_fk_ctrl.cv[0:26]', 'ring_03_r_fk_ctrl.cv[0:26]','middle_00_r_fk_ctrl.cv[0:26]', 'middle_01_r_fk_ctrl.cv[0:26]', 'middle_02_r_fk_ctrl.cv[0:26]',
-                    'middle_03_r_fk_ctrl.cv[0:26]', 'index_00_r_fk_ctrl.cv[0:26]', 'index_01_r_fk_ctrl.cv[0:26]', 'index_02_r_fk_ctrl.cv[0:26]', 'index_03_r_fk_ctrl.cv[0:26]',  'thumb_01_r_fk_ctrl.cv[0:26]',
-                    'thumb_02_r_fk_ctrl.cv[0:26]', 'thumb_03_r_fk_ctrl.cv[0:26]']
+                    'thumb_03_l_fk_ctrl.cv[0:26]']
+fingerFK_l_cv_sel = mc.select(fingerFK_l_cv_list)
+mc.scale(0.128653, 0.128653, 0.128653, ocp=True), mc.select(d=True)
+
+###################################### section scale per phalange
+### finger 00
+mc.select('pinky_00_l_fk_ctrl.cv[0:26]', 'index_00_l_fk_ctrl.cv[0:26]', 'middle_00_l_fk_ctrl.cv[0:26]', 'ring_00_l_fk_ctrl.cv[0:26]')
+mc.scale(2.213146, 2.213146, 2.213146, ocp=True), mc.scale(0.417209, 1, 1, ocp=True), mc.scale(1.264578, 1.264578, 1.264578, ocp=True), mc.scale(1, 1, 0.568709, ocp=True), mc.scale(0.71982, 1, 1, ocp=True), mc.select(d=True)
+
+### finger 01
+mc.select('pinky_01_l_fk_ctrl.cv[0:26]', 'index_01_l_fk_ctrl.cv[0:26]', 'middle_01_l_fk_ctrl.cv[0:26]', 'ring_01_l_fk_ctrl.cv[0:26]')
+mc.scale(2.037736, 2.037736, 2.037736, ocp=True), mc.scale(0.424699, 1, 1, ocp=True), mc.scale(1, 1, 0.707371, ocp=True), mc.select(d=True)
+
+### finger 02
+mc.select('pinky_02_l_fk_ctrl.cv[0:26]', 'index_02_l_fk_ctrl.cv[0:26]', 'middle_02_l_fk_ctrl.cv[0:26]', 'ring_02_l_fk_ctrl.cv[0:26]')
+mc.scale(1.565238, 1.565238, 1.565238, ocp=True), mc.scale(0.34634, 1, 1, ocp=True), mc.select(d=True)
+
+### finger 03
+mc.select('pinky_03_l_fk_ctrl.cv[0:26]', 'index_03_l_fk_ctrl.cv[0:26]', 'middle_03_l_fk_ctrl.cv[0:26]', 'ring_03_l_fk_ctrl.cv[0:26]')
+mc.scale(1.243849, 1.243849, 1.243849, ocp=True), mc.scale(0.433078, 1, 1, ocp=True), mc.select(d=True)
+
+### thumb 01
+mc.select('thumb_01_l_fk_ctrl.cv[0:26]')
+mc.scale(2.828923, 2.828923, 2.828923, ocp=True), mc.scale(0.331514, 1, 1, ocp=True), mc.select(d=True)
+
+### thumb 02
+mc.select('thumb_02_l_fk_ctrl.cv[0:26]')
+mc.scale(2.15293, 2.15293, 2.15293, ocp=True), mc.scale(0.43488, 1, 1, ocp=True), mc.select(d=True)
+
+### thumb 03
+mc.select('thumb_03_l_fk_ctrl.cv[0:26]')
+mc.scale(1.850562, 1.850562, 1.850562, ocp=True), mc.scale(0.374072, 1, 1, ocp=True), mc.select(d=True)
+
+############################################################## fingers lef side parent controls
 
 '''
-
-
-
 
 
 

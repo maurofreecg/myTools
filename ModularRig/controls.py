@@ -103,8 +103,11 @@ class myControls():
                                      (-14.267528, 7.299508, -1.0877106), (-14.267528, 3.649755, 6.321559), (12.47326, 3.649755, 6.321559), (12.47326, -3.649754, 6.321559), (-14.267528, -3.649754, 6.321559),
                                      (-14.267528, -7.299508, 0), (12.47326, -7.299508, 0), (12.47326, -3.649756, -6.321559), (-14.267528, -3.649756, -6.321559), (-14.267528, 3.649753, -6.32156), (12.47326, 3.649753, -6.32156),
                                      (12.47326, 7.299508, -1.0877106), (-14.267528, 7.299508, -1.0877106), (-14.267528, 3.649755, 6.321559), (12.47326, 3.649755, 6.321559)), n=name + str('_ctrl'))
+        mc.move(-15, 0, 0, fkCtrl + '.scalePivot', fkCtrl + '.rotatePivot', r=True)
         fkCtrlSpace = mc.group(em=True, n=name + '_ctrlSpace')
+        mc.move(-15, 0, 0, fkCtrlSpace + '.scalePivot', fkCtrlSpace + '.rotatePivot', r=True)
         print(fkCtrl)
         fkCtrlSpaceMaster = mc.group(em=True, n=name + '_ctrlSpaceMaster')
+        mc.move(-15, 0, 0, fkCtrlSpaceMaster + '.scalePivot', fkCtrlSpaceMaster + '.rotatePivot', r=True)
         mc.parent(fkCtrl, fkCtrlSpace), mc.parent(fkCtrlSpace, fkCtrlSpaceMaster)
         mc.select(d=True)
