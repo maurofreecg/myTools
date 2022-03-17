@@ -475,6 +475,7 @@ def BodyCustomButton(*args):
 
     mc.addAttr('Main', ln='extraCtrls', at='bool', k=True)
     mc.connectAttr('Main.extraCtrls', 'extraControls_GRP.v')
+    mc.select('MainShape.cv[0:7]'), mc.scale(2.1, 2.1 , 2.1, ocp=True), mc.select(0, 0, 69.5, r=True, os=True, wd=True)
 
     mc.select(d=True)
 
