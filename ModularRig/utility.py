@@ -1344,7 +1344,7 @@ def arm_fingers_IK_transform(*args):
 
 
 
-
+'''
 
 arm_fingers_l_jnt_list = ['clavicle_l', 'upperarm_l', 'lowerarm_l', 'hand_l', 'pinky_00_l', 'pinky_01_l', 'pinky_02_l', 'pinky_03_l', 'ring_00_l', 'ring_01_l',
                           'ring_02_l', 'ring_03_l', 'index_00_l', 'index_01_l', 'index_02_l', 'index_03_l', 'middle_00_l', 'middle_01_l', 'middle_02_l', 'middle_03_l',
@@ -1949,8 +1949,26 @@ mc.select('thumb_03_l_fk_ctrl.cv[0:26]')
 mc.scale(1.850562, 1.850562, 1.850562, ocp=True), mc.scale(0.374072, 1, 1, ocp=True), mc.select(d=True)
 
 ############################################################## fingers lef side parent controls
+### thumb
+mc.parent('thumb_03_l_fk_ctrlSpaceMaster', 'thumb_02_l_fk_ctrl'), mc.parent('thumb_02_l_fk_ctrlSpaceMaster', 'thumb_01_l_fk_ctrl'), mc.select(d=True)
 
+### index
+mc.parent('index_03_l_fk_ctrlSpaceMaster', 'index_02_l_fk_ctrl'), mc.parent('index_02_l_fk_ctrlSpaceMaster', 'index_01_l_fk_ctrl'), mc.parent('index_01_l_fk_ctrlSpaceMaster', 'index_00_l_fk_ctrl'), mc.select(d=True)
+
+### middle
+mc.parent('middle_03_l_fk_ctrlSpaceMaster', 'middle_02_l_fk_ctrl'), mc.parent('middle_02_l_fk_ctrlSpaceMaster', 'middle_01_l_fk_ctrl'), mc.parent('middle_01_l_fk_ctrlSpaceMaster', 'middle_00_l_fk_ctrl'), mc.select(d=True)
+
+### ring
+mc.parent('ring_03_l_fk_ctrlSpaceMaster', 'ring_02_l_fk_ctrl'), mc.parent('ring_02_l_fk_ctrlSpaceMaster', 'ring_01_l_fk_ctrl'), mc.parent('ring_01_l_fk_ctrlSpaceMaster', 'ring_00_l_fk_ctrl'), mc.select(d=True)
+
+### pinky
+mc.parent('pinky_03_l_fk_ctrlSpaceMaster', 'pinky_02_l_fk_ctrl'), mc.parent('pinky_02_l_fk_ctrlSpaceMaster', 'pinky_01_l_fk_ctrl'), mc.parent('pinky_01_l_fk_ctrlSpaceMaster', 'pinky_00_l_fk_ctrl'), mc.select(d=True)
+
+################################################################ FK control connection to bone
 '''
+think how to connect control to joints with matrix and direct connection
+'''
+
 
 
 
