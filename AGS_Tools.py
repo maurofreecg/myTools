@@ -1,4 +1,5 @@
 import maya.cmds as mc
+import maya.mel as mel
 
 # AGS_BodyCustom_Tool
 # AGS_FacialRig_Tool
@@ -453,8 +454,8 @@ def BodyCustomButton(*args):
         mc.setAttr(i + '.sz', l=True, k=False, ch=False)
         mc.setAttr(i + '.v', l=True, k=False, ch=False)
 
-    controlColor(LeftGimbalCtrl_crv, 6)
-    controlColor(RightGimbalCtrl_crv, 13)
+    controlColor(LeftGimbalCtrl_crv, 13)
+    controlColor(RightGimbalCtrl_crv, 6)
 
     mc.select(d=True)
 
@@ -475,21 +476,34 @@ def BodyCustomButton(*args):
 
     mc.addAttr('Main', ln='extraCtrls', at='bool', k=True)
     mc.connectAttr('Main.extraCtrls', 'extraControls_GRP.v')
-    mc.select('MainShape.cv[0:7]'), mc.scale(2.1, 2.1 , 2.1, ocp=True), mc.select(0, 0, 69.5, r=True, os=True, wd=True)
+    mc.select('MainShape.cv[0:7]'), mc.scale(2.1, 2.1, 2.1, ocp=True), mc.move(0, 0, 21, r=True, os=True, wd=True)
 
     mc.select(d=True)
 
 ################################################ scale cv's
-'''
-mc.select('PoleLeg_L.cv[0:7]', 'PoleLeg_R.cv[0:7]', 'PoleArm_R.cv[0:7]', 'PoleArm_L.cv[0:7]')
-mc.scale(5, 5, 5, ocp=True), mc.select(d=True)
 
+mc.select('PoleLeg_L.cv[0:7]', 'PoleLeg_R.cv[0:7]', 'PoleArm_R.cv[0:7]', 'PoleArm_L.cv[0:7]'), mc.scale(9, 9, 9, ocp=True)
 mc.select('IKLeg_RShape.cv[0:15]', 'IKLeg_LShape.cv[0:15]'), mc.scale(9.5, 1, 1, ocp=True)
+mc.select('IKLeg_RShape.cv[3:6]', 'IKLeg_RShape.cv[9:12]', 'IKLeg_LShape.cv[0:2]', 'IKLeg_LShape.cv[7:8]', 'IKLeg_LShape.cv[13:15]'), mc.move(0, 0, -7, r=True, os=True, wd=True)
+mc.select('IKLeg_RShape.cv[2]', 'IKLeg_RShape.cv[7]', 'IKLeg_RShape.cv[14:15]', 'IKLeg_LShape.cv[4:5]', 'IKLeg_LShape.cv[9]', 'IKLeg_LShape.cv[12]'), mc.move(0, 0, 9.5, r=True, os=True, wd=True)
 mc.select('IKToes_LShape.cv[0:7]', 'RollToes_LShape.cv[0:15]', 'RollToesEnd_LShape.cv[0:15]', 'RollToesEnd_RShape.cv[0:15]', 'RollToes_RShape.cv[0:15]', 'RollHeel_RShape.cv[0:15]', 'IKToes_RShape.cv[0:7]',
-          'RollHeel_LShape.cv[0:15]'), mc.scale(7, 7, 7, ocp=True), mc.select(d=True)
+          'RollHeel_LShape.cv[0:15]'), mc.scale(9.3, 9.3, 9.3, ocp=True), mc.select('RollHeel_LShape.cv[0:15]', 'RollHeel_RShape.cv[0:15]'), mc.move(0, 3.5, -3, r=True, os=True, wd=True)
+mc.select('RollToes_RShape.cv[0:15]', 'RollToes_LShape.cv[0:15]', 'IKToes_LShape.cv[0:7]', 'IKToes_RShape.cv[0:7]'), mc.scale(1.5, 1.5, 1.5, ocp=True), mc.move(0, 2.6, 1.2, r=True, os=True, wd=True)
+mc.select('FKIKLeg_L.cv[0:11]'), mc.scale(2.3, 2.3, 2.3, ocp=True), mc.move(17, 0, 0, r=True, os=True, wd=True), mc.select('FKIKLeg_R.cv[0:11]'), mc.scale(2.3, 2.3, 2.3, ocp=True), mc.move(-17, 0, 0, r=True, os=True, wd=True)
+mc.select('IKArm_LShape.cv[0:15]', 'IKArm_RShape.cv[0:15]', 'IKLocalArm_R.cv[0:4]', 'IKLocalArm_L.cv[0:4]'), mc.scale(8, 8, 8, ocp=True), mc.scale(0.3, 1, 1, ocp=True)
+mc.select('FKKnee_LShape.cv[0:7]', 'FKKnee_RShape.cv[0:7]'), mc.scale(11.5, 11.5, 11.5, ocp=True)
+mc.select('FKAnkle_LShape.cv[0:7]', 'FKAnkle_RShape.cv[0:7]'), mc.scale(12.5, 12.5, 12.5, ocp=True)
+mc.select('FKToes_LShape.cv[0:7]', 'FKToes_RShape.cv[0:7]'), mc.scale(13, 13, 13, ocp=True), mc.move(0, 3, 0, r=True)
+mc.select('FKHip_LShape.cv[0:7]', 'FKHip_RShape.cv[0:7]'), mc.scale(10.3, 10.3, 10.3, ocp=True), mc.rotate(0, -28, 0, ocp=True), mc.move(0, -2.8, 0, r=True)
+mc.select('FKIKSpine_M.cv[0:11]'), mc.scale(2, 2, 2, ocp=True), mc.move(20, 0, 0, r=True, os=True, wd=True)
+mc.select('FKSpine1_MShape.cv[0:7]', 'FKRoot_MShape.cv[0:7]', 'FKChest_MShape.cv[0:7]', 'FKSpine2_MShape.cv[0:7]'), mc.scale(12,12, 12, ocp=True)
+mc.select('HipSwinger_M.cv[0:7]'), mc.rotate(0, 0, 90, ocp=True), mc.move(2.5, 0, 0, r=True), mel.eval("CenterPivot"), mc.scale(30, 30, 30, ocp=True)
+mc.select('RootX_MShape.cv[0:6]', 'RootX_MShape3.cv[0:6]', 'RootX_MShape1.cv[0:6]', 'RootX_MShape2.cv[0:6]'), mc.scale(13, 13, 13, ocp=True)
+mc.select('IKSpine2_MShape.cv[0:7]', 'IKSpine1_MShape.cv[0:15]', 'IKSpine3_MShape.cv[0:15]', 'IKhybridSpine3_MShape.cv[0:15]', 'IKhybridSpine2_MShape.cv[0:15]', 'IKhybridSpine1_MShape.cv[0:15]'), mc.scale(9, 9, 9, ocp=True)
+mc.select('FKIKArm_R.cv[0:11]', 'FKIKArm_L.cv[0:11]'), mc.scale(2, 2, 2, ocp=True), mc.select('FKIKArm_L.cv[0:11]'), mc.move(8.9, 8.2, 0, r=True, os=True, wd=True), mc.select('FKIKArm_R.cv[0:11]'), mc.move(-8.9, 8.2, 0, r=True, os=True, wd=True)
+mc.select('FKNeck_MShape.cv[0:7]'), mc.scale(21.6, 21.6, 21.6, ocp=True), mc.select('FKNeck_MShape.cv[1]', 'FKNeck_MShape.cv[5]'), mc.move(4.1, 0, 0, r=True, os=True, wd=True)
+mc.select('FKHead_MShape.cv[0:7]'), mc.scale(13, 13, 13, r=True, p=(0, 174, -6.1))
 
-mc.select('IKArm_LShape.cv[0:15]', 'IKArm_RShape.cv[0:15]', 'IKLocalArm_R.cv[0:4]', 'IKLocalArm_L.cv[0:4]'), mc.scale(8,8,8, ocp=True), mc.select(0.3, 1, 1, ocp=True), mc.select(d=True)
-'''
 ######################################################################################################################################
 ########################                                                            ##################################################
 ########################                            Create facialTemplete           ##################################################
