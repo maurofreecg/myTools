@@ -480,29 +480,61 @@ def BodyCustomButton(*args):
 
     mc.select(d=True)
 
-################################################ scale cv's
+    ################################################ scale cv's
 
-mc.select('PoleLeg_L.cv[0:7]', 'PoleLeg_R.cv[0:7]', 'PoleArm_R.cv[0:7]', 'PoleArm_L.cv[0:7]'), mc.scale(9, 9, 9, ocp=True)
-mc.select('IKLeg_RShape.cv[0:15]', 'IKLeg_LShape.cv[0:15]'), mc.scale(9.5, 1, 1, ocp=True)
-mc.select('IKLeg_RShape.cv[3:6]', 'IKLeg_RShape.cv[9:12]', 'IKLeg_LShape.cv[0:2]', 'IKLeg_LShape.cv[7:8]', 'IKLeg_LShape.cv[13:15]'), mc.move(0, 0, -7, r=True, os=True, wd=True)
-mc.select('IKLeg_RShape.cv[2]', 'IKLeg_RShape.cv[7]', 'IKLeg_RShape.cv[14:15]', 'IKLeg_LShape.cv[4:5]', 'IKLeg_LShape.cv[9]', 'IKLeg_LShape.cv[12]'), mc.move(0, 0, 9.5, r=True, os=True, wd=True)
-mc.select('IKToes_LShape.cv[0:7]', 'RollToes_LShape.cv[0:15]', 'RollToesEnd_LShape.cv[0:15]', 'RollToesEnd_RShape.cv[0:15]', 'RollToes_RShape.cv[0:15]', 'RollHeel_RShape.cv[0:15]', 'IKToes_RShape.cv[0:7]',
-          'RollHeel_LShape.cv[0:15]'), mc.scale(9.3, 9.3, 9.3, ocp=True), mc.select('RollHeel_LShape.cv[0:15]', 'RollHeel_RShape.cv[0:15]'), mc.move(0, 3.5, -3, r=True, os=True, wd=True)
-mc.select('RollToes_RShape.cv[0:15]', 'RollToes_LShape.cv[0:15]', 'IKToes_LShape.cv[0:7]', 'IKToes_RShape.cv[0:7]'), mc.scale(1.5, 1.5, 1.5, ocp=True), mc.move(0, 2.6, 1.2, r=True, os=True, wd=True)
-mc.select('FKIKLeg_L.cv[0:11]'), mc.scale(2.3, 2.3, 2.3, ocp=True), mc.move(17, 0, 0, r=True, os=True, wd=True), mc.select('FKIKLeg_R.cv[0:11]'), mc.scale(2.3, 2.3, 2.3, ocp=True), mc.move(-17, 0, 0, r=True, os=True, wd=True)
-mc.select('IKArm_LShape.cv[0:15]', 'IKArm_RShape.cv[0:15]', 'IKLocalArm_R.cv[0:4]', 'IKLocalArm_L.cv[0:4]'), mc.scale(8, 8, 8, ocp=True), mc.scale(0.3, 1, 1, ocp=True)
-mc.select('FKKnee_LShape.cv[0:7]', 'FKKnee_RShape.cv[0:7]'), mc.scale(11.5, 11.5, 11.5, ocp=True)
-mc.select('FKAnkle_LShape.cv[0:7]', 'FKAnkle_RShape.cv[0:7]'), mc.scale(12.5, 12.5, 12.5, ocp=True)
-mc.select('FKToes_LShape.cv[0:7]', 'FKToes_RShape.cv[0:7]'), mc.scale(13, 13, 13, ocp=True), mc.move(0, 3, 0, r=True)
-mc.select('FKHip_LShape.cv[0:7]', 'FKHip_RShape.cv[0:7]'), mc.scale(10.3, 10.3, 10.3, ocp=True), mc.rotate(0, -28, 0, ocp=True), mc.move(0, -2.8, 0, r=True)
-mc.select('FKIKSpine_M.cv[0:11]'), mc.scale(2, 2, 2, ocp=True), mc.move(20, 0, 0, r=True, os=True, wd=True)
-mc.select('FKSpine1_MShape.cv[0:7]', 'FKRoot_MShape.cv[0:7]', 'FKChest_MShape.cv[0:7]', 'FKSpine2_MShape.cv[0:7]'), mc.scale(12,12, 12, ocp=True)
-mc.select('HipSwinger_M.cv[0:7]'), mc.rotate(0, 0, 90, ocp=True), mc.move(2.5, 0, 0, r=True), mel.eval("CenterPivot"), mc.scale(30, 30, 30, ocp=True)
-mc.select('RootX_MShape.cv[0:6]', 'RootX_MShape3.cv[0:6]', 'RootX_MShape1.cv[0:6]', 'RootX_MShape2.cv[0:6]'), mc.scale(13, 13, 13, ocp=True)
-mc.select('IKSpine2_MShape.cv[0:7]', 'IKSpine1_MShape.cv[0:15]', 'IKSpine3_MShape.cv[0:15]', 'IKhybridSpine3_MShape.cv[0:15]', 'IKhybridSpine2_MShape.cv[0:15]', 'IKhybridSpine1_MShape.cv[0:15]'), mc.scale(9, 9, 9, ocp=True)
-mc.select('FKIKArm_R.cv[0:11]', 'FKIKArm_L.cv[0:11]'), mc.scale(2, 2, 2, ocp=True), mc.select('FKIKArm_L.cv[0:11]'), mc.move(8.9, 8.2, 0, r=True, os=True, wd=True), mc.select('FKIKArm_R.cv[0:11]'), mc.move(-8.9, 8.2, 0, r=True, os=True, wd=True)
-mc.select('FKNeck_MShape.cv[0:7]'), mc.scale(21.6, 21.6, 21.6, ocp=True), mc.select('FKNeck_MShape.cv[1]', 'FKNeck_MShape.cv[5]'), mc.move(4.1, 0, 0, r=True, os=True, wd=True)
-mc.select('FKHead_MShape.cv[0:7]'), mc.scale(13, 13, 13, r=True, p=(0, 174, -6.1))
+    mc.select('PoleLeg_L.cv[0:7]', 'PoleLeg_R.cv[0:7]', 'PoleArm_R.cv[0:7]', 'PoleArm_L.cv[0:7]'), mc.scale(9, 9, 9, ocp=True)
+    mc.select('IKLeg_RShape.cv[0:15]', 'IKLeg_LShape.cv[0:15]'), mc.scale(9.5, 1, 1, ocp=True)
+    mc.select('IKLeg_RShape.cv[3:6]', 'IKLeg_RShape.cv[9:12]', 'IKLeg_LShape.cv[0:2]', 'IKLeg_LShape.cv[7:8]', 'IKLeg_LShape.cv[13:15]'), mc.move(0, 0, -7, r=True, os=True, wd=True)
+    mc.select('IKLeg_RShape.cv[2]', 'IKLeg_RShape.cv[7]', 'IKLeg_RShape.cv[14:15]', 'IKLeg_LShape.cv[4:5]', 'IKLeg_LShape.cv[9]', 'IKLeg_LShape.cv[12]'), mc.move(0, 0, 9.5, r=True, os=True, wd=True)
+    mc.select('IKToes_LShape.cv[0:7]', 'RollToes_LShape.cv[0:15]', 'RollToesEnd_LShape.cv[0:15]', 'RollToesEnd_RShape.cv[0:15]', 'RollToes_RShape.cv[0:15]', 'RollHeel_RShape.cv[0:15]', 'IKToes_RShape.cv[0:7]',
+              'RollHeel_LShape.cv[0:15]'), mc.scale(9.3, 9.3, 9.3, ocp=True), mc.select('RollHeel_LShape.cv[0:15]', 'RollHeel_RShape.cv[0:15]'), mc.move(0, 3.5, -3, r=True, os=True, wd=True)
+    mc.select('RollToes_RShape.cv[0:15]', 'RollToes_LShape.cv[0:15]', 'IKToes_LShape.cv[0:7]', 'IKToes_RShape.cv[0:7]'), mc.scale(1.5, 1.5, 1.5, ocp=True), mc.move(0, 2.6, 1.2, r=True, os=True, wd=True)
+    mc.select('FKIKLeg_L.cv[0:11]'), mc.scale(2.3, 2.3, 2.3, ocp=True), mc.move(17, 0, 0, r=True, os=True, wd=True), mc.select('FKIKLeg_R.cv[0:11]'), mc.scale(2.3, 2.3, 2.3, ocp=True), mc.move(-17, 0, 0, r=True, os=True, wd=True)
+    mc.select('IKArm_LShape.cv[0:15]', 'IKArm_RShape.cv[0:15]', 'IKLocalArm_R.cv[0:4]', 'IKLocalArm_L.cv[0:4]'), mc.scale(8, 8, 8, ocp=True), mc.scale(0.3, 1, 1, ocp=True)
+    mc.select('FKKnee_LShape.cv[0:7]', 'FKKnee_RShape.cv[0:7]'), mc.scale(11.5, 11.5, 11.5, ocp=True)
+    mc.select('FKAnkle_LShape.cv[0:7]', 'FKAnkle_RShape.cv[0:7]'), mc.scale(12.5, 12.5, 12.5, ocp=True)
+    mc.select('FKToes_LShape.cv[0:7]', 'FKToes_RShape.cv[0:7]'), mc.scale(13, 13, 13, ocp=True), mc.move(0, 3, 0, r=True)
+    mc.select('FKHip_LShape.cv[0:7]', 'FKHip_RShape.cv[0:7]'), mc.scale(10.3, 10.3, 10.3, ocp=True), mc.rotate(0, -28, 0, ocp=True), mc.move(0, -2.8, 0, r=True)
+    mc.select('FKIKSpine_M.cv[0:11]'), mc.scale(2, 2, 2, ocp=True), mc.move(20, 0, 0, r=True, os=True, wd=True)
+    mc.select('FKSpine1_MShape.cv[0:7]', 'FKRoot_MShape.cv[0:7]', 'FKChest_MShape.cv[0:7]', 'FKSpine2_MShape.cv[0:7]'), mc.scale(12,12, 12, ocp=True)
+    mc.select('HipSwinger_M.cv[0:7]'), mc.rotate(0, 0, 90, ocp=True), mc.move(2.5, 0, 0, r=True), mel.eval("CenterPivot"), mc.scale(30, 30, 30, ocp=True)
+    mc.select('RootX_MShape.cv[0:6]', 'RootX_MShape3.cv[0:6]', 'RootX_MShape1.cv[0:6]', 'RootX_MShape2.cv[0:6]'), mc.scale(13, 13, 13, ocp=True)
+    mc.select('IKSpine2_MShape.cv[0:7]', 'IKSpine1_MShape.cv[0:15]', 'IKSpine3_MShape.cv[0:15]', 'IKhybridSpine3_MShape.cv[0:15]', 'IKhybridSpine2_MShape.cv[0:15]', 'IKhybridSpine1_MShape.cv[0:15]'), mc.scale(9, 9, 9, ocp=True)
+    mc.select('FKIKArm_R.cv[0:11]', 'FKIKArm_L.cv[0:11]'), mc.scale(2, 2, 2, ocp=True), mc.select('FKIKArm_L.cv[0:11]'), mc.move(8.9, 8.2, 0, r=True, os=True, wd=True), mc.select('FKIKArm_R.cv[0:11]'), mc.move(-8.9, 8.2, 0, r=True, os=True, wd=True)
+    mc.select('FKNeck_MShape.cv[0:7]'), mc.scale(21.6, 21.6, 21.6, ocp=True), mc.select('FKNeck_MShape.cv[1]', 'FKNeck_MShape.cv[5]'), mc.move(4.1, 0, 0, r=True, os=True, wd=True)
+    mc.select('FKHead_MShape.cv[0:7]'), mc.scale(13, 13, 13, r=True, p=(0, 174, -6.1))
+    mc.select('FKScapula_LShape.cv[0:20]'), mc.scale(12.5, 12.5, 12.5, ocp=True), mc.move(-8.5, 0, 0, r=True, os=True, wd=True), mc.scale(0.3, 1, 1, r=True, p=(10.5, 115.9, -8.8))
+    mc.select('FKScapula_RShape.cv[0:20]'), mc.scale(12.5, 12.5, 12.5, ocp=True), mc.move(8.5, 0, 0, r=True, os=True, wd=True), mc.scale(0.3, 1, 1, r=True, p=(-10.5, 115.9, 8.8))
+    mc.select('FKShoulder1_RShape.cv[0:7]', 'FKShoulder1_LShape.cv[0:7]'), mc.scale(10, 10, 10, ocp=True)
+    mc.select('FKElbow_LShape.cv[0:7]', 'FKElbow_RShape.cv[0:7]'), mc.scale(7, 7, 7, ocp=True)
+    mc.select('FKWrist_RShape.cv[0:7]', 'FKWrist_LShape.cv[0:7]'), mc.scale(7, 7, 7, ocp=True)
+    mc.select('FKIndexFinger3_RShape.cv[0:7]', 'FKPinkyFinger1_RShape.cv[0:7]', 'FKIndexFinger3_LShape.cv[0:7]', 'FKPinkyFinger1_LShape.cv[0:7]', 'FKMiddleFinger2_RShape.cv[0:7]',
+              'FKThumbFinger1_LShape.cv[0:7]', 'FKRingFinger2_LShape.cv[0:7]', 'FKIndexFinger2_LShape.cv[0:7]', 'FKIndexFinger2_RShape.cv[0:7]', 'FKThumbFinger2_LShape.cv[0:7]',
+              'FKRingFinger3_RShape.cv[0:7]', 'FKThumbFinger3_RShape.cv[0:7]', 'FKCup_LShape.cv[0:7]', 'FKRingFinger2_RShape.cv[0:7]', 'FKPinkyFinger3_RShape.cv[0:7]', 'FKIndexFinger1_RShape.cv[0:7]',
+              'FKMiddleFinger2_LShape.cv[0:7]', 'FKPinkyFinger3_LShape.cv[0:7]', 'FKMiddleFinger3_RShape.cv[0:7]', 'FKThumbFinger1_RShape.cv[0:7]', 'FKRingFinger1_RShape.cv[0:7]', 'FKPinkyFinger2_RShape.cv[0:7]',
+              'FKPinkyFinger2_LShape.cv[0:7]', 'FKThumbFinger2_RShape.cv[0:7]', 'FKIndexFinger1_LShape.cv[0:7]', 'FKThumbFinger3_LShape.cv[0:7]', 'FKCup_RShape.cv[0:7]', 'FKMiddleFinger1_LShape.cv[0:7]',
+              'FKRingFinger1_LShape.cv[0:7]', 'FKMiddleFinger3_LShape.cv[0:7]', 'FKRingFinger3_LShape.cv[0:7]', 'FKMiddleFinger1_RShape.cv[0:7]'), mc.scale(8, 8, 8, ocp=True)
+    mc.select('FKCup_RShape.cv[0:7]', 'FKCup_LShape.cv[0:7]'), mc.scale(3, 3, 3, ocp=True)
+
+    mc.select(d=True)
+
+    ########################################################################################################################################################################################
+    ################################################################################################### control colors
+
+    AS_leftCtrl_list = ['FKScapula_LShape','FKAnkle_LShape', 'FKElbow_LShape', 'FKHip_LShape', 'FKIndexFinger1_LShape', 'FKIndexFinger2_LShape', 'FKIndexFinger3_LShape', 'FKKnee_LShape', 'FKMiddleFinger1_LShape',
+                        'FKMiddleFinger3_LShape', 'FKPinkyFinger1_LShape', 'FKPinkyFinger2_LShape', 'FKPinkyFinger3_LShape', 'FKRingFinger1_LShape', 'FKRingFinger2_LShape', 'FKRingFinger3_LShape', 'FKShoulder1_LShape',
+                        'FKThumbFinger2_LShape', 'FKThumbFinger3_LShape', 'FKToes_LShape', 'FKWrist_LShape', 'IKArm_LShape', 'curveShape16', 'PoleArm_LShape', 'IKLeg_LShape', 'RollHeel_LShape', 'RollToesEnd_LShape',
+                        'RollToes_LShape', 'Fingers_LShape', 'PoleLeg_LShape', 'FKCup_LShape', 'FKMiddleFinger2_LShape', 'FKThumbFinger1_LShape', 'IKToes_LShape']
+    for AS_lCtrls in AS_leftCtrl_list:
+        itemColor(AS_lCtrls, 6)
+
+    AS_rightCtrl_list = ['FKScapula_RShape','FKAnkle_RShape', 'FKElbow_RShape', 'FKHip_RShape', 'FKIndexFinger1_RShape', 'FKIndexFinger2_RShape', 'FKIndexFinger3_RShape', 'FKKnee_RShape', 'FKMiddleFinger1_RShape',
+                        'FKMiddleFinger3_RShape', 'FKPinkyFinger1_RShape', 'FKPinkyFinger2_RShape', 'FKPinkyFinger3_RShape', 'FKRingFinger1_RShape', 'FKRingFinger2_RShape', 'FKRingFinger3_RShape', 'FKShoulder1_RShape',
+                        'FKThumbFinger2_RShape', 'FKThumbFinger3_RShape', 'FKToes_RShape', 'FKWrist_RShape', 'IKArm_RShape', 'curveShape16', 'PoleArm_RShape', 'IKLeg_RShape', 'RollHeel_RShape', 'RollToesEnd_RShape',
+                        'RollToes_RShape', 'Fingers_RShape', 'PoleLeg_RShape', 'FKCup_RShape', 'FKMiddleFinger2_RShape', 'FKThumbFinger1_RShape', 'IKToes_RShape']
+    for AS_rCtrls in AS_rightCtrl_list:
+        itemColor(AS_rCtrls, 13)
+
 
 ######################################################################################################################################
 ########################                                                            ##################################################
@@ -542,19 +574,19 @@ def templeteFacialButton(*args):
     mc.setAttr('LipUp_loc.displayLocalAxis', 1)
 
     LeftLipUp1 = mc.spaceLocator(n = 'LeftLipUp1_loc')
-    LeftLipUp1Space = mc.group(LeftLipUp1, n = 'LeftLipUp1_locSpace'),  mc.move(1.429, 172.891, 14.388)
+    LeftLipUp1Space = mc.group(LeftLipUp1, n = 'LeftLipUp1_locSpace'),  mc.move(1.429, 172.891, 14.388), mc.rotate(0, 20, 0)
     mc.setAttr('LeftLipUp1_loc.displayLocalAxis', 1)
 
     LeftLipUp2 = mc.spaceLocator(n = 'LeftLipUp2_loc')
-    LeftLipUp2Space = mc.group(LeftLipUp2, n = 'LeftLipUp2_locSpace'),  mc.move(2.504, 172.793, 13.454)
+    LeftLipUp2Space = mc.group(LeftLipUp2, n = 'LeftLipUp2_locSpace'),  mc.move(2.504, 172.793, 13.454), mc.rotate(0, 27, 0)
     mc.setAttr('LeftLipUp2_loc.displayLocalAxis', 1)
 
     LeftLipDn2 = mc.spaceLocator(n = 'LeftLipDn2_loc')
-    LeftLipDn2Space = mc.group(LeftLipDn2, n = 'LeftLipDn2_locSpace'),  mc.move(2.504, 172.618, 13.454)
+    LeftLipDn2Space = mc.group(LeftLipDn2, n = 'LeftLipDn2_locSpace'),  mc.move(2.504, 172.618, 13.454), mc.rotate(0, 27, 0)
     mc.setAttr('LeftLipDn2_loc.displayLocalAxis', 1)
 
     LeftLipDn1 = mc.spaceLocator(n = 'LeftLipDn1_loc')
-    LeftLipDn1Space = mc.group(LeftLipDn1, n = 'LeftLipDn1_locSpace'),  mc.move(1.388, 172.524, 14.219)
+    LeftLipDn1Space = mc.group(LeftLipDn1, n = 'LeftLipDn1_locSpace'),  mc.move(1.388, 172.524, 14.219), mc.rotate(0, 20, 0)
     mc.setAttr('LeftLipDn1_loc.displayLocalAxis', 1)
 
     LipDn = mc.spaceLocator(n = 'LipDn_loc')
@@ -566,11 +598,11 @@ def templeteFacialButton(*args):
     mc.setAttr('LipDnOut_loc.displayLocalAxis', 1)
 
     LeftLipDn1Out = mc.spaceLocator(n = 'LeftLipDn1Out_loc')
-    LeftLipDn1OutSpace = mc.group(LeftLipDn1Out, n = 'LeftLipDn1Out_locSpace'),  mc.move(1.388, 172.023, 14.219)
+    LeftLipDn1OutSpace = mc.group(LeftLipDn1Out, n = 'LeftLipDn1Out_locSpace'),  mc.move(1.388, 172.023, 14.219), mc.rotate(0, 20, 0)
     mc.setAttr('LeftLipDn1Out_loc.displayLocalAxis', 1)
 
     LeftLipUp1Out = mc.spaceLocator(n = 'LeftLipUp1Out_loc')
-    LeftLipUp1OutSpace = mc.group(LeftLipUp1Out, n = 'LeftLipUp1Out_locSpace'),  mc.move(1.429, 173.365, 14.388)
+    LeftLipUp1OutSpace = mc.group(LeftLipUp1Out, n = 'LeftLipUp1Out_locSpace'),  mc.move(1.429, 173.365, 14.388),  mc.rotate(0, 20, 0)
     mc.setAttr('LeftLipUp1Out_loc.displayLocalAxis', 1)
 
     LipUpOut = mc.spaceLocator(n = 'LipUpOut_loc')
@@ -592,27 +624,27 @@ def templeteFacialButton(*args):
     mc.setAttr('LeftEyeLidDn_loc.displayLocalAxis', 1)
 
     LeftEyeLidOut = mc.spaceLocator(n = 'LeftEyeLidOut_loc')
-    LeftEyeLidOutSpace = mc.group(LeftEyeLidOut, n = 'LeftEyeLidOut_locSpace'),  mc.move(4.702, 180.467, 12.369)
+    LeftEyeLidOutSpace = mc.group(LeftEyeLidOut, n = 'LeftEyeLidOut_locSpace'),  mc.move(4.702, 180.467, 12.369), mc.rotate(0, 11, 0)
     mc.setAttr('LeftEyeLidOut_loc.displayLocalAxis', 1)
 
     LeftEyeLidIn = mc.spaceLocator(n = 'LeftEyeLidIn_loc')
-    LeftEyeLidInSpace = mc.group(LeftEyeLidIn, n = 'LeftEyeLidIn_locSpace'),  mc.move(1.621, 180.129, 12.482)
+    LeftEyeLidInSpace = mc.group(LeftEyeLidIn, n = 'LeftEyeLidIn_locSpace'),  mc.move(1.621, 180.129, 12.482),  mc.rotate(0, -11, 0)
     mc.setAttr('LeftEyeLidIn_loc.displayLocalAxis', 1)
 
     LeftEyeLidUpOut = mc.spaceLocator(n = 'LeftEyeLidUpOut_loc')
-    LeftEyeLidUpOutSpace = mc.group(LeftEyeLidUpOut, n = 'LeftEyeLidUpOut_locSpace'),  mc.move(4.185, 180.842, 13.158)
+    LeftEyeLidUpOutSpace = mc.group(LeftEyeLidUpOut, n = 'LeftEyeLidUpOut_locSpace'),  mc.move(4.185, 180.842, 13.158),  mc.rotate(0, 11, 0)
     mc.setAttr('LeftEyeLidUpOut_loc.displayLocalAxis', 1)
 
     LeftEyeLidUpIn = mc.spaceLocator(n = 'LeftEyeLidUpIn_loc')
-    LeftEyeLidUpInSpace = mc.group(LeftEyeLidUpIn, n = 'LeftEyeLidUpIn_locSpace'),  mc.move(2.36, 180.665, 12.937)
+    LeftEyeLidUpInSpace = mc.group(LeftEyeLidUpIn, n = 'LeftEyeLidUpIn_locSpace'),  mc.move(2.36, 180.665, 12.937),  mc.rotate(0, -11, 0)
     mc.setAttr('LeftEyeLidUpIn_loc.displayLocalAxis', 1)
 
     LeftEyeLidDnIn = mc.spaceLocator(n = 'LeftEyeLidDnIn_loc')
-    LeftEyeLidDnInSpace = mc.group(LeftEyeLidDnIn, n = 'LeftEyeLidDnIn_locSpace'),  mc.move(2.411, 179.994, 13.011)
+    LeftEyeLidDnInSpace = mc.group(LeftEyeLidDnIn, n = 'LeftEyeLidDnIn_locSpace'),  mc.move(2.411, 179.994, 13.011),  mc.rotate(0, -11, 0)
     mc.setAttr('LeftEyeLidDnIn_loc.displayLocalAxis', 1)
 
     LeftEyeLidDnOut = mc.spaceLocator(n = 'LeftEyeLidDnOut_loc')
-    LeftEyeLidDnOutSpace = mc.group(LeftEyeLidDnOut, n = 'LeftEyeLidDnOut_locSpace'),  mc.move(4.341, 179.994, 12.872)
+    LeftEyeLidDnOutSpace = mc.group(LeftEyeLidDnOut, n = 'LeftEyeLidDnOut_locSpace'),  mc.move(4.341, 179.994, 12.872),  mc.rotate(0, 11, 0)
     mc.setAttr('LeftEyeLidDnOut_loc.displayLocalAxis', 1)
 
     ############################################################# cheeks
@@ -622,29 +654,29 @@ def templeteFacialButton(*args):
     mc.setAttr('LeftCheekBoneFront_loc.displayLocalAxis', 1)
 
     LeftCheekbone = mc.spaceLocator(n = 'LeftCheekbone_loc')
-    LeftCheekboneSpace = mc.group(LeftCheekbone, n = 'LeftCheekbone_locSpace'),  mc.move(5.87, 178.305, 11.614)
+    LeftCheekboneSpace = mc.group(LeftCheekbone, n = 'LeftCheekbone_locSpace'),  mc.move(5.87, 178.305, 11.614),  mc.rotate(0, 70, 0)
     mc.setAttr('LeftCheekbone_loc.displayLocalAxis', 1)
 
     LeftCheekboneDn = mc.spaceLocator(n = 'LeftCheekboneDn_loc')
-    LeftCheekboneDnSpace = mc.group(LeftCheekboneDn, n = 'LeftCheekboneDn_locSpace'),  mc.move(4.117, 175.307, 13.178)
+    LeftCheekboneDnSpace = mc.group(LeftCheekboneDn, n = 'LeftCheekboneDn_locSpace'),  mc.move(4.117, 175.307, 13.178),  mc.rotate(0, 50, 0)
     mc.setAttr('LeftCheekboneDn_loc.displayLocalAxis', 1)
 
     LeftCheekDn = mc.spaceLocator(n = 'LeftCheekDn_loc')
-    LeftCheekDnSpace = mc.group(LeftCheekDn, n = 'LeftCheekDn_locSpace'),  mc.move(5.025, 173.304, 12.2)
+    LeftCheekDnSpace = mc.group(LeftCheekDn, n = 'LeftCheekDn_locSpace'),  mc.move(5.025, 173.304, 12.2),  mc.rotate(0, 60, 0)
     mc.setAttr('LeftCheekDn_loc.displayLocalAxis', 1)
 
     LeftCheekUp = mc.spaceLocator(n = 'LeftCheekUp_loc')
-    LeftCheekUpSpace = mc.group(LeftCheekUp, n = 'LeftCheekUp_locSpace'),  mc.move(7.436, 175.181, 8.273)
+    LeftCheekUpSpace = mc.group(LeftCheekUp, n = 'LeftCheekUp_locSpace'),  mc.move(7.436, 175.181, 8.273),  mc.rotate(0, 90, 0)
     mc.setAttr('LeftCheekUp_loc.displayLocalAxis', 1)
 
     ############################################################## ear
 
     LeftLobe = mc.spaceLocator(n = 'LeftLobe_loc')
-    LeftLobeSpace = mc.group(LeftLobe, n = 'LeftLobe_locSpace'),  mc.move(8.994, 175.103, 3.667)
+    LeftLobeSpace = mc.group(LeftLobe, n = 'LeftLobe_locSpace'),  mc.move(8.994, 175.103, 3.667), mc.rotate(0, 75, 0)
     mc.setAttr('LeftLobe_loc.displayLocalAxis', 1)
 
     LeftEarUp = mc.spaceLocator(n = 'LeftEarUp_loc')
-    LeftEarUpSpace = mc.group(LeftEarUp, n = 'LeftEarUp_locSpace'),  mc.move(10.191, 181.143, 1.767)
+    LeftEarUpSpace = mc.group(LeftEarUp, n = 'LeftEarUp_locSpace'),  mc.move(10.191, 181.143, 1.767), mc.rotate(0, 75, 0)
     mc.setAttr('LeftEarUp_loc.displayLocalAxis', 1)
 
     LeftEar = mc.spaceLocator(n = 'LeftEar_loc')
@@ -654,31 +686,31 @@ def templeteFacialButton(*args):
     ########################################################## leftSide
 
     LeftUpperHead = mc.spaceLocator(n = 'LeftUpperHead_loc')
-    LeftUpperHeadSpace = mc.group(LeftUpperHead, n = 'LeftUpperHead_locSpace'),  mc.move(8.513, 182.356, 3.069)
+    LeftUpperHeadSpace = mc.group(LeftUpperHead, n = 'LeftUpperHead_locSpace'), mc.move(8.513, 182.356, 3.069)
     mc.setAttr('LeftUpperHead_loc.displayLocalAxis', 1)
 
     LeftOcularDn = mc.spaceLocator(n = 'LeftOcularDn_loc')
-    LeftOcularDnSpace = mc.group(LeftOcularDn, n = 'LeftOcularDn_locSpace'),  mc.move(1.872, 179.575, 12.677)
+    LeftOcularDnSpace = mc.group(LeftOcularDn, n = 'LeftOcularDn_locSpace'), mc.move(1.872, 178.846, 13.159)
     mc.setAttr('LeftOcularDn_loc.displayLocalAxis', 1)
 
     LeftMaxilarDn = mc.spaceLocator(n = 'LeftMaxilarDn_loc')
-    LeftMaxilarDnSpace = mc.group(LeftMaxilarDn, n = 'LeftMaxilarDn_locSpace'),  mc.move(4.697, 169.6, 10.449)
+    LeftMaxilarDnSpace = mc.group(LeftMaxilarDn, n = 'LeftMaxilarDn_locSpace'),  mc.move(4.697, 169.6, 10.449), mc.rotate(0, 70, 0)
     mc.setAttr('LeftMaxilarDn_loc.displayLocalAxis', 1)
 
     LeftMaxilarUp = mc.spaceLocator(n = 'LeftMaxilarUp_loc')
-    LeftMaxilarUpSpace = mc.group(LeftMaxilarUp, n = 'LeftMaxilarUp_locSpace'),  mc.move(7.811, 173.91, 5.038)
+    LeftMaxilarUpSpace = mc.group(LeftMaxilarUp, n = 'LeftMaxilarUp_locSpace'),  mc.move(7.811, 173.91, 5.038), mc.rotate(0, 90, 0)
     mc.setAttr('LeftMaxilarUp_loc.displayLocalAxis', 1)
 
     LeftMaxilarNeck = mc.spaceLocator(n = 'LeftMaxilarNeck_loc')
-    LeftMaxilarNeckSpace = mc.group(n = 'LeftMaxilarNeck_locSpace'), mc.move(5.131, 165.262, 7.070)
+    LeftMaxilarNeckSpace = mc.group(n = 'LeftMaxilarNeck_locSpace'), mc.move(5.131, 165.262, 7.070), mc.rotate(0, 90, 0)
     mc.setAttr('LeftMaxilarNeck_loc.displayLocalAxis', 1)
 
     LeftMaxilarHead = mc.spaceLocator(n = 'LeftMaxilarHead_loc')
-    LeftMaxilarHeadSpace = mc.group(n = 'LeftMaxilarHead_locSpace'), mc.move(8.614, 178.088, 6.880)
+    LeftMaxilarHeadSpace = mc.group(n = 'LeftMaxilarHead_locSpace'), mc.move(8.614, 178.088, 6.880), mc.rotate(0, 90, 0)
     mc.setAttr('LeftMaxilarHead_loc.displayLocalAxis', 1)
 
     LeftTemples = mc.spaceLocator(n = 'LeftTemples_loc')
-    LeftTemplesSpace = mc.group(n = 'LeftTemples_locSpace'), mc.move(8.614, 182.256, 8.526)
+    LeftTemplesSpace = mc.group(n = 'LeftTemples_locSpace'), mc.move(8.614, 182.256, 8.526), mc.rotate(0, 90, 0)
     mc.setAttr('LeftTemples_loc.displayLocalAxis', 1)
 
     leftSide = mc.spaceLocator(n = 'LeftSide_loc')
@@ -702,7 +734,7 @@ def templeteFacialButton(*args):
     ####################################################### nose
 
     LeftNasalUp = mc.spaceLocator(n = 'LeftNasalUp_loc')
-    LeftNasalUpSpace = mc.group(LeftNasalUp, n = 'LeftNasalUp_locSpace'),  mc.move(1.643, 178.22, 13.578)
+    LeftNasalUpSpace = mc.group(LeftNasalUp, n = 'LeftNasalUp_locSpace'),  mc.move(1.643, 178.22, 13.578), mc.rotate(-12.698, 32.438, -15.888)
     mc.setAttr('LeftNasalUp_loc.displayLocalAxis', 1)
 
     LeftNostril = mc.spaceLocator(n = 'LeftNostril_loc')
@@ -740,15 +772,15 @@ def templeteFacialButton(*args):
     ############################################### master mirror
 
     LeftMaxilarMaster = mc.spaceLocator(n= 'LeftMaxilarMaster')
-    LeftMaxilarMasterSpace = mc.group(LeftMaxilarMaster, n= 'LeftMaxilarMasterSpace'), mc.move(6.254, 171.755, 7.744)
+    LeftMaxilarMasterSpace = mc.group(LeftMaxilarMaster, n= 'LeftMaxilarMasterSpace'), mc.move(6.254, 171.755, 7.744), mc.rotate(0, 80, 0)
     mc.setAttr('LeftMaxilarMaster.displayLocalAxis', 1)
 
     LeftMaxilarDn_Master = mc.spaceLocator(n= 'LeftMaxilarDn_Master')
-    LeftMaxilarDn_MasterSpace = mc.group(LeftMaxilarDn_Master, n= 'LeftMaxilarDn_MasterSpace'), mc.move(8.185, 171.755, 7.744)
+    LeftMaxilarDn_MasterSpace = mc.group(LeftMaxilarDn_Master, n= 'LeftMaxilarDn_MasterSpace'), mc.move(8.185, 171.755, 7.744), mc.rotate(0, 80, 0)
     mc.setAttr('LeftMaxilarDn_Master.displayLocalAxis', 1)
 
     LeftTempleMaster = mc.spaceLocator(n= 'LeftTempleMaster')
-    LeftTempleMasterSpace = mc.group(LeftTempleMaster, n= 'LeftTempleMasterSpace'), mc.move(8.614, 180.172, 7.703)
+    LeftTempleMasterSpace = mc.group(LeftTempleMaster, n= 'LeftTempleMasterSpace'), mc.move(8.614, 180.172, 7.703), mc.rotate(0, 90, 0)
     mc.setAttr('LeftTempleMaster.displayLocalAxis', 1)
 
     LeftNoseMaster = mc.spaceLocator(n= 'LeftNoseMaster')
@@ -1319,7 +1351,7 @@ def facialRigButton(*args):
                                'NoseDn_ctrlMasterSpace', 'LipDn_ctrlMasterSpace', 'LipUp_ctrlMasterSpace', 'LipUpOut_ctrlMasterSpace', 'LipDnOut_ctrlMasterSpace', 'JawDn_ctrlMasterSpace', 'NoseUp_ctrlMasterSpace', n= 'CenterMasterCtrl_GRP')
 
     ############################# parent facial master control
-    facialMasterCtrl_GRP = mc.group(leftMasterGRP, centerMasterGRP, rightMasterGRP, mouthPivots, 'jawMain_lipSupport_locSpace', 'headMain_lipSupport_locSpace', n= 'FacialMasterCtrl_GRP')
+    facialMasterCtrl_GRP = mc.group(leftMasterGRP, centerMasterGRP, rightMasterGRP, 'mouthPivot', 'jawMain_lipSupport_locSpace', 'headMain_lipSupport_locSpace', n= 'FacialMasterCtrl_GRP')
     mc.parent(facialMasterCtrl_GRP, 'MotionSystem')
     mc.parentConstraint('Head_M', facialMasterCtrl_GRP, mo=True)
 
@@ -1506,11 +1538,26 @@ def facialRigButton(*args):
     mc.select('curveShape28.cv[0:11]'), mc.move(0, 0, 3.5, r=True, os=True, wd=True)
     mc.select('curveShape42.cv[0:11]'), mc.scale(0, 0, 0.5, ocp=True)
     mc.select('curveShape31.cv[0:11]'), mc.move(1.1, 0, 0, r=True, os=True, wd=True)
-    mc.select('curveShape55.cv[0:11]'), mc.scale(3, 3, 3, ocp=True), mc.move(5, 0, 0, r=True, os=True, wd=True)
+    mc.select('curveShape55.cv[0:11]'), mc.scale(3, 3, 3, ocp=True), mc.move(0, 0, 5, r=True, os=True, wd=True)
     mc.select('curveShape51.cv[0:11]'), mc.scale(1.7, 1.7, 1.7, ocp=True), mc.move(6, 0, 0, r=True, os=True, wd=True)
 
+    mc.select(d=True)
 
-########################################### windows
+######################################################################################################################################
+########################                                                            ##################################################
+########################                            Delete animLayer                ##################################################
+######################################################################################################################################
+
+def deleteAnimLy(*args):
+
+    mc.select('BaseAnimation')
+    mel.eval("delete")
+
+######################################################################################################################################
+########################                                                            ##################################################
+########################                            Window                          ##################################################
+########################                                                            ##################################################
+######################################################################################################################################
 mc.window(t= 'AGS - Tools', iconName= 'FacialRigTool', w= 300)
 mc.columnLayout(adj= True)
 mc.text(l='Need import - armsLegs_ch -')
@@ -1520,4 +1567,8 @@ mc.separator()
 mc.text(l='Need - jaw / head bone -')
 mc.button(l= '02 - FaceTemplete', command= templeteFacialButton)
 mc.button(l= '03 - FaceFacialRig', command= facialRigButton)
+mc.separator()
+mc.text(l='Delete animLayer')
+mc.button(l='Delete animLayer', command=deleteAnimLy)
+
 mc.showWindow()

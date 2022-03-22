@@ -1344,7 +1344,7 @@ def arm_fingers_IK_transform(*args):
 
 
 
-'''
+
 
 arm_fingers_l_jnt_list = ['clavicle_l', 'upperarm_l', 'lowerarm_l', 'hand_l', 'pinky_00_l', 'pinky_01_l', 'pinky_02_l', 'pinky_03_l', 'ring_00_l', 'ring_01_l',
                           'ring_02_l', 'ring_03_l', 'index_00_l', 'index_01_l', 'index_02_l', 'index_03_l', 'middle_00_l', 'middle_01_l', 'middle_02_l', 'middle_03_l',
@@ -1783,22 +1783,22 @@ mc.scale(0.156885, 0.156885, 0.156885, ocp=True), mc.select(d=True)
 
 ### fingers setup - Point / PV constraint
 
-pinkiesIK_ctrl_list = ['pinky_l_ik_ctrl', 'ring_l_ik_ctrl', 'middle_l_ik_ctrl', 'index_l_ik_ctrl', 'thumb_l_ik_ctrl', 'pinky_r_ik_ctrl', 'ring_r_ik_ctrl', 'middle_r_ik_ctrl', 'index_r_ik_ctrl', 'thumb_r_ik_ctrl']
-pinkiesIK_handles_list = ['pinky_l_ik', 'ring_l_ik', 'middle_l_ik', 'index_l_ik', 'thumb_l_ik', 'pinky_r_ik', 'ring_r_ik', 'middle_r_ik', 'index_r_ik', 'thumb_r_ik']
+fingersIK_ctrl_list = ['pinky_l_ik_ctrl', 'ring_l_ik_ctrl', 'middle_l_ik_ctrl', 'index_l_ik_ctrl', 'thumb_l_ik_ctrl', 'pinky_r_ik_ctrl', 'ring_r_ik_ctrl', 'middle_r_ik_ctrl', 'index_r_ik_ctrl', 'thumb_r_ik_ctrl']
+fingersIK_handles_list = ['pinky_l_ik', 'ring_l_ik', 'middle_l_ik', 'index_l_ik', 'thumb_l_ik', 'pinky_r_ik', 'ring_r_ik', 'middle_r_ik', 'index_r_ik', 'thumb_r_ik']
 
-for i, item in enumerate(pinkiesIK_ctrl_list):
-    mc.pointConstraint(item, pinkiesIK_handles_list[i])
+for i, item in enumerate(fingersIK_ctrl_list):
+    mc.pointConstraint(item, fingersIK_handles_list[i])
 
 fingers_PV_ctrl_list = ['pinky_l_PV_ctrl', 'ring_l_PV_ctrl', 'middle_l_PV_ctrl', 'index_l_PV_ctrl', 'thumb_l_PV_ctrl', 'pinky_r_PV_ctrl', 'ring_r_PV_ctrl', 'middle_r_PV_ctrl', 'index_r_PV_ctrl', 'thumb_r_PV_ctrl']
 
 for i, item in enumerate(fingers_PV_ctrl_list):
-    mc.poleVectorConstraint(item, pinkiesIK_handles_list[i])
+    mc.poleVectorConstraint(item, fingersIK_handles_list[i])
 
 mc.delete('pinky_l_ik_locSpace', 'ring_l_ik_locSpace', 'middle_l_ik_locSpace', 'index_l_ik_locSpace', 'thumb_l_ik_locSpace', 'pinky_l_ik_locSpace1', 'ring_l_ik_locSpace1', 'middle_l_ik_locSpace1',
           'index_l_ik_locSpace1', 'thumb_l_ik_locSpace1')
 
 ### finger IK lock scale attrs
-for finIK_ctrl in pinkiesIK_ctrl_list:
+for finIK_ctrl in fingersIK_ctrl_list:
     mc.setAttr(finIK_ctrl + '.sx', l=True, k=False, ch=False)
     mc.setAttr(finIK_ctrl + '.sy', l=True, k=False, ch=False)
     mc.setAttr(finIK_ctrl + '.sz', l=True, k=False, ch=False)
@@ -1808,7 +1808,7 @@ for finIK_ctrl in pinkiesIK_ctrl_list:
 
 finger03_ik_list = ['pinky_03_l_ik', 'ring_03_l_ik', 'middle_03_l_ik', 'index_03_l_ik', 'thumb_03_l_ik', 'pinky_03_r_ik', 'ring_03_r_ik', 'middle_03_r_ik', 'index_03_r_ik', 'thumb_03_r_ik']
 
-for i, item in enumerate(pinkiesIK_ctrl_list):
+for i, item in enumerate(fingersIK_ctrl_list):
     pm.orientConstraint(item, finger03_ik_list[i])
 
 ###################################################### control colors and cleanup
@@ -1838,10 +1838,6 @@ leftIKFinger_ctrlMaster_list = ['pinky_00_l_ik_ctrlSpaceMaster', 'ring_00_l_ik_c
 left_fingerIK_ctrl_grp = mc.group(em=True, n= 'left_finger_ik_ctrl_grp')
 mc.parent(leftIKFinger_ctrlMaster_list, left_fingerIK_ctrl_grp)
 
-### parent ik / PV fionger to phalange 00 -> just for presentation -> need think the best rig via
-mc.parent('pinky_l_ik_ctrlSpaceMaster', 'pinky_l_PV_ctrlSpaceMaster', 'pinky_00_l_ik_ctrl'), mc.parent('ring_l_ik_ctrlSpaceMaster', 'ring_l_PV_ctrlSpaceMaster', 'ring_00_l_ik_ctrl')
-mc.parent('middle_l_ik_ctrlSpaceMaster', 'middle_l_PV_ctrlSpaceMaster', 'middle_00_l_ik_ctrl'), mc.parent('index_l_ik_ctrlSpaceMaster', 'index_l_PV_ctrlSpaceMaster', 'index_00_l_ik_ctrl'), mc.select(d=True)
-
 ### right ik controls
 rightIKFinger_ctrlMaster_list = ['pinky_00_r_ik_ctrlSpaceMaster', 'ring_00_r_ik_ctrlSpaceMaster', 'middle_00_r_ik_ctrlSpaceMaster', 'index_00_r_ik_ctrlSpaceMaster', 'pinky_00_r_ik_ctrlSpaceMaster',
                                 'pinky_r_ik_ctrlSpaceMaster', 'ring_r_ik_ctrlSpaceMaster', 'middle_r_ik_ctrlSpaceMaster', 'index_r_ik_ctrlSpaceMaster', 'thumb_r_ik_ctrlSpaceMaster',
@@ -1851,9 +1847,24 @@ mc.parent(rightIKFinger_ctrlMaster_list, right_fingerIK_ctrl_grp), mc.select(d=T
 
 mc.parent(left_fingerIK_ctrl_grp, 'hand_l_ik_gimbal_ctrl'), mc.parent(right_fingerIK_ctrl_grp, 'hand_r_ik_gimbal_ctrl'), mc.select(d=True)
 
-### parent ik / PV fionger to phalange 00 -> just for presentation -> need think the best rig via
-mc.parent('pinky_r_ik_ctrlSpaceMaster', 'pinky_r_PV_ctrlSpaceMaster', 'pinky_00_r_ik_ctrl'), mc.parent('ring_r_ik_ctrlSpaceMaster', 'ring_r_PV_ctrlSpaceMaster', 'ring_00_r_ik_ctrl')
-mc.parent('middle_r_ik_ctrlSpaceMaster', 'middle_r_PV_ctrlSpaceMaster', 'middle_00_r_ik_ctrl'), mc.parent('index_r_ik_ctrlSpaceMaster', 'index_r_PV_ctrlSpaceMaster', 'index_00_r_ik_ctrl'), mc.select(d=True)
+### fingers switch to body and world
+mc.addAttr('pinky_l_ik_ctrl', ln='switch', at='double', minValue=0, maxValue=1, keyable=True), mc.addAttr('index_l_ik_ctrl', ln='switch', at='double', minValue=0, maxValue=1, keyable=True)
+mc.addAttr('middle_l_ik_ctrl', ln='switch', at='double', minValue=0, maxValue=1, keyable=True), mc.addAttr('ring_l_ik_ctrl', ln='switch', at='double', minValue=0, maxValue=1, keyable=True)
+
+mc.addAttr('pinky_r_ik_ctrl', ln='switch', at='double', minValue=0, maxValue=1, keyable=True), mc.addAttr('index_r_ik_ctrl', ln='switch', at='double', minValue=0, maxValue=1, keyable=True)
+mc.addAttr('middle_r_ik_ctrl', ln='switch', at='double', minValue=0, maxValue=1, keyable=True), mc.addAttr('ring_r_ik_ctrl', ln='switch', at='double', minValue=0, maxValue=1, keyable=True)
+
+mc.parentConstraint('index_00_r_ik_ctrl', 'index_r_ik_ctrlSpaceMaster', mo=True), mc.parentConstraint('index_00_r_ik_ctrl', 'index_r_PV_ctrlSpaceMaster', mo=True)
+mc.parentConstraint('middle_00_r_ik_ctrl', 'middle_r_ik_ctrlSpaceMaster', mo=True), mc.parentConstraint('middle_00_r_ik_ctrl', 'middle_r_PV_ctrlSpaceMaster', mo=True)
+mc.parentConstraint('ring_00_r_ik_ctrl', 'ring_r_ik_ctrlSpaceMaster', mo=True), mc.parentConstraint('ring_00_r_ik_ctrl', 'ring_r_PV_ctrlSpaceMaster', mo=True)
+mc.parentConstraint('pinky_00_r_ik_ctrl', 'pinky_r_ik_ctrlSpaceMaster', mo=True), mc.parentConstraint('pinky_00_r_ik_ctrl', 'pinky_r_PV_ctrlSpaceMaster', mo=True)
+
+mc.parentConstraint('index_00_l_ik_ctrl', 'index_l_ik_ctrlSpaceMaster', mo=True), mc.parentConstraint('index_00_l_ik_ctrl', 'index_l_PV_ctrlSpaceMaster', mo=True)
+mc.parentConstraint('middle_00_l_ik_ctrl', 'middle_l_ik_ctrlSpaceMaster', mo=True), mc.parentConstraint('middle_00_l_ik_ctrl', 'middle_l_PV_ctrlSpaceMaster', mo=True)
+mc.parentConstraint('ring_00_l_ik_ctrl', 'ring_l_ik_ctrlSpaceMaster', mo=True), mc.parentConstraint('ring_00_l_ik_ctrl', 'ring_l_PV_ctrlSpaceMaster', mo=True)
+mc.parentConstraint('pinky_00_l_ik_ctrl', 'pinky_l_ik_ctrlSpaceMaster', mo=True), mc.parentConstraint('pinky_00_l_ik_ctrl', 'pinky_l_PV_ctrlSpaceMaster', mo=True)
+
+pm.connectAttr('index_00_r_ik_ctrl.switch', 'index_r_PV_ctrlSpaceMaster_parentConstraint1.index_00_r_ik_ctrlW0', f=True)
 
 ### arm master group
 ik_arm_grp = mc.group(em=True, n='arms_ik_grp')
@@ -1965,7 +1976,7 @@ mc.parent('ring_03_l_fk_ctrlSpaceMaster', 'ring_02_l_fk_ctrl'), mc.parent('ring_
 mc.parent('pinky_03_l_fk_ctrlSpaceMaster', 'pinky_02_l_fk_ctrl'), mc.parent('pinky_02_l_fk_ctrlSpaceMaster', 'pinky_01_l_fk_ctrl'), mc.parent('pinky_01_l_fk_ctrlSpaceMaster', 'pinky_00_l_fk_ctrl'), mc.select(d=True)
 
 ################################################################ FK control connection to bone
-'''
+
 think how to connect control to joints with matrix and direct connection
 '''
 
