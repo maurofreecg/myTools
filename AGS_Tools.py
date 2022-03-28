@@ -14,10 +14,9 @@ import maya.mel as mel
 ##############################################################################################################################################
 
 def BodyCustomButton(*args):
-    
     mc.rename('Spine1', 'Spine11')
     mc.rename('Spine2', 'Spine22')
-    
+
     mc.rename('Root_M', 'Hips')
     mc.rename('Spine1_M', 'Spine')
     mc.rename('Spine2_M', 'Spine1')
@@ -26,14 +25,14 @@ def BodyCustomButton(*args):
     mc.rename('FKNeckBase_M', 'FKNeck_M')
     mc.rename('NeckBase_M', 'Neck_M')
     mc.rename('HeadBase_M', 'Head_M')
-    
+
     BaseJNT_List = ['Hip_R', 'Hip_L', 'Scapula_R', 'Scapula_L', 'Neck_M']
     mc.parent(BaseJNT_List, 'MotionSystem')
-    
+
     for BaseJNT in (BaseJNT_List):
         mc.setAttr(BaseJNT + '.v', 0)
     mc.select(d=True)
-    
+
     # ik bones
     ikLeg = mc.joint(n='LeftFoot_IK'), mc.select(d=True)
     mc.delete(mc.parentConstraint('LeftFoot', ikLeg, mo=False)), mc.select(d=True)
@@ -46,11 +45,11 @@ def BodyCustomButton(*args):
     HipTrans = mc.joint(n='HipsTranslation'), mc.select(d=True)
 
     mc.mirrorJoint('LeftShoulder', mirrorYZ=True, mirrorBehavior=True, searchReplace=('Left', 'Right')), mc.select(cl=True)
-    mc.mirrorJoint('LeftButtock', mirrorYZ=True, mirrorBehavior=True, searchReplace=('Left', 'Right')), mc.select(cl=True)
+    mc.mirrorJoint('LeftButtock', mirrorYZ=True, mirrorBehavior=True, searchReplace=('Left', 'Right')), mc.select( cl=True)
     mc.mirrorJoint('LeftUpLeg', mirrorYZ=True, mirrorBehavior=True, searchReplace=('Left', 'Right')), mc.select(cl=True)
-    mc.mirrorJoint('LeftSpine2AttachRear', mirrorYZ=True, mirrorBehavior=False, searchReplace=('Left', 'Right')), mc.select(cl=True)
+    mc.mirrorJoint('LeftSpine2AttachRear', mirrorYZ=True, mirrorBehavior=False,searchReplace=('Left', 'Right')), mc.select(cl=True)
     mc.mirrorJoint('LeftBreast', mirrorYZ=True, mirrorBehavior=False, searchReplace=('Left', 'Right')), mc.select(cl=True)
-    mc.mirrorJoint('LeftScapulaUpVolume', mirrorYZ=True, mirrorBehavior=False, searchReplace=('Left', 'Right')), mc.select(cl=True)
+    mc.mirrorJoint('LeftScapulaUpVolume', mirrorYZ=True, mirrorBehavior=False,searchReplace=('Left', 'Right')), mc.select(cl=True)
     mc.mirrorJoint(ikLeg, mirrorYZ=True, mirrorBehavior=True, searchReplace=('Left', 'Right')), mc.select(cl=True)
     mc.mirrorJoint(ikArm, mirrorYZ=True, mirrorBehavior=True, searchReplace=('Left', 'Right')), mc.select(cl=True)
 
@@ -60,66 +59,25 @@ def BodyCustomButton(*args):
     mc.parent('Neck', 'LeftShoulder', 'RightShoulder', 'Spine2')
     mc.parent('Hips', 'HipsTranslation')
     mc.parent('LeftSpine2AttachRear', 'LeftBreast', 'RightSpine2AttachRear', 'RightBreast', 'Spine2'), mc.select(d=True)
-    mc.parent('LeftHipsAttachSide', 'LeftHipsAttachRear', 'LeftHipsAttachFront', 'RightHipsAttachSide', 'RightHipsAttachFront', 'RightHipsAttachRear', 'Hips'), mc.select(d=True)
+    mc.parent('LeftHipsAttachSide', 'LeftHipsAttachRear', 'LeftHipsAttachFront', 'RightHipsAttachSide','RightHipsAttachFront', 'RightHipsAttachRear', 'Hips'), mc.select(d=True)
 
-    RootMotion = mc.curve(d = 1, p = [(0, 0, 108),(36, 0, 36),(12, 0, 36),(12, 0, 12),(36, 0, 12),(36, 0, 24),(60, 0, 0),(36, 0, -24),(36, 0, -12),(12, 0, -12)
-    ,(12, 0, -36),(24, 0, -36),(0, 0, -60),(-24, 0, -36),(-12, 0, -36),(-12, 0, -12),(-36, 0, -12),(-36, 0, -24),(-60, 0, 0),(-36, 0, 24),
-    (-36, 0, 12),(-12, 0, 12),(-12, 0, 36),(-36, 0, 36),(0, 0, 108)], n = 'HipsDirection')
+    RootMotion = mc.curve(d=1,p=[(0, 0, 108), (36, 0, 36), (12, 0, 36), (12, 0, 12), (36, 0, 12), (36, 0, 24), (60, 0, 0),
+                             (36, 0, -24), (36, 0, -12), (12, 0, -12), (12, 0, -36), (24, 0, -36), (0, 0, -60), (-24, 0, -36), (-12, 0, -36), (-12, 0, -12),
+                             (-36, 0, -12), (-36, 0, -24), (-60, 0, 0), (-36, 0, 24),(-36, 0, 12), (-12, 0, 12), (-12, 0, 36), (-36, 0, 36), (0, 0, 108)], n='HipsDirection')
 
-    ########################### Rotate Order Tool - AGS
-    ########################################################### need to check the flip axis on match process
-    '''
-    # each list will have proxy bones (AS) / AGS bones / FK controls
-    
-    zxy_List = ['Hips', 'FKRoot_M', 'LeftArm', 'LeftForeArm', 'FKElbow_L', 'FKShoulder1_L', 'FKShoulder1_R', 'FKElbow_R', 'RightArm',
-    'RightForeArm', 'Shoulder1_R', 'Shoulder1_L', 'Elbow_R', 'Elbow_L', 'HipsDirection', 'HipsTranslation', 'Spine2', 'FKChest_M',
-    'Spine', 'FKSpine1_M']
-    
-    for zxy in (zxy_List):
-        mc.setAttr(zxy + '.rotateOrder', 2)
-    
-    yxz_List = ['Neck', 'Head', 'FKNeck_M', 'FKHead_M', 'Neck', 'Head']
-    
-    for yxz in (yxz_List):
-        mc.setAttr(yxz + '.rotateOrder', 4)
-    
-    xyz_List = ['FKScapula_L', 'FKScapula_R', 'LeftShoulder', 'RightShoulder', 'LeftHand', 'RightHand', 'FKWrist_R', 'FKWrist_L', 'Wrist_R', 'Wrist_L']
-    
-    for xyz in (xyz_List):
-        mc.setAttr(xyz + '.rotateOrder', 0)
-    
-    yzx_List = ['FKCup_L', 'FKCup_R', 'FKPinkyFinger1_L', 'FKPinkyFinger1_R', 'FKPinkyFinger2_L', 'FKPinkyFinger2_R', 'FKPinkyFinger3_L',
-    'FKPinkyFinger3_R', 'FKRingFinger1_L', 'FKRingFinger1_R', 'FKRingFinger2_L', 'FKRingFinger2_R', 'FKRingFinger3_L', 'FKRingFinger3_R',
-    'FKMiddleFinger1_L', 'FKMiddleFinger1_R', 'FKMiddleFinger2_L', 'FKMiddleFinger2_R', 'FKMiddleFinger3_L', 'FKMiddleFinger3_R', 'FKIndexFinger1_L',
-    'FKIndexFinger1_R', 'FKIndexFinger2_L', 'FKIndexFinger2_R', 'FKIndexFinger3_L', 'FKIndexFinger3_R', 'FKThumbFinger1_L', 'FKThumbFinger1_R',
-    'FKThumbFinger2_L', 'FKThumbFinger2_R', 'FKThumbFinger3_L', 'FKThumbFinger3_R', 'MiddleFinger1_R', 'MiddleFinger2_R', 'MiddleFinger3_R', 'MiddleFinger1_L',
-    'MiddleFinger2_L', 'MiddleFinger3_L', 'ThumbFinger1_R', 'ThumbFinger2_R', 'ThumbFinger3_R', 'ThumbFinger1_L', 'ThumbFinger2_L', 'ThumbFinger3_L',
-    'IndexFinger1_R', 'IndexFinger2_R', 'IndexFinger3_R', 'IndexFinger1_L', 'IndexFinger2_L', 'IndexFinger3_L', 'Cup_R', 'Cup_L', 'PinkyFinger1_R', 'PinkyFinger2_R',
-    'PinkyFinger3_R', 'PinkyFinger1_L', 'PinkyFinger2_L', 'PinkyFinger3_L', 'RingFinger1_R', 'RingFinger2_R', 'RingFinger3_R', 'RingFinger1_L', 'RingFinger2_L', 'RingFinger3_L',
-    'LeftHandMetacarpal', 'LeftHandPinky1', 'LeftHandPinky2', 'LeftHandPinky3', 'LeftHandPinky3End', 'LeftHandRing1', 'LeftHandRing2', 'LeftHandRing3', 'LeftHandRing3End',
-    'LeftHandMiddle1', 'LeftHandMiddle2', 'LeftHandMiddle3', 'LeftHandMiddle3End', 'LeftHandIndex1', 'LeftHandIndex2', 'LeftHandIndex3', 'LeftHandIndex3End', 'LeftHandThumb1',
-    'LeftHandThumb2', 'LeftHandThumb3', 'LeftHandThumb3End', 'RightHandMetacarpal', 'RightHandPinky1', 'RightHandPinky2', 'RightHandPinky3', 'RightHandPinky3End', 'RightHandRing1',
-    'RightHandRing2', 'RightHandRing3', 'RightHandRing3End', 'RightHandMiddle1', 'RightHandMiddle2', 'RightHandMiddle3', 'RightHandMiddle3End', 'RightHandIndex1', 'RightHandIndex2',
-    'RightHandIndex3', 'RightHandIndex3End', 'RightHandThumb1', 'RightHandThumb2', 'RightHandThumb3', 'RightHandThumb3End',]
-    
-    for yzx in (yzx_List):
-        mc.setAttr(yzx + '.rotateOrder', 1)
-    
-    xzy_List = ['FKSpine2_M', 'Hip_L', 'Hip_R', 'Knee_L', 'Knee_R', 'Ankle_L', 'Ankle_R', 'Toes_L', 'Toes_R', 'LeftUpLeg', 'LeftLeg', 'LeftFoot', 'LeftToeBase',
-    'RightUpLeg', 'RightLeg', 'RightFoot', 'RightToeBase', 'FKHip_L', 'FKHip_R', 'FKKnee_L', 'FKKnee_R', 'FKAnkle_L', 'FKAnkle_R', 'FKToes_L', 'FKToes_R', 'Spine1']
-    
-    for xzy in (xzy_List):
-        mc.setAttr(xzy + '.rotateOrder', 3)
-    '''
-    AS_BonesArmLegNeckList = ['Scapula_R', 'Shoulder1_R', 'Elbow_R', 'Wrist_R', 'MiddleFinger1_R', 'MiddleFinger2_R', 'MiddleFinger3_R', 'ThumbFinger1_R', 'ThumbFinger2_R', 'ThumbFinger3_R', 'IndexFinger1_R', 'IndexFinger2_R', 'IndexFinger3_R',
-    'Cup_R', 'PinkyFinger1_R', 'PinkyFinger2_R', 'PinkyFinger3_R', 'RingFinger1_R', 'RingFinger2_R', 'RingFinger3_R', 'Scapula_L', 'Shoulder1_L', 'Elbow_L', 'Wrist_L', 'MiddleFinger1_L', 'MiddleFinger2_L', 'MiddleFinger3_L',
-    'ThumbFinger1_L', 'ThumbFinger2_L', 'ThumbFinger3_L', 'IndexFinger1_L', 'IndexFinger2_L', 'IndexFinger3_L', 'Cup_L', 'PinkyFinger1_L', 'PinkyFinger2_L', 'PinkyFinger3_L', 'RingFinger1_L', 'RingFinger2_L', 'RingFinger3_L',
-    'Hip_L', 'Knee_L', 'Ankle_L', 'Toes_L', 'ToesEnd_L', 'Hip_R', 'Knee_R', 'Ankle_R', 'Toes_R', 'ToesEnd_R', 'Neck_M', 'Head_M']
+    AS_BonesArmLegNeckList = ['Scapula_R', 'Shoulder1_R', 'Elbow_R', 'Wrist_R', 'MiddleFinger1_R', 'MiddleFinger2_R','MiddleFinger3_R', 'ThumbFinger1_R', 'ThumbFinger2_R', 'ThumbFinger3_R', 'IndexFinger1_R',
+                              'IndexFinger2_R', 'IndexFinger3_R','Cup_R', 'PinkyFinger1_R', 'PinkyFinger2_R', 'PinkyFinger3_R', 'RingFinger1_R',
+                              'RingFinger2_R', 'RingFinger3_R', 'Scapula_L', 'Shoulder1_L', 'Elbow_L', 'Wrist_L','MiddleFinger1_L', 'MiddleFinger2_L', 'MiddleFinger3_L',
+                              'ThumbFinger1_L', 'ThumbFinger2_L', 'ThumbFinger3_L', 'IndexFinger1_L', 'IndexFinger2_L','IndexFinger3_L', 'Cup_L', 'PinkyFinger1_L', 'PinkyFinger2_L', 'PinkyFinger3_L',
+                              'RingFinger1_L', 'RingFinger2_L', 'RingFinger3_L','Hip_L', 'Knee_L', 'Ankle_L', 'Toes_L', 'ToesEnd_L', 'Hip_R', 'Knee_R', 'Ankle_R',
+                              'Toes_R', 'ToesEnd_R', 'Neck_M', 'Head_M']
 
-    AGS_BonesArmLegNeckList = ['RightShoulder', 'RightArm', 'RightForeArm', 'RightHand', 'RightHandMiddle1', 'RightHandMiddle2', 'RightHandMiddle3', 'RightHandThumb1', 'RightHandThumb2', 'RightHandThumb3', 'RightHandIndex1', 'RightHandIndex2',
-    'RightHandIndex3', 'RightHandMetacarpal', 'RightHandPinky1', 'RightHandPinky2', 'RightHandPinky3', 'RightHandRing1', 'RightHandRing2', 'RightHandRing3', 'LeftShoulder', 'LeftArm', 'LeftForeArm', 'LeftHand', 'LeftHandMiddle1', 'LeftHandMiddle2',
-    'LeftHandMiddle3', 'LeftHandThumb1', 'LeftHandThumb2', 'LeftHandThumb3', 'LeftHandIndex1', 'LeftHandIndex2', 'LeftHandIndex3', 'LeftHandMetacarpal', 'LeftHandPinky1', 'LeftHandPinky2', 'LeftHandPinky3', 'LeftHandRing1', 'LeftHandRing2', 'LeftHandRing3',
-    'LeftUpLeg', 'LeftLeg', 'LeftFoot', 'LeftToeBase', 'LeftToeBaseEnd', 'RightUpLeg', 'RightLeg', 'RightFoot', 'RightToeBase', 'RightToeBaseEnd', 'Neck', 'Head']
+    AGS_BonesArmLegNeckList = ['RightShoulder', 'RightArm', 'RightForeArm', 'RightHand', 'RightHandMiddle1','RightHandMiddle2', 'RightHandMiddle3', 'RightHandThumb1', 'RightHandThumb2',
+                               'RightHandThumb3', 'RightHandIndex1', 'RightHandIndex2','RightHandIndex3', 'RightHandMetacarpal', 'RightHandPinky1', 'RightHandPinky2',
+                               'RightHandPinky3', 'RightHandRing1', 'RightHandRing2', 'RightHandRing3', 'LeftShoulder','LeftArm', 'LeftForeArm', 'LeftHand', 'LeftHandMiddle1', 'LeftHandMiddle2',
+                               'LeftHandMiddle3', 'LeftHandThumb1', 'LeftHandThumb2', 'LeftHandThumb3','LeftHandIndex1', 'LeftHandIndex2', 'LeftHandIndex3', 'LeftHandMetacarpal',
+                               'LeftHandPinky1', 'LeftHandPinky2', 'LeftHandPinky3', 'LeftHandRing1', 'LeftHandRing2','LeftHandRing3',
+                               'LeftUpLeg', 'LeftLeg', 'LeftFoot', 'LeftToeBase', 'LeftToeBaseEnd', 'RightUpLeg','RightLeg', 'RightFoot', 'RightToeBase', 'RightToeBaseEnd', 'Neck', 'Head']
 
     for i, item in enumerate(AS_BonesArmLegNeckList):
         mc.parentConstraint(item, AGS_BonesArmLegNeckList[i], mo=True)
@@ -133,58 +91,65 @@ def BodyCustomButton(*args):
     mc.parentConstraint('RightFoot', 'RightFoot_IK', mo=True)
     mc.parentConstraint('Head', 'Head_IK', mo=True)
 
-    mc.parent('LeftFoot_IK', 'LeftHand_IK', 'Head_IK', 'Camera', 'Attach', 'RightFoot_IK', 'RightHand_IK', 'HipsTranslation')
+    mc.parent('LeftFoot_IK', 'LeftHand_IK', 'Head_IK', 'Camera', 'Attach', 'RightFoot_IK', 'RightHand_IK','HipsTranslation')
     mc.pointConstraint(RootMotion, 'HipsTranslation', mo=True)
     mc.parent(RootMotion, 'Main')
 
     # clean up
-    mc.delete('HeadEnd_M', 'ThumbFinger4_L', 'IndexFinger4_L', 'MiddleFinger4_L', 'RingFinger4_L', 'PinkyFinger4_L', 'ThumbFinger4_R', 'IndexFinger4_R',
-    'MiddleFinger4_R', 'RingFinger4_R', 'PinkyFinger4_R')
+    mc.delete('HeadEnd_M', 'ThumbFinger4_L', 'IndexFinger4_L', 'MiddleFinger4_L', 'RingFinger4_L', 'PinkyFinger4_L','ThumbFinger4_R', 'IndexFinger4_R','MiddleFinger4_R', 'RingFinger4_R', 'PinkyFinger4_R')
     ###########################################################################################################
     ########################################### extras controls  ##############################################
     ###########################################################################################################
     ###################### Left Side
 
-    LeftExtrasBn_List = ['LeftWristHelper', 'LeftForeArmRoll', 'LeftLowerarm', 'LeftShoulderarmHelper_02', 'LeftArmRoll', 'LeftShoulderarmHelper_01', 'LeftUpperarm',
-    'LeftUpperlegHelper', 'LeftUpperlegHelperUp', 'LeftUpLegRoll', 'LeftUpperlegHelperDn', 'LeftLowerleg', 'LeftLegRoll', 'LeftAnkleHelper']
+    LeftExtrasBn_List = ['LeftWristHelper', 'LeftForeArmRoll', 'LeftLowerarm', 'LeftShoulderarmHelper_02','LeftArmRoll', 'LeftShoulderarmHelper_01', 'LeftUpperarm',
+                         'LeftUpperlegHelper', 'LeftUpperlegHelperUp', 'LeftUpLegRoll', 'LeftUpperlegHelperDn','LeftLowerleg', 'LeftLegRoll', 'LeftAnkleHelper']
 
-    def controlColor(s, c): # yellow 17, red 13, blue 6, light blue 18, light red 4, light green 23
+    def controlColor(s, c):  # yellow 17, red 13, blue 6, light blue 18, light red 4, light green 23
         mc.setAttr(s + '.overrideEnabled', 1)
         mc.setAttr(s + '.overrideColor', c)
 
     for LeftExtrasBn in (LeftExtrasBn_List):
-        crv = mc.circle(n= LeftExtrasBn + '_ctrl', radius=4, ch=False, nr=(1, 0, 0))
-        spaceCrv = mc.group(crv, n= LeftExtrasBn + '_ctrlSpace')
-        masterSpace = mc.group(spaceCrv, n= LeftExtrasBn + '_ctrlMasterSpace')
+        crv = mc.circle(n=LeftExtrasBn + '_ctrl', radius=4, ch=False, nr=(1, 0, 0))
+        spaceCrv = mc.group(crv, n=LeftExtrasBn + '_ctrlSpace')
+        masterSpace = mc.group(spaceCrv, n=LeftExtrasBn + '_ctrlMasterSpace')
         mc.delete(mc.parentConstraint(LeftExtrasBn, masterSpace, mo=False))
 
     for mC in (LeftExtrasBn_List):
-        mirrorCtrl = mc.curve(d = 1, p = [(-0.0133947, 0, 0.351564), (-0.0130162, 0, 0.916036), (-0.126636, 0, 0.85811), (0, 0, 1.111383), (0.126636, 0, 0.85811), (0.0121104, 0, 0.916036),
-        (0.0121104, 0, 0.351564), (0.0935195, 0, 0.281599), (0.0935195, 0, 0.195095), (-0.0935195, 0, 0.195095), (-0.0935195, 0, 0.281599), (-0.0133947, 0, 0.351564)], n= mC + '_mCtrl')
+        mirrorCtrl = mc.curve(d=1, p=[(-0.0133947, 0, 0.351564), (-0.0130162, 0, 0.916036), (-0.126636, 0, 0.85811),(0, 0, 1.111383), (0.126636, 0, 0.85811), (0.0121104, 0, 0.916036),
+                                      (0.0121104, 0, 0.351564), (0.0935195, 0, 0.281599), (0.0935195, 0, 0.195095),(-0.0935195, 0, 0.195095), (-0.0935195, 0, 0.281599), (-0.0133947, 0, 0.351564)],n=mC + '_mCtrl')
         mc.scale(6, 6, 6, mirrorCtrl)
         mc.makeIdentity(mirrorCtrl, apply=True, scale=True)
-        mirrorCtrlSpace = mc.group(em=True, n= mC + '_mCtrlSpace')
-        mirrorCtrlMasterSpace = mc.group(em= True, n= mC + '_mCtrlMasterSpace')
+        mirrorCtrlSpace = mc.group(em=True, n=mC + '_mCtrlSpace')
+        mirrorCtrlMasterSpace = mc.group(em=True, n=mC + '_mCtrlMasterSpace')
         mc.parent(mirrorCtrl, mirrorCtrlSpace), mc.parent(mirrorCtrlSpace, mirrorCtrlMasterSpace)
         mc.delete(mc.parentConstraint(mC, mirrorCtrlMasterSpace, mo=False))
 
-    LeftMirrorCtrl_List = ['LeftWristHelper_mCtrl', 'LeftForeArmRoll_mCtrl', 'LeftLowerarm_mCtrl', 'LeftShoulderarmHelper_02_mCtrl', 'LeftArmRoll_mCtrl', 'LeftShoulderarmHelper_01_mCtrl',
-    'LeftUpperarm_mCtrl', 'LeftUpperlegHelper_mCtrl', 'LeftUpperlegHelperUp_mCtrl', 'LeftUpLegRoll_mCtrl', 'LeftUpperlegHelperDn_mCtrl', 'LeftLowerleg_mCtrl', 'LeftLegRoll_mCtrl', 'LeftAnkleHelper_mCtrl']
+    LeftMirrorCtrl_List = ['LeftWristHelper_mCtrl', 'LeftForeArmRoll_mCtrl', 'LeftLowerarm_mCtrl','LeftShoulderarmHelper_02_mCtrl', 'LeftArmRoll_mCtrl', 'LeftShoulderarmHelper_01_mCtrl',
+                           'LeftUpperarm_mCtrl', 'LeftUpperlegHelper_mCtrl', 'LeftUpperlegHelperUp_mCtrl','LeftUpLegRoll_mCtrl', 'LeftUpperlegHelperDn_mCtrl', 'LeftLowerleg_mCtrl',
+                           'LeftLegRoll_mCtrl', 'LeftAnkleHelper_mCtrl']
 
-    LeftMirrorCtrl_Space_List = ['LeftWristHelper_mCtrlSpace', 'LeftForeArmRoll_mCtrlSpace', 'LeftLowerarm_mCtrlSpace', 'LeftShoulderarmHelper_02_mCtrlSpace', 'LeftArmRoll_mCtrlSpace', 'LeftShoulderarmHelper_01_mCtrlSpace',
-    'LeftUpperarm_mCtrlSpace', 'LeftUpperlegHelper_mCtrlSpace', 'LeftUpperlegHelperUp_mCtrlSpace', 'LeftUpLegRoll_mCtrlSpace', 'LeftUpperlegHelperDn_mCtrlSpace', 'LeftLowerleg_mCtrlSpace', 'LeftLegRoll_mCtrlSpace', 'LeftAnkleHelper_mCtrlSpace']
+    LeftMirrorCtrl_Space_List = ['LeftWristHelper_mCtrlSpace', 'LeftForeArmRoll_mCtrlSpace', 'LeftLowerarm_mCtrlSpace','LeftShoulderarmHelper_02_mCtrlSpace', 'LeftArmRoll_mCtrlSpace',
+                                 'LeftShoulderarmHelper_01_mCtrlSpace','LeftUpperarm_mCtrlSpace', 'LeftUpperlegHelper_mCtrlSpace',
+                                 'LeftUpperlegHelperUp_mCtrlSpace', 'LeftUpLegRoll_mCtrlSpace','LeftUpperlegHelperDn_mCtrlSpace', 'LeftLowerleg_mCtrlSpace', 'LeftLegRoll_mCtrlSpace','LeftAnkleHelper_mCtrlSpace']
 
-    LeftMirrorCtrl_masterSpace_List = ['LeftWristHelper_mCtrlMasterSpace', 'LeftForeArmRoll_mCtrlMasterSpace', 'LeftLowerarm_mCtrlMasterSpace', 'LeftShoulderarmHelper_02_mCtrlMasterSpace', 'LeftArmRoll_mCtrlMasterSpace', 'LeftShoulderarmHelper_01_mCtrlMasterSpace',
-    'LeftUpperarm_mCtrlMasterSpace', 'LeftUpperlegHelper_mCtrlMasterSpace', 'LeftUpperlegHelperUp_mCtrlMasterSpace', 'LeftUpLegRoll_mCtrlMasterSpace', 'LeftUpperlegHelperDn_mCtrlMasterSpace', 'LeftLowerleg_mCtrlMasterSpace', 'LeftLegRoll_mCtrlMasterSpace', 'LeftAnkleHelper_mCtrlMasterSpace']
+    LeftMirrorCtrl_masterSpace_List = ['LeftWristHelper_mCtrlMasterSpace', 'LeftForeArmRoll_mCtrlMasterSpace','LeftLowerarm_mCtrlMasterSpace', 'LeftShoulderarmHelper_02_mCtrlMasterSpace',
+                                       'LeftArmRoll_mCtrlMasterSpace', 'LeftShoulderarmHelper_01_mCtrlMasterSpace','LeftUpperarm_mCtrlMasterSpace', 'LeftUpperlegHelper_mCtrlMasterSpace',
+                                       'LeftUpperlegHelperUp_mCtrlMasterSpace', 'LeftUpLegRoll_mCtrlMasterSpace','LeftUpperlegHelperDn_mCtrlMasterSpace', 'LeftLowerleg_mCtrlMasterSpace',
+                                       'LeftLegRoll_mCtrlMasterSpace', 'LeftAnkleHelper_mCtrlMasterSpace']
 
-    LeftCtrl_List = ['LeftWristHelper_ctrl', 'LeftForeArmRoll_ctrl', 'LeftLowerarm_ctrl', 'LeftShoulderarmHelper_02_ctrl', 'LeftArmRoll_ctrl', 'LeftShoulderarmHelper_01_ctrl', 'LeftUpperarm_ctrl', 'LeftUpperlegHelper_ctrl',
-    'LeftUpperlegHelperUp_ctrl', 'LeftUpLegRoll_ctrl', 'LeftUpperlegHelperDn_ctrl', 'LeftLowerleg_ctrl', 'LeftLegRoll_ctrl', 'LeftAnkleHelper_ctrl']
+    LeftCtrl_List = ['LeftWristHelper_ctrl', 'LeftForeArmRoll_ctrl', 'LeftLowerarm_ctrl', 'LeftShoulderarmHelper_02_ctrl', 'LeftArmRoll_ctrl', 'LeftShoulderarmHelper_01_ctrl',
+                     'LeftUpperarm_ctrl', 'LeftUpperlegHelper_ctrl','LeftUpperlegHelperUp_ctrl', 'LeftUpLegRoll_ctrl', 'LeftUpperlegHelperDn_ctrl',
+                     'LeftLowerleg_ctrl', 'LeftLegRoll_ctrl', 'LeftAnkleHelper_ctrl']
 
-    LeftCtrl_Space_List = ['LeftWristHelper_ctrlSpace', 'LeftForeArmRoll_ctrlSpace', 'LeftLowerarm_ctrlSpace', 'LeftShoulderarmHelper_02_ctrlSpace', 'LeftArmRoll_ctrlSpace', 'LeftShoulderarmHelper_01_ctrlSpace',
-    'LeftUpperarm_ctrlSpace', 'LeftUpperlegHelper_ctrlSpace', 'LeftUpperlegHelperUp_ctrlSpace', 'LeftUpLegRoll_ctrlSpace', 'LeftUpperlegHelperDn_ctrlSpace', 'LeftLowerleg_ctrlSpace', 'LeftLegRoll_ctrlSpace', 'LeftAnkleHelper_ctrlSpace']
+    LeftCtrl_Space_List = ['LeftWristHelper_ctrlSpace', 'LeftForeArmRoll_ctrlSpace', 'LeftLowerarm_ctrlSpace','LeftShoulderarmHelper_02_ctrlSpace', 'LeftArmRoll_ctrlSpace',
+                           'LeftShoulderarmHelper_01_ctrlSpace','LeftUpperarm_ctrlSpace', 'LeftUpperlegHelper_ctrlSpace', 'LeftUpperlegHelperUp_ctrlSpace',
+                           'LeftUpLegRoll_ctrlSpace', 'LeftUpperlegHelperDn_ctrlSpace', 'LeftLowerleg_ctrlSpace','LeftLegRoll_ctrlSpace', 'LeftAnkleHelper_ctrlSpace']
 
-    LeftCtrl_masterSpace_List = ['LeftWristHelper_ctrlMasterSpace', 'LeftForeArmRoll_ctrlMasterSpace', 'LeftLowerarm_ctrlMasterSpace', 'LeftShoulderarmHelper_02_ctrlMasterSpace', 'LeftArmRoll_ctrlMasterSpace', 'LeftShoulderarmHelper_01_ctrlMasterSpace',
-    'LeftUpperarm_ctrlMasterSpace', 'LeftUpperlegHelper_ctrlMasterSpace', 'LeftUpperlegHelperUp_ctrlMasterSpace', 'LeftUpLegRoll_ctrlMasterSpace', 'LeftUpperlegHelperDn_ctrlMasterSpace', 'LeftLowerleg_ctrlMasterSpace', 'LeftLegRoll_ctrlMasterSpace', 'LeftAnkleHelper_ctrlMasterSpace']
+    LeftCtrl_masterSpace_List = ['LeftWristHelper_ctrlMasterSpace', 'LeftForeArmRoll_ctrlMasterSpace','LeftLowerarm_ctrlMasterSpace', 'LeftShoulderarmHelper_02_ctrlMasterSpace',
+                                 'LeftArmRoll_ctrlMasterSpace', 'LeftShoulderarmHelper_01_ctrlMasterSpace','LeftUpperarm_ctrlMasterSpace', 'LeftUpperlegHelper_ctrlMasterSpace',
+                                 'LeftUpperlegHelperUp_ctrlMasterSpace', 'LeftUpLegRoll_ctrlMasterSpace','LeftUpperlegHelperDn_ctrlMasterSpace', 'LeftLowerleg_ctrlMasterSpace',
+                                 'LeftLegRoll_ctrlMasterSpace', 'LeftAnkleHelper_ctrlMasterSpace']
 
     ############## parent ctrls to mirror controls
 
@@ -200,27 +165,32 @@ def BodyCustomButton(*args):
 
     #################### Right Side
 
-    RightExtrasBn_List = ['RightWristHelper', 'RightForeArmRoll', 'RightLowerarm', 'RightShoulderarmHelper_02', 'RightArmRoll', 'RightShoulderarmHelper_01', 'RightUpperarm',
-    'RightUpperlegHelper', 'RightUpperlegHelperUp', 'RightUpLegRoll', 'RightUpperlegHelperDn', 'RightLowerleg', 'RightLegRoll', 'RightAnkleHelper']
+    RightExtrasBn_List = ['RightWristHelper', 'RightForeArmRoll', 'RightLowerarm', 'RightShoulderarmHelper_02','RightArmRoll', 'RightShoulderarmHelper_01', 'RightUpperarm',
+                          'RightUpperlegHelper', 'RightUpperlegHelperUp', 'RightUpLegRoll', 'RightUpperlegHelperDn','RightLowerleg', 'RightLegRoll', 'RightAnkleHelper']
 
     for RightExtrasBn in (RightExtrasBn_List):
-        crv = mc.circle(n= RightExtrasBn + '_ctrl', radius=4, ch=False, nr=(1, 0, 0))
-        spaceCrv = mc.group(crv, n= RightExtrasBn + '_ctrlSpace')
-        constCrv = mc.group(spaceCrv, n= RightExtrasBn + '_const')
-        masterConst = mc.group(constCrv, n= RightExtrasBn + '_MasterConst')
+        crv = mc.circle(n=RightExtrasBn + '_ctrl', radius=4, ch=False, nr=(1, 0, 0))
+        spaceCrv = mc.group(crv, n=RightExtrasBn + '_ctrlSpace')
+        constCrv = mc.group(spaceCrv, n=RightExtrasBn + '_const')
+        masterConst = mc.group(constCrv, n=RightExtrasBn + '_MasterConst')
         mc.delete(mc.parentConstraint(RightExtrasBn, masterConst, mo=False))
 
-    RightMasterConst_List = ['RightWristHelper_MasterConst', 'RightForeArmRoll_MasterConst', 'RightLowerarm_MasterConst', 'RightShoulderarmHelper_02_MasterConst', 'RightArmRoll_MasterConst', 'RightShoulderarmHelper_01_MasterConst', 'RightUpperarm_MasterConst', 'RightUpperlegHelper_MasterConst',
-    'RightUpperlegHelperUp_MasterConst', 'RightUpLegRoll_MasterConst', 'RightUpperlegHelperDn_MasterConst', 'RightLowerleg_MasterConst', 'RightLegRoll_MasterConst', 'RightAnkleHelper_MasterConst']
+    RightMasterConst_List = ['RightWristHelper_MasterConst', 'RightForeArmRoll_MasterConst','RightLowerarm_MasterConst', 'RightShoulderarmHelper_02_MasterConst',
+                             'RightArmRoll_MasterConst', 'RightShoulderarmHelper_01_MasterConst','RightUpperarm_MasterConst', 'RightUpperlegHelper_MasterConst',
+                             'RightUpperlegHelperUp_MasterConst', 'RightUpLegRoll_MasterConst','RightUpperlegHelperDn_MasterConst', 'RightLowerleg_MasterConst',
+                             'RightLegRoll_MasterConst', 'RightAnkleHelper_MasterConst']
 
-    RightConst_List = ['RightWristHelper_const', 'RightForeArmRoll_const', 'RightLowerarm_const', 'RightShoulderarmHelper_02_const', 'RightArmRoll_const', 'RightShoulderarmHelper_01_const', 'RightUpperarm_const', 'RightUpperlegHelper_const', 'RightUpperlegHelperUp_const', 'RightUpLegRoll_const',
-    'RightUpperlegHelperDn_const', 'RightLowerleg_const', 'RightLegRoll_const', 'RightAnkleHelper_const']
+    RightConst_List = ['RightWristHelper_const', 'RightForeArmRoll_const', 'RightLowerarm_const','RightShoulderarmHelper_02_const', 'RightArmRoll_const', 'RightShoulderarmHelper_01_const',
+                       'RightUpperarm_const', 'RightUpperlegHelper_const', 'RightUpperlegHelperUp_const','RightUpLegRoll_const',
+                       'RightUpperlegHelperDn_const', 'RightLowerleg_const', 'RightLegRoll_const','RightAnkleHelper_const']
 
-    RightCtrl_Space = ['RightWristHelper_ctrlSpace', 'RightForeArmRoll_ctrlSpace', 'RightLowerarm_ctrlSpace', 'RightShoulderarmHelper_02_ctrlSpace', 'RightArmRoll_ctrlSpace', 'RightShoulderarmHelper_01_ctrlSpace', 'RightUpperarm_ctrlSpace', 'RightUpperlegHelper_ctrlSpace', 'RightUpperlegHelperUp_ctrlSpace',
-    'RightUpperlegHelperDn_ctrlSpace', 'RightLowerleg_ctrlSpace', 'RightLegRoll_ctrlSpace', 'RightAnkleHelper_ctrlSpace']
+    RightCtrl_Space = ['RightWristHelper_ctrlSpace', 'RightForeArmRoll_ctrlSpace', 'RightLowerarm_ctrlSpace','RightShoulderarmHelper_02_ctrlSpace', 'RightArmRoll_ctrlSpace',
+                       'RightShoulderarmHelper_01_ctrlSpace', 'RightUpperarm_ctrlSpace','RightUpperlegHelper_ctrlSpace', 'RightUpperlegHelperUp_ctrlSpace',
+                       'RightUpperlegHelperDn_ctrlSpace', 'RightLowerleg_ctrlSpace', 'RightLegRoll_ctrlSpace','RightAnkleHelper_ctrlSpace']
 
-    RightCtrl_List = ['RightWristHelper_ctrl', 'RightForeArmRoll_ctrl', 'RightLowerarm_ctrl', 'RightShoulderarmHelper_02_ctrl', 'RightArmRoll_ctrl', 'RightShoulderarmHelper_01_ctrl', 'RightUpperarm_ctrl', 'RightUpperlegHelper_ctrl', 'RightUpperlegHelperUp_ctrl', 'RightUpLegRoll_ctrl',
-    'RightUpperlegHelperDn_ctrl', 'RightLowerleg_ctrl', 'RightLegRoll_ctrl', 'RightAnkleHelper_ctrl']
+    RightCtrl_List = ['RightWristHelper_ctrl', 'RightForeArmRoll_ctrl', 'RightLowerarm_ctrl','RightShoulderarmHelper_02_ctrl', 'RightArmRoll_ctrl', 'RightShoulderarmHelper_01_ctrl',
+                      'RightUpperarm_ctrl', 'RightUpperlegHelper_ctrl', 'RightUpperlegHelperUp_ctrl', 'RightUpLegRoll_ctrl',
+                      'RightUpperlegHelperDn_ctrl', 'RightLowerleg_ctrl', 'RightLegRoll_ctrl', 'RightAnkleHelper_ctrl']
 
     #################### parent / scale constraint from  extra ctrls to extra bones - Right Side
 
@@ -247,9 +217,9 @@ def BodyCustomButton(*args):
     sclMD_List = []
 
     for i in (LeftMirrorCtrl_List):
-        transMD = mc.createNode('multiplyDivide', n= i + '_Trans_MD')
-        rotMD = mc.createNode('multiplyDivide', n= i + '_Rot_MD')
-        sclMD = mc.createNode('multiplyDivide', n = i + '_Scl_MD')
+        transMD = mc.createNode('multiplyDivide', n=i + '_Trans_MD')
+        rotMD = mc.createNode('multiplyDivide', n=i + '_Rot_MD')
+        sclMD = mc.createNode('multiplyDivide', n=i + '_Scl_MD')
 
         transMD_list.append(transMD)
         rotMD_List.append(rotMD)
@@ -343,7 +313,7 @@ def BodyCustomButton(*args):
     LeftCtrl_UpperArm_List = ['LeftArmRoll_mCtrlSpace', 'LeftShoulderarmHelper_02_mCtrlSpace']
 
     for lUpperArm, item in enumerate(LeftCtrl_UpperArm_List):
-        rotMD = mc.createNode('multiplyDivide', n= item + '_MD')
+        rotMD = mc.createNode('multiplyDivide', n=item + '_MD')
         mc.setAttr(rotMD + '.input2X', -1)
 
         mc.connectAttr('Shoulder1Part1_L.rx', rotMD + '.input1X')
@@ -353,7 +323,7 @@ def BodyCustomButton(*args):
     LeftCtrl_LowerArm_List = ['LeftForeArmRoll_mCtrlSpace', 'LeftWristHelper_mCtrlSpace']
 
     for lLowerArm, item in enumerate(LeftCtrl_LowerArm_List):
-        rotMD = mc.createNode('multiplyDivide', n= item + '_MD')
+        rotMD = mc.createNode('multiplyDivide', n=item + '_MD')
         mc.setAttr(rotMD + '.input2X', -1)
 
         mc.connectAttr('ElbowPart1_L.rx', rotMD + '.input1X')
@@ -363,7 +333,7 @@ def BodyCustomButton(*args):
     LeftCtrl_UpperLeg_List = ['LeftUpLegRoll_mCtrlSpace', 'LeftUpperlegHelperDn_mCtrlSpace']
 
     for lUpperLeg, item in enumerate(LeftCtrl_UpperLeg_List):
-        rotMD = mc.createNode('multiplyDivide', n= item + '_MD')
+        rotMD = mc.createNode('multiplyDivide', n=item + '_MD')
         mc.setAttr(rotMD + '.input2X', -1)
 
         mc.connectAttr('HipPart1_L.rx', rotMD + '.input1X')
@@ -373,7 +343,7 @@ def BodyCustomButton(*args):
     LeftCtrl_LowerLeg_List = ['LeftLegRoll_mCtrlSpace', 'LeftAnkleHelper_mCtrlSpace']
 
     for lLowerLeg, item in enumerate(LeftCtrl_LowerLeg_List):
-        rotMD = mc.createNode('multiplyDivide', n= item + '_MD')
+        rotMD = mc.createNode('multiplyDivide', n=item + '_MD')
         mc.setAttr(rotMD + '.input2X', -1)
 
         mc.connectAttr('KneePart1_L.rx', rotMD + '.input1X')
@@ -385,7 +355,7 @@ def BodyCustomButton(*args):
     RightCtrl_UpperArm_List = ['RightArmRoll_ctrlSpace', 'RightShoulderarmHelper_02_ctrlSpace']
 
     for rUpperArm, item in enumerate(RightCtrl_UpperArm_List):
-        rotMD = mc.createNode('multiplyDivide', n= item + '_MD')
+        rotMD = mc.createNode('multiplyDivide', n=item + '_MD')
         mc.setAttr(rotMD + '.input2X', -1)
 
         mc.connectAttr('Shoulder1Part1_R.rx', rotMD + '.input1X')
@@ -395,7 +365,7 @@ def BodyCustomButton(*args):
     RightCtrl_LowerArm_List = ['RightForeArmRoll_ctrlSpace', 'RightWristHelper_ctrlSpace']
 
     for rLowerArm, item in enumerate(RightCtrl_LowerArm_List):
-        rotMD = mc.createNode('multiplyDivide', n= item + '_MD')
+        rotMD = mc.createNode('multiplyDivide', n=item + '_MD')
         mc.setAttr(rotMD + '.input2X', -1)
 
         mc.connectAttr('ElbowPart1_R.rx', rotMD + '.input1X')
@@ -405,7 +375,7 @@ def BodyCustomButton(*args):
     RightCtrl_UpperLeg_List = ['RightUpLegRoll_ctrlSpace', 'RightUpperlegHelperDn_ctrlSpace']
 
     for rUpperLeg, item in enumerate(RightCtrl_UpperLeg_List):
-        rotMD = mc.createNode('multiplyDivide', n= item + '_MD')
+        rotMD = mc.createNode('multiplyDivide', n=item + '_MD')
         mc.setAttr(rotMD + '.input2X', -1)
 
         mc.connectAttr('HipPart1_R.rx', rotMD + '.input1X')
@@ -415,7 +385,7 @@ def BodyCustomButton(*args):
     RightCtrl_LowerLeg_List = ['RightLegRoll_ctrlSpace', 'RightAnkleHelper_ctrlSpace']
 
     for rLowerLeg, item in enumerate(RightCtrl_LowerLeg_List):
-        rotMD = mc.createNode('multiplyDivide', n= item + '_MD')
+        rotMD = mc.createNode('multiplyDivide', n=item + '_MD')
         mc.setAttr(rotMD + '.input2X', -1)
 
         mc.connectAttr('KneePart1_R.rx', rotMD + '.input1X')
@@ -424,15 +394,18 @@ def BodyCustomButton(*args):
 
     ########### hand gimbal controls
 
-    LeftGimbalCtrl_crv = mc.curve(d=True, p=((-0.5, 0.5, 0.00702787), (0.5, 0.5, 0.00702787), (0.5, -0.5, 0.00702787), (-0.5, -0.5, 0.00702787), (-0.5, 0.5, 0.00702787)), n='IKLocalArm_L')
+    LeftGimbalCtrl_crv = mc.curve(d=True, p=(
+    (-0.5, 0.5, 0.00702787), (0.5, 0.5, 0.00702787), (0.5, -0.5, 0.00702787), (-0.5, -0.5, 0.00702787),(-0.5, 0.5, 0.00702787)), n='IKLocalArm_L')
     LeftGimbalCtrl_space = mc.group(em=True, n='IKLocalArm_L_ctrlSpace')
     mc.parent(LeftGimbalCtrl_crv, LeftGimbalCtrl_space), mc.select(d=True)
 
-    RightGimbalCtrl_crv = mc.curve(d=True, p=((-0.5, 0.5, 0.00702787), (0.5, 0.5, 0.00702787), (0.5, -0.5, 0.00702787), (-0.5, -0.5, 0.00702787), (-0.5, 0.5, 0.00702787)), n='IKLocalArm_R')
+    RightGimbalCtrl_crv = mc.curve(d=True, p=(
+    (-0.5, 0.5, 0.00702787), (0.5, 0.5, 0.00702787), (0.5, -0.5, 0.00702787), (-0.5, -0.5, 0.00702787),(-0.5, 0.5, 0.00702787)), n='IKLocalArm_R')
     RightGimbalCtrl_space = mc.group(em=True, n='IKLocalArm_R_ctrlSpace')
     mc.parent(RightGimbalCtrl_crv, RightGimbalCtrl_space), mc.select(d=True)
 
-    mc.delete(mc.parentConstraint('IKArm_L', LeftGimbalCtrl_space, mo=False)), mc.delete(mc.parentConstraint('IKArm_R', RightGimbalCtrl_space, mo=False))
+    mc.delete(mc.parentConstraint('IKArm_L', LeftGimbalCtrl_space, mo=False)), mc.delete(
+        mc.parentConstraint('IKArm_R', RightGimbalCtrl_space, mo=False))
 
     gimbalCtrl_cv_list = ['IKLocalArm_L.cv[0:4]', 'IKLocalArm_R.cv[0:4]']
     mc.select(gimbalCtrl_cv_list)
@@ -440,8 +413,8 @@ def BodyCustomButton(*args):
     mc.select(d=True)
 
     mc.parent(LeftGimbalCtrl_space, 'IKFKAlignedArm_L'), mc.parent(RightGimbalCtrl_space, 'IKFKAlignedArm_R')
-    #mc.delete('IKXWrist_L_orientConstraint1', 'IKXWrist_R_orientConstraint1')
-    mc.orientConstraint(LeftGimbalCtrl_crv, 'IKXWrist_L', mo=True), mc.orientConstraint(RightGimbalCtrl_crv, 'IKXWrist_R', mo=True)
+    # mc.delete('IKXWrist_L_orientConstraint1', 'IKXWrist_R_orientConstraint1')
+    mc.orientConstraint(LeftGimbalCtrl_crv, 'IKXWrist_L', mo=True), mc.orientConstraint(RightGimbalCtrl_crv,'IKXWrist_R', mo=True)
 
     gimbalCtrl_list = [LeftGimbalCtrl_crv, RightGimbalCtrl_crv]
 
@@ -467,7 +440,7 @@ def BodyCustomButton(*args):
 
     ################################# clean up
 
-    ExtraCtrl_GRP = mc.group(LeftMirrorCtrl_masterSpace_List, RightMasterConst_List,  n= 'extraControls_GRP')
+    ExtraCtrl_GRP = mc.group(LeftMirrorCtrl_masterSpace_List, RightMasterConst_List, n='extraControls_GRP')
     mc.parent(ExtraCtrl_GRP, 'MotionSystem')
     mc.select(d=True)
 
@@ -482,32 +455,31 @@ def BodyCustomButton(*args):
 
     ################################################ scale cv's
 
-    mc.select('PoleLeg_L.cv[0:7]', 'PoleLeg_R.cv[0:7]', 'PoleArm_R.cv[0:7]', 'PoleArm_L.cv[0:7]'), mc.scale(9, 9, 9, ocp=True)
+    mc.select('PoleLeg_L.cv[0:7]', 'PoleLeg_R.cv[0:7]', 'PoleArm_R.cv[0:7]', 'PoleArm_L.cv[0:7]'), mc.scale(9, 9, 9,
+                                                                                                            ocp=True)
     mc.select('IKLeg_RShape.cv[0:15]', 'IKLeg_LShape.cv[0:15]'), mc.scale(9.5, 1, 1, ocp=True)
     mc.select('IKLeg_RShape.cv[3:6]', 'IKLeg_RShape.cv[9:12]', 'IKLeg_LShape.cv[0:2]', 'IKLeg_LShape.cv[7:8]', 'IKLeg_LShape.cv[13:15]'), mc.move(0, 0, -7, r=True, os=True, wd=True)
-    mc.select('IKLeg_RShape.cv[2]', 'IKLeg_RShape.cv[7]', 'IKLeg_RShape.cv[14:15]', 'IKLeg_LShape.cv[4:5]', 'IKLeg_LShape.cv[9]', 'IKLeg_LShape.cv[12]'), mc.move(0, 0, 9.5, r=True, os=True, wd=True)
-    mc.select('IKToes_LShape.cv[0:7]', 'RollToes_LShape.cv[0:15]', 'RollToesEnd_LShape.cv[0:15]', 'RollToesEnd_RShape.cv[0:15]', 'RollToes_RShape.cv[0:15]', 'RollHeel_RShape.cv[0:15]', 'IKToes_RShape.cv[0:7]',
-              'RollHeel_LShape.cv[0:15]'), mc.scale(9.3, 9.3, 9.3, ocp=True), mc.select('RollHeel_LShape.cv[0:15]', 'RollHeel_RShape.cv[0:15]'), mc.move(0, 3.5, -3, r=True, os=True, wd=True)
-    mc.select('RollToes_RShape.cv[0:15]', 'RollToes_LShape.cv[0:15]', 'IKToes_LShape.cv[0:7]', 'IKToes_RShape.cv[0:7]'), mc.scale(1.5, 1.5, 1.5, ocp=True), mc.move(0, 2.6, 1.2, r=True, os=True, wd=True)
-    mc.select('FKIKLeg_L.cv[0:11]'), mc.scale(2.3, 2.3, 2.3, ocp=True), mc.move(17, 0, 0, r=True, os=True, wd=True), mc.select('FKIKLeg_R.cv[0:11]'), mc.scale(2.3, 2.3, 2.3, ocp=True), mc.move(-17, 0, 0, r=True, os=True, wd=True)
-    mc.select('IKArm_LShape.cv[0:15]', 'IKArm_RShape.cv[0:15]', 'IKLocalArm_R.cv[0:4]', 'IKLocalArm_L.cv[0:4]'), mc.scale(8, 8, 8, ocp=True), mc.scale(0.3, 1, 1, ocp=True)
+    mc.select('IKLeg_RShape.cv[2]', 'IKLeg_RShape.cv[7]', 'IKLeg_RShape.cv[14:15]', 'IKLeg_LShape.cv[4:5]','IKLeg_LShape.cv[9]', 'IKLeg_LShape.cv[12]'), mc.move(0, 0, 9.5, r=True, os=True, wd=True)
+    mc.select('IKToes_LShape.cv[0:7]', 'RollToes_LShape.cv[0:15]', 'RollToesEnd_LShape.cv[0:15]','RollToesEnd_RShape.cv[0:15]', 'RollToes_RShape.cv[0:15]', 'RollHeel_RShape.cv[0:15]','IKToes_RShape.cv[0:7]',
+              'RollHeel_LShape.cv[0:15]'), mc.scale(9.3, 9.3, 9.3, ocp=True), mc.select('RollHeel_LShape.cv[0:15]','RollHeel_RShape.cv[0:15]'), mc.move(0, 3.5, -3, r=True, os=True, wd=True)
+    mc.select('RollToes_RShape.cv[0:15]', 'RollToes_LShape.cv[0:15]', 'IKToes_LShape.cv[0:7]','IKToes_RShape.cv[0:7]'), mc.scale(1.5, 1.5, 1.5, ocp=True), mc.move(0, 2.6, 1.2, r=True, os=True, wd=True)
+    mc.select('FKIKLeg_L.cv[0:11]'), mc.scale(2.3, 2.3, 2.3, ocp=True), mc.move(17, 0, 0, r=True, os=True,wd=True), mc.select('FKIKLeg_R.cv[0:11]'), mc.scale(2.3, 2.3, 2.3, ocp=True), mc.move(-17, 0, 0, r=True, os=True, wd=True)
+    mc.select('IKArm_LShape.cv[0:15]', 'IKArm_RShape.cv[0:15]', 'IKLocalArm_R.cv[0:4]','IKLocalArm_L.cv[0:4]'), mc.scale(8, 8, 8, ocp=True), mc.scale(0.3, 1, 1, ocp=True)
     mc.select('FKKnee_LShape.cv[0:7]', 'FKKnee_RShape.cv[0:7]'), mc.scale(11.5, 11.5, 11.5, ocp=True)
     mc.select('FKAnkle_LShape.cv[0:7]', 'FKAnkle_RShape.cv[0:7]'), mc.scale(12.5, 12.5, 12.5, ocp=True)
-    mc.select('FKToes_LShape.cv[0:7]', 'FKToes_RShape.cv[0:7]'), mc.scale(13, 13, 13, ocp=True), mc.move(0, 3, 0, r=True)
-    mc.select('FKHip_LShape.cv[0:7]', 'FKHip_RShape.cv[0:7]'), mc.scale(10.3, 10.3, 10.3, ocp=True), mc.rotate(0, -28, 0, ocp=True), mc.move(0, -2.8, 0, r=True)
+    mc.select('FKToes_LShape.cv[0:7]', 'FKToes_RShape.cv[0:7]'), mc.scale(13, 13, 13, ocp=True), mc.move(0, 3, 0,r=True)
+    mc.select('FKHip_LShape.cv[0:7]', 'FKHip_RShape.cv[0:7]'), mc.scale(10.3, 10.3, 10.3, ocp=True), mc.rotate(0, -28,0,ocp=True), mc.move( 0, -2.8, 0, r=True)
     mc.select('FKIKSpine_M.cv[0:11]'), mc.scale(2, 2, 2, ocp=True), mc.move(20, 0, 0, r=True, os=True, wd=True)
-    mc.select('FKSpine1_MShape.cv[0:7]', 'FKRoot_MShape.cv[0:7]', 'FKChest_MShape.cv[0:7]', 'FKSpine2_MShape.cv[0:7]'), mc.scale(12,12, 12, ocp=True)
+    mc.select('FKSpine1_MShape.cv[0:7]', 'FKRoot_MShape.cv[0:7]', 'FKChest_MShape.cv[0:7]','FKSpine2_MShape.cv[0:7]'), mc.scale(12, 12, 12, ocp=True)
     mc.select('HipSwinger_M.cv[0:7]'), mc.rotate(0, 0, 90, ocp=True), mc.move(2.5, 0, 0, r=True), mel.eval("CenterPivot"), mc.scale(30, 30, 30, ocp=True)
-    mc.select('RootX_MShape.cv[0:6]', 'RootX_MShape3.cv[0:6]', 'RootX_MShape1.cv[0:6]', 'RootX_MShape2.cv[0:6]'), mc.scale(13, 13, 13, ocp=True)
-    mc.select('IKSpine2_MShape.cv[0:7]', 'IKSpine1_MShape.cv[0:15]', 'IKSpine3_MShape.cv[0:15]', 'IKhybridSpine3_MShape.cv[0:15]', 'IKhybridSpine2_MShape.cv[0:15]', 'IKhybridSpine1_MShape.cv[0:15]'), mc.scale(9, 9, 9, ocp=True)
+    mc.select('RootX_MShape.cv[0:6]', 'RootX_MShape3.cv[0:6]', 'RootX_MShape1.cv[0:6]','RootX_MShape2.cv[0:6]'), mc.scale(13, 13, 13, ocp=True)
+    mc.select('IKSpine2_MShape.cv[0:7]', 'IKSpine1_MShape.cv[0:15]', 'IKSpine3_MShape.cv[0:15]','IKhybridSpine3_MShape.cv[0:15]', 'IKhybridSpine2_MShape.cv[0:15]','IKhybridSpine1_MShape.cv[0:15]'), mc.scale(9, 9, 9, ocp=True)
     mc.select('FKIKArm_R.cv[0:11]', 'FKIKArm_L.cv[0:11]'), mc.scale(2, 2, 2, ocp=True), mc.select('FKIKArm_L.cv[0:11]'), mc.move(8.9, 8.2, 0, r=True, os=True, wd=True), mc.select('FKIKArm_R.cv[0:11]'), mc.move(-8.9, 8.2, 0, r=True, os=True, wd=True)
-    mc.select('FKNeck_MShape.cv[0:7]'), mc.scale(21.6, 21.6, 21.6, ocp=True), mc.select('FKNeck_MShape.cv[1]', 'FKNeck_MShape.cv[5]'), mc.move(4.1, 0, 0, r=True, os=True, wd=True)
+    mc.select('FKNeck_MShape.cv[0:7]'), mc.scale(21.6, 21.6, 21.6, ocp=True), mc.select('FKNeck_MShape.cv[1]','FKNeck_MShape.cv[5]'), mc.move(4.1, 0, 0, r=True, os=True, wd=True)
     mc.select('FKHead_MShape.cv[0:7]'), mc.scale(13, 13, 13, r=True, p=(0, 174, -6.1))
-    mc.select('FKScapula_LShape.cv[0:20]'), mc.scale(12.5, 12.5, 12.5, ocp=True), mc.move(-8.5, 0, 0, r=True, os=True, wd=True), mc.scale(0.3, 1, 1, r=True, p=(10.5, 115.9, -8.8))
+    mc.select('FKScapula_LShape.cv[0:20]'), mc.scale(12.5, 12.5, 12.5, ocp=True), mc.move(-8.5, 0, 0, r=True, os=True, wd=True), mc.scale(0.3, 1, 1,r=True, p=(0.5, 115.9, -8.8))
     mc.select('FKScapula_RShape.cv[0:20]'), mc.scale(12.5, 12.5, 12.5, ocp=True), mc.move(8.5, 0, 0, r=True, os=True, wd=True), mc.scale(0.3, 1, 1, r=True, p=(-10.5, 115.9, 8.8))
-    mc.select('FKShoulder1_RShape.cv[0:7]', 'FKShoulder1_LShape.cv[0:7]'), mc.scale(10, 10, 10, ocp=True)
-    mc.select('FKElbow_LShape.cv[0:7]', 'FKElbow_RShape.cv[0:7]'), mc.scale(7, 7, 7, ocp=True)
-    mc.select('FKWrist_RShape.cv[0:7]', 'FKWrist_LShape.cv[0:7]'), mc.scale(7, 7, 7, ocp=True)
+    mc.select('FKShoulder1_RShape.cv[0:7]', 'FKShoulder1_LShape.cv[0:7]', 'FKElbow_LShape.cv[0:7]', 'FKElbow_RShape.cv[0:7]', 'FKWrist_RShape.cv[0:7]', 'FKWrist_LShape.cv[0:7]'), mc.scale(10, 10, 10, ocp=True)
     mc.select('FKIndexFinger3_RShape.cv[0:7]', 'FKPinkyFinger1_RShape.cv[0:7]', 'FKIndexFinger3_LShape.cv[0:7]', 'FKPinkyFinger1_LShape.cv[0:7]', 'FKMiddleFinger2_RShape.cv[0:7]',
               'FKThumbFinger1_LShape.cv[0:7]', 'FKRingFinger2_LShape.cv[0:7]', 'FKIndexFinger2_LShape.cv[0:7]', 'FKIndexFinger2_RShape.cv[0:7]', 'FKThumbFinger2_LShape.cv[0:7]',
               'FKRingFinger3_RShape.cv[0:7]', 'FKThumbFinger3_RShape.cv[0:7]', 'FKCup_LShape.cv[0:7]', 'FKRingFinger2_RShape.cv[0:7]', 'FKPinkyFinger3_RShape.cv[0:7]', 'FKIndexFinger1_RShape.cv[0:7]',
@@ -521,19 +493,99 @@ def BodyCustomButton(*args):
     ########################################################################################################################################################################################
     ################################################################################################### control colors
 
-    AS_leftCtrl_list = ['FKScapula_LShape','FKAnkle_LShape', 'FKElbow_LShape', 'FKHip_LShape', 'FKIndexFinger1_LShape', 'FKIndexFinger2_LShape', 'FKIndexFinger3_LShape', 'FKKnee_LShape', 'FKMiddleFinger1_LShape',
-                        'FKMiddleFinger3_LShape', 'FKPinkyFinger1_LShape', 'FKPinkyFinger2_LShape', 'FKPinkyFinger3_LShape', 'FKRingFinger1_LShape', 'FKRingFinger2_LShape', 'FKRingFinger3_LShape', 'FKShoulder1_LShape',
-                        'FKThumbFinger2_LShape', 'FKThumbFinger3_LShape', 'FKToes_LShape', 'FKWrist_LShape', 'IKArm_LShape', 'curveShape16', 'PoleArm_LShape', 'IKLeg_LShape', 'RollHeel_LShape', 'RollToesEnd_LShape',
-                        'RollToes_LShape', 'Fingers_LShape', 'PoleLeg_LShape', 'FKCup_LShape', 'FKMiddleFinger2_LShape', 'FKThumbFinger1_LShape', 'IKToes_LShape']
+    AS_leftCtrl_list = ['FKScapula_LShape', 'FKAnkle_LShape', 'FKElbow_LShape', 'FKHip_LShape', 'FKIndexFinger1_LShape','FKIndexFinger2_LShape', 'FKIndexFinger3_LShape', 'FKKnee_LShape', 'FKMiddleFinger1_LShape',
+                        'FKMiddleFinger3_LShape', 'FKPinkyFinger1_LShape', 'FKPinkyFinger2_LShape','FKPinkyFinger3_LShape', 'FKRingFinger1_LShape', 'FKRingFinger2_LShape', 'FKRingFinger3_LShape',
+                        'FKShoulder1_LShape','FKThumbFinger2_LShape', 'FKThumbFinger3_LShape', 'FKToes_LShape', 'FKWrist_LShape','IKArm_LShape', 'curveShape16', 'PoleArm_LShape', 'IKLeg_LShape', 'RollHeel_LShape',
+                        'RollToesEnd_LShape','RollToes_LShape', 'Fingers_LShape', 'PoleLeg_LShape', 'FKCup_LShape', 'FKMiddleFinger2_LShape','FKThumbFinger1_LShape', 'IKToes_LShape']
     for AS_lCtrls in AS_leftCtrl_list:
-        itemColor(AS_lCtrls, 6)
+        controlColor(AS_lCtrls, 6)
 
-    AS_rightCtrl_list = ['FKScapula_RShape','FKAnkle_RShape', 'FKElbow_RShape', 'FKHip_RShape', 'FKIndexFinger1_RShape', 'FKIndexFinger2_RShape', 'FKIndexFinger3_RShape', 'FKKnee_RShape', 'FKMiddleFinger1_RShape',
-                        'FKMiddleFinger3_RShape', 'FKPinkyFinger1_RShape', 'FKPinkyFinger2_RShape', 'FKPinkyFinger3_RShape', 'FKRingFinger1_RShape', 'FKRingFinger2_RShape', 'FKRingFinger3_RShape', 'FKShoulder1_RShape',
-                        'FKThumbFinger2_RShape', 'FKThumbFinger3_RShape', 'FKToes_RShape', 'FKWrist_RShape', 'IKArm_RShape', 'curveShape16', 'PoleArm_RShape', 'IKLeg_RShape', 'RollHeel_RShape', 'RollToesEnd_RShape',
-                        'RollToes_RShape', 'Fingers_RShape', 'PoleLeg_RShape', 'FKCup_RShape', 'FKMiddleFinger2_RShape', 'FKThumbFinger1_RShape', 'IKToes_RShape']
+    AS_rightCtrl_list = ['FKScapula_RShape', 'FKAnkle_RShape', 'FKElbow_RShape', 'FKHip_RShape','FKIndexFinger1_RShape', 'FKIndexFinger2_RShape', 'FKIndexFinger3_RShape', 'FKKnee_RShape','FKMiddleFinger1_RShape',
+                         'FKMiddleFinger3_RShape', 'FKPinkyFinger1_RShape', 'FKPinkyFinger2_RShape','FKPinkyFinger3_RShape', 'FKRingFinger1_RShape', 'FKRingFinger2_RShape',
+                         'FKRingFinger3_RShape', 'FKShoulder1_RShape','FKThumbFinger2_RShape', 'FKThumbFinger3_RShape', 'FKToes_RShape', 'FKWrist_RShape',
+                         'IKArm_RShape', 'curveShape16', 'PoleArm_RShape', 'IKLeg_RShape', 'RollHeel_RShape','RollToesEnd_RShape','RollToes_RShape', 'Fingers_RShape', 'PoleLeg_RShape', 'FKCup_RShape',
+                         'FKMiddleFinger2_RShape', 'FKThumbFinger1_RShape', 'IKToes_RShape']
     for AS_rCtrls in AS_rightCtrl_list:
-        itemColor(AS_rCtrls, 13)
+        controlColor(AS_rCtrls, 13)
+
+    ###############################################################################################################################################################
+    ############################################################################ camera setup
+    cam = mc.camera(n='Cine_Cam1', hfa=1.417, vfa=0.945, fl=20, lsr=1, fs=5, sa=144, coi=5), mc.rotate(0, -180, 0,fo=True)
+    camCtrl = mc.circle(n='Camera_ctrl', ch=False)
+    mc.select('Camera_ctrl.cv[0:7]'), mc.rotate(90, 0, 0, ocp=True), mc.scale(30, 30, 30, ocp=True), mc.scale(1, 1, 1.5,ocp=True)
+    mc.select('Camera_ctrl.cv[4]', 'Camera_ctrl.cv[6]', 'Camera_ctrl.cv[0]', 'Camera_ctrl.cv[2]'), mc.scale(0.15, 1, 1,ocp=True), mc.scale(1, 1, 0.5, ocp=True)
+    camCtrlSpace = mc.group(camCtrl, n='Camera_ctrlSpace')
+    attCtrl = mc.circle(n='Attach_ctrl', ch=False)
+    attCtrlSpace = mc.group(attCtrl, n='Attach_ctrlSpace')
+    mc.select('Attach_ctrl.cv[0:7]'), mc.rotate(90, 0, 0, ocp=True), mc.scale(15, 15, 15, ocp=True), mc.select('Attach_ctrl.cv[1]'), mc.move(0, 0, 30, r=True, os=True, wd=True)
+    mc.select('Attach_ctrl.cv[0]', 'Attach_ctrl.cv[2]'), mc.scale(0.3, 1, 1, ocp=True), mc.select(d=True)
+
+    mc.parentConstraint('Camera', 'Cine_Cam1', mo=True)
+    mc.parentConstraint('RootX_M', camCtrlSpace, mo=False)
+    mc.parentConstraint('HipsDirection', camCtrlSpace, mo=False)
+    mc.parentConstraint('Main', camCtrlSpace, mo=False)
+    mc.parentConstraint('RootX_M', attCtrlSpace, mo=False)
+    mc.parentConstraint('HipsDirection', attCtrlSpace, mo=False)
+    mc.parentConstraint('Main', attCtrlSpace, mo=False)
+
+    mc.setAttr('Camera_ctrlSpace_parentConstraint1.MainW2', 0)
+    mc.setAttr('Camera_ctrlSpace_parentConstraint1.RootX_MW0', 0)
+    mc.setAttr('Camera_ctrlSpace_parentConstraint1.HipsDirectionW1', 0)
+
+    mc.setAttr('Attach_ctrlSpace_parentConstraint1.MainW2', 0)
+    mc.setAttr('Attach_ctrlSpace_parentConstraint1.RootX_MW0', 0)
+    mc.setAttr('Attach_ctrlSpace_parentConstraint1.HipsDirectionW1', 0)
+
+    ctrls_list = ['Attach_ctrl', 'Camera_ctrl']
+    for i in ctrls_lits:
+        mc.addAttr(i, longName='root_ctrl', min=0, max=1, defaultValue=1.0, k=True)
+        mc.addAttr(i, longName='hips_translation_ctrl', min=0, max=1, defaultValue=0, k=True)
+        mc.addAttr(i, longName='main_ctrl', min=0, max=1, defaultValue=0, k=True)
+
+    mc.setDrivenKeyframe('Camera_ctrlSpace_parentConstraint1.MainW2', currentDriver='Camera_ctrl.main_ctrl')
+    mc.setAttr('Camera_ctrl.main_ctrl', 1), mc.setAttr('Camera_ctrlSpace_parentConstraint1.MainW2', 1)
+    mc.setDrivenKeyframe('Camera_ctrlSpace_parentConstraint1.MainW2', currentDriver='Camera_ctrl.main_ctrl')
+    mc.setAttr('Camera_ctrl.main_ctrl', 0), mc.setAttr('Camera_ctrlSpace_parentConstraint1.MainW2', 0)
+    mc.setDrivenKeyframe('Camera_ctrlSpace_parentConstraint1.MainW2', currentDriver='Camera_ctrl.main_ctrl')
+
+    mc.setDrivenKeyframe('Camera_ctrlSpace_parentConstraint1.HipsDirectionW1',currentDriver='Camera_ctrl.hips_translation_ctrl')
+    mc.setAttr('Camera_ctrl.hips_translation_ctrl', 1), mc.setAttr('Camera_ctrlSpace_parentConstraint1.HipsDirectionW1',1)
+    mc.setDrivenKeyframe('Camera_ctrlSpace_parentConstraint1.HipsDirectionW1',currentDriver='Camera_ctrl.hips_translation_ctrl')
+    mc.setAttr('Camera_ctrl.hips_translation_ctrl', 0), mc.setAttr('Camera_ctrlSpace_parentConstraint1.HipsDirectionW1',0)
+    mc.setDrivenKeyframe('Camera_ctrlSpace_parentConstraint1.HipsDirectionW1',currentDriver='Camera_ctrl.hips_translation_ctrl')
+
+    mc.setDrivenKeyframe('Camera_ctrlSpace_parentConstraint1.RootX_MW0', currentDriver='Camera_ctrl.root_ctrl')
+    mc.setAttr('Camera_ctrl.root_ctrl', 1), mc.setAttr('Camera_ctrlSpace_parentConstraint1.RootX_MW0', 1)
+    mc.setDrivenKeyframe('Camera_ctrlSpace_parentConstraint1.RootX_MW0', currentDriver='Camera_ctrl.root_ctrl')
+    mc.setAttr('Camera_ctrl.root_ctrl', 0), mc.setAttr('Camera_ctrlSpace_parentConstraint1.RootX_MW0', 0)
+    mc.setDrivenKeyframe('Camera_ctrlSpace_parentConstraint1.RootX_MW0', currentDriver='Camera_ctrl.root_ctrl')
+    mc.setAttr('Camera_ctrl.main_ctrl', 1)
+
+    mc.setDrivenKeyframe('Attach_ctrlSpace_parentConstraint1.MainW2', currentDriver='Attach_ctrl.main_ctrl')
+    mc.setAttr('Attach_ctrl.main_ctrl', 1), mc.setAttr('Attach_ctrlSpace_parentConstraint1.MainW2', 1)
+    mc.setDrivenKeyframe('Attach_ctrlSpace_parentConstraint1.MainW2', currentDriver='Attach_ctrl.main_ctrl')
+    mc.setAttr('Attach_ctrl.main_ctrl', 0), mc.setAttr('Attach_ctrlSpace_parentConstraint1.MainW2', 0)
+    mc.setDrivenKeyframe('Attach_ctrlSpace_parentConstraint1.MainW2', currentDriver='Attach_ctrl.main_ctrl')
+
+    mc.setDrivenKeyframe('Attach_ctrlSpace_parentConstraint1.HipsDirectionW1', currentDriver='Attach_ctrl.hips_translation_ctrl')
+    mc.setAttr('Attach_ctrl.hips_translation_ctrl', 1), mc.setAttr('Attach_ctrlSpace_parentConstraint1.HipsDirectionW1', 1)
+    mc.setDrivenKeyframe('Attach_ctrlSpace_parentConstraint1.HipsDirectionW1', currentDriver='Attach_ctrl.hips_translation_ctrl')
+    mc.setAttr('Attach_ctrl.hips_translation_ctrl', 0), mc.setAttr('Attach_ctrlSpace_parentConstraint1.HipsDirectionW1',0)
+    mc.setDrivenKeyframe('Attach_ctrlSpace_parentConstraint1.HipsDirectionW1',currentDriver='Attach_ctrl.hips_translation_ctrl')
+
+    mc.setDrivenKeyframe('Attach_ctrlSpace_parentConstraint1.RootX_MW0', currentDriver='Attach_ctrl.root_ctrl')
+    mc.setAttr('Attach_ctrl.root_ctrl', 1), mc.setAttr('Attach_ctrlSpace_parentConstraint1.RootX_MW0', 1)
+    mc.setDrivenKeyframe('Attach_ctrlSpace_parentConstraint1.RootX_MW0', currentDriver='Attach_ctrl.root_ctrl')
+    mc.setAttr('Attach_ctrl.root_ctrl', 0), mc.setAttr('Attach_ctrlSpace_parentConstraint1.RootX_MW0', 0)
+    mc.setDrivenKeyframe('Attach_ctrlSpace_parentConstraint1.RootX_MW0', currentDriver='Attach_ctrl.root_ctrl')
+    mc.setAttr('Attach_ctrl.main_ctrl', 1)
+
+    mc.parent(camCtrlSpace, attCtrlSpace, 'Cine_Cam1', 'Group')
+    controlColor('Camera_ctrl', 17)
+    controlColor('Attach_ctrl', 18)
+    mc.setAttr('Cine_Cam1.v', 0)
+    mc.parentConstraint(camCtrl, 'Camera', mo=True), mc.parentConstraint(attCtrl, 'Attach', mo=True)
+    mc.select(d=True)
 
 
 ######################################################################################################################################
@@ -1538,14 +1590,73 @@ def facialRigButton(*args):
     mc.select('curveShape28.cv[0:11]'), mc.move(0, 0, 3.5, r=True, os=True, wd=True)
     mc.select('curveShape42.cv[0:11]'), mc.scale(0, 0, 0.5, ocp=True)
     mc.select('curveShape31.cv[0:11]'), mc.move(1.1, 0, 0, r=True, os=True, wd=True)
-    mc.select('curveShape55.cv[0:11]'), mc.scale(3, 3, 3, ocp=True), mc.move(0, 0, 5, r=True, os=True, wd=True)
+    mc.select('curveShape55.cv[0:11]'), mc.scale(3, 3, 3, ocp=True), mc.rotate(0, 90, 0, ocp=True), mc.move(5, 0, 0, r=True, os=True, wd=True)
     mc.select('curveShape51.cv[0:11]'), mc.scale(1.7, 1.7, 1.7, ocp=True), mc.move(6, 0, 0, r=True, os=True, wd=True)
 
     mc.select(d=True)
 
 ######################################################################################################################################
 ########################                                                            ##################################################
+########################                            Aim Head                        ##################################################
+########################                                                            ##################################################
+######################################################################################################################################
+
+def aimHead(*args):
+
+    mc.spaceLocator(n='HeadAim_Loc', p=(0,0,0))
+    mc.parentConstraint('Head','HeadAim_Loc', mo=False)
+    mc.delete('HeadAim_Loc_parentConstraint1')
+    mc.setAttr('HeadAim_Loc.translateZ', 40)
+    mc.makeIdentity(apply=True, t=1, r=1, s=1, n=0)
+    mc.group('HeadAim_Loc', n='HeadAim_Grp')
+
+    mc.setAttr('HeadAim_LocShape.localScaleX', 15)
+    mc.setAttr('HeadAim_LocShape.localScaleY', 15)
+    mc.setAttr('HeadAim_LocShape.localScaleZ', 15)
+
+    #create aim constraint
+    mc.group(em=True, n='FollowHeadNode')
+    mc.parentConstraint('FKHead_M', 'FollowHeadNode', mo=False)
+    mc.delete('FollowHeadNode_parentConstraint1')
+    mc.parent('FollowHeadNode','FKExtraHeadBase_M')
+    mc.select('FollowHeadNode')
+    mc.makeIdentity(apply=True, t=1, r=1, s=1, n=0)
+    mc.parent('FKHead_M', 'FollowHeadNode')
+    mc.aimConstraint('HeadAim_Loc', 'FollowHeadNode', mo=True)
+
+    #create attribute on main controller to toggle the visibility of HeadAim_Grp
+
+    mc.addAttr('Main', longName='HeadAim_Vis', min=0, max=1, defaultValue=1.0, k=True)
+    mc.setAttr('Main.HeadAim_Vis',e=True, keyable=True, l=False)
+
+    #set driven key from Main to turn vis off of Group
+    mc.setDrivenKeyframe ('HeadAim_Grp.v', currentDriver = 'Main.HeadAim_Vis')
+    mc.setAttr ('Main.HeadAim_Vis', 1)
+    mc.setAttr ('HeadAim_Grp.v', 1)
+    mc.setDrivenKeyframe ('HeadAim_Grp.v', currentDriver = 'Main.HeadAim_Vis')
+    mc.setAttr ('Main.HeadAim_Vis', 0)
+    mc.setAttr ('HeadAim_Grp.v', 0)
+    mc.setDrivenKeyframe ('HeadAim_Grp.v', currentDriver = 'Main.HeadAim_Vis')
+
+    #set driven key from HeadAim_Grp to turn the aimConstraint off when visibility is off
+    mc.setDrivenKeyframe ('FollowHeadNode_aimConstraint1.HeadAim_LocW0', currentDriver = 'HeadAim_Grp.v')
+    mc.setAttr ('HeadAim_Grp.v', 1)
+    mc.setAttr ('FollowHeadNode_aimConstraint1.HeadAim_LocW0', 1)
+    mc.setDrivenKeyframe ('FollowHeadNode_aimConstraint1.HeadAim_LocW0', currentDriver = 'HeadAim_Grp.v')
+    mc.setAttr ('HeadAim_Grp.v', 0)
+    mc.setAttr ('FollowHeadNode_aimConstraint1.HeadAim_LocW0', 0)
+    mc.setDrivenKeyframe ('FollowHeadNode_aimConstraint1.HeadAim_LocW0', currentDriver = 'HeadAim_Grp.v')
+
+    #connect HeadAim_Grp to follow neck
+    mc.parent('HeadAim_Grp','Main')
+    mc.parentConstraint('FKNeck_M','HeadAim_Grp', mo=True)
+
+    mc.select(d=True)
+
+######################################################################################################################################
+########################                                                            ##################################################
 ########################                            Delete animLayer                ##################################################
+########################                                                            ##################################################
 ######################################################################################################################################
 
 def deleteAnimLy(*args):
@@ -1568,7 +1679,14 @@ mc.text(l='Need - jaw / head bone -')
 mc.button(l= '02 - FaceTemplete', command= templeteFacialButton)
 mc.button(l= '03 - FaceFacialRig', command= facialRigButton)
 mc.separator()
+mc.text(l='Aim Head')
+mc.button(l='AimHead_Ctrl', command=aimHead)
+mc.separator()
 mc.text(l='Delete animLayer')
 mc.button(l='Delete animLayer', command=deleteAnimLy)
 
 mc.showWindow()
+
+
+
+
