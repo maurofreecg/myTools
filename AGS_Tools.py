@@ -97,6 +97,8 @@ def BodyCustomButton(*args):
 
     # clean up
     mc.delete('HeadEnd_M', 'ThumbFinger4_L', 'IndexFinger4_L', 'MiddleFinger4_L', 'RingFinger4_L', 'PinkyFinger4_L','ThumbFinger4_R', 'IndexFinger4_R','MiddleFinger4_R', 'RingFinger4_R', 'PinkyFinger4_R')
+
+    print('Mirror and clean up complete -> 01')
     ###########################################################################################################
     ########################################### extras controls  ##############################################
     ###########################################################################################################
@@ -392,7 +394,10 @@ def BodyCustomButton(*args):
         mc.connectAttr(rotMD + '.outputX', RightCtrl_LowerLeg_List[rLowerLeg] + '.rx')
     mc.setAttr('RightAnkleHelper_ctrlSpace_MD.input2X', -1.5)
 
-    ########### hand gimbal controls
+    print('Extras bones + controls connection completed -> 02')
+
+    #####################################################################################################################################
+    ######################################################### hand gimbal controls
 
     LeftGimbalCtrl_crv = mc.curve(d=True, p=(
     (-0.5, 0.5, 0.00702787), (0.5, 0.5, 0.00702787), (0.5, -0.5, 0.00702787), (-0.5, -0.5, 0.00702787),(-0.5, 0.5, 0.00702787)), n='IKLocalArm_L')
@@ -404,8 +409,7 @@ def BodyCustomButton(*args):
     RightGimbalCtrl_space = mc.group(em=True, n='IKLocalArm_R_ctrlSpace')
     mc.parent(RightGimbalCtrl_crv, RightGimbalCtrl_space), mc.select(d=True)
 
-    mc.delete(mc.parentConstraint('IKArm_L', LeftGimbalCtrl_space, mo=False)), mc.delete(
-        mc.parentConstraint('IKArm_R', RightGimbalCtrl_space, mo=False))
+    mc.delete(mc.parentConstraint('IKArm_L', LeftGimbalCtrl_space, mo=False)), mc.delete(mc.parentConstraint('IKArm_R', RightGimbalCtrl_space, mo=False))
 
     gimbalCtrl_cv_list = ['IKLocalArm_L.cv[0:4]', 'IKLocalArm_R.cv[0:4]']
     mc.select(gimbalCtrl_cv_list)
@@ -432,6 +436,7 @@ def BodyCustomButton(*args):
 
     mc.select(d=True)
 
+    print('Gimbal control completed -> 03')
     ##################################### neck twist
     MDNode = mc.createNode('multiplyDivide', n='neckTwist_MD')
     mc.connectAttr('Head.rx', MDNode + '.input1X')
@@ -453,10 +458,10 @@ def BodyCustomButton(*args):
 
     mc.select(d=True)
 
+    print('Neck twist completed -> 04')
     ################################################ scale cv's
 
-    mc.select('PoleLeg_L.cv[0:7]', 'PoleLeg_R.cv[0:7]', 'PoleArm_R.cv[0:7]', 'PoleArm_L.cv[0:7]'), mc.scale(9, 9, 9,
-                                                                                                            ocp=True)
+    mc.select('PoleLeg_L.cv[0:7]', 'PoleLeg_R.cv[0:7]', 'PoleArm_R.cv[0:7]', 'PoleArm_L.cv[0:7]'), mc.scale(9, 9, 9,ocp=True)
     mc.select('IKLeg_RShape.cv[0:15]', 'IKLeg_LShape.cv[0:15]'), mc.scale(9.5, 1, 1, ocp=True)
     mc.select('IKLeg_RShape.cv[3:6]', 'IKLeg_RShape.cv[9:12]', 'IKLeg_LShape.cv[0:2]', 'IKLeg_LShape.cv[7:8]', 'IKLeg_LShape.cv[13:15]'), mc.move(0, 0, -7, r=True, os=True, wd=True)
     mc.select('IKLeg_RShape.cv[2]', 'IKLeg_RShape.cv[7]', 'IKLeg_RShape.cv[14:15]', 'IKLeg_LShape.cv[4:5]','IKLeg_LShape.cv[9]', 'IKLeg_LShape.cv[12]'), mc.move(0, 0, 9.5, r=True, os=True, wd=True)
@@ -476,7 +481,7 @@ def BodyCustomButton(*args):
     mc.select('IKSpine2_MShape.cv[0:7]', 'IKSpine1_MShape.cv[0:15]', 'IKSpine3_MShape.cv[0:15]','IKhybridSpine3_MShape.cv[0:15]', 'IKhybridSpine2_MShape.cv[0:15]','IKhybridSpine1_MShape.cv[0:15]'), mc.scale(9, 9, 9, ocp=True)
     mc.select('FKIKArm_R.cv[0:11]', 'FKIKArm_L.cv[0:11]'), mc.scale(2, 2, 2, ocp=True), mc.select('FKIKArm_L.cv[0:11]'), mc.move(8.9, 8.2, 0, r=True, os=True, wd=True), mc.select('FKIKArm_R.cv[0:11]'), mc.move(-8.9, 8.2, 0, r=True, os=True, wd=True)
     mc.select('FKNeck_MShape.cv[0:7]'), mc.scale(21.6, 21.6, 21.6, ocp=True), mc.select('FKNeck_MShape.cv[1]','FKNeck_MShape.cv[5]'), mc.move(4.1, 0, 0, r=True, os=True, wd=True)
-    mc.select('FKHead_MShape.cv[0:7]'), mc.scale(13, 13, 13, r=True, p=(0, 174, -6.1))
+    mc.select('FKHead_MShape.cv[0:7]'), mc.scale(13, 13, 13, ocp=True) # 0 174 -6.1
     mc.select('FKScapula_LShape.cv[0:20]'), mc.scale(12.5, 12.5, 12.5, ocp=True), mc.move(-8.5, 0, 0, r=True, os=True, wd=True), mc.scale(0.3, 1, 1,r=True, p=(0.5, 115.9, -8.8))
     mc.select('FKScapula_RShape.cv[0:20]'), mc.scale(12.5, 12.5, 12.5, ocp=True), mc.move(8.5, 0, 0, r=True, os=True, wd=True), mc.scale(0.3, 1, 1, r=True, p=(-10.5, 115.9, 8.8))
     mc.select('FKShoulder1_RShape.cv[0:7]', 'FKShoulder1_LShape.cv[0:7]', 'FKElbow_LShape.cv[0:7]', 'FKElbow_RShape.cv[0:7]', 'FKWrist_RShape.cv[0:7]', 'FKWrist_LShape.cv[0:7]'), mc.scale(10, 10, 10, ocp=True)
@@ -508,6 +513,7 @@ def BodyCustomButton(*args):
     for AS_rCtrls in AS_rightCtrl_list:
         controlColor(AS_rCtrls, 13)
 
+    print('Cvs scaled completed -> 05')
     ###############################################################################################################################################################
     ############################################################################ camera setup
     cam = mc.camera(n='Cine_Cam1', hfa=1.417, vfa=0.945, fl=20, lsr=1, fs=5, sa=144, coi=5), mc.rotate(0, -180, 0,fo=True)
@@ -537,7 +543,7 @@ def BodyCustomButton(*args):
     mc.setAttr('Attach_ctrlSpace_parentConstraint1.HipsDirectionW1', 0)
 
     ctrls_list = ['Attach_ctrl', 'Camera_ctrl']
-    for i in ctrls_lits:
+    for i in ctrls_list:
         mc.addAttr(i, longName='root_ctrl', min=0, max=1, defaultValue=1.0, k=True)
         mc.addAttr(i, longName='hips_translation_ctrl', min=0, max=1, defaultValue=0, k=True)
         mc.addAttr(i, longName='main_ctrl', min=0, max=1, defaultValue=0, k=True)
@@ -586,6 +592,8 @@ def BodyCustomButton(*args):
     mc.setAttr('Cine_Cam1.v', 0)
     mc.parentConstraint(camCtrl, 'Camera', mo=True), mc.parentConstraint(attCtrl, 'Attach', mo=True)
     mc.select(d=True)
+
+    print('Camera setup completed -> 06')
 
 
 ######################################################################################################################################
@@ -754,19 +762,19 @@ def templeteFacialButton(*args):
     mc.setAttr('LeftMaxilarUp_loc.displayLocalAxis', 1)
 
     LeftMaxilarNeck = mc.spaceLocator(n = 'LeftMaxilarNeck_loc')
-    LeftMaxilarNeckSpace = mc.group(n = 'LeftMaxilarNeck_locSpace'), mc.move(5.131, 165.262, 7.070), mc.rotate(0, 90, 0)
+    LeftMaxilarNeckSpace = mc.group(LeftMaxilarNeck, n = 'LeftMaxilarNeck_locSpace'), mc.move(5.131, 165.262, 7.070), mc.rotate(0, 90, 0)
     mc.setAttr('LeftMaxilarNeck_loc.displayLocalAxis', 1)
 
     LeftMaxilarHead = mc.spaceLocator(n = 'LeftMaxilarHead_loc')
-    LeftMaxilarHeadSpace = mc.group(n = 'LeftMaxilarHead_locSpace'), mc.move(8.614, 178.088, 6.880), mc.rotate(0, 90, 0)
+    LeftMaxilarHeadSpace = mc.group(LeftMaxilarHead, n = 'LeftMaxilarHead_locSpace'), mc.move(8.614, 178.088, 6.880), mc.rotate(0, 90, 0)
     mc.setAttr('LeftMaxilarHead_loc.displayLocalAxis', 1)
 
     LeftTemples = mc.spaceLocator(n = 'LeftTemples_loc')
-    LeftTemplesSpace = mc.group(n = 'LeftTemples_locSpace'), mc.move(8.614, 182.256, 8.526), mc.rotate(0, 90, 0)
+    LeftTemplesSpace = mc.group(LeftTemples, n = 'LeftTemples_locSpace'), mc.move(8.614, 182.256, 8.526), mc.rotate(0, 90, 0)
     mc.setAttr('LeftTemples_loc.displayLocalAxis', 1)
 
     leftSide = mc.spaceLocator(n = 'LeftSide_loc')
-    LeftSideSpace = mc.group(n = 'LeftSide_locSpace'), mc.move(5.912, 178.088, 3.775)
+    LeftSideSpace = mc.group(leftSide, n = 'LeftSide_locSpace'), mc.move(5.912, 178.088, 3.775)
     mc.setAttr('LeftSide_loc.displayLocalAxis', 1)
 
     ##################################################### leftEyebrow
@@ -869,7 +877,7 @@ def templeteFacialButton(*args):
 
 def facialRigButton(*args):
 
-    ######################### eyelids
+######################### eyelids
 
     LeftEyeLidUpOut_JNT = mc.joint(n = 'LeftEyeLidUpOut', radius=0.5)
     mc.delete(mc.parentConstraint('LeftEyeLidUpOut_loc', LeftEyeLidUpOut_JNT, mo = False)), mc.select(d = True)
@@ -1043,10 +1051,10 @@ def facialRigButton(*args):
     ################################################################# parent bones
     mc.parent(LeftEyeLidDnOut_JNT, LeftEyeLidDnIn_JNT, LeftEyeLidUpIn_JNT, LeftEyeLidUpOut_JNT, LeftEyeLidOut_JNT, LeftEyeLidIn_JNT, LeftEyeLidDn_JNT, LeftEyeLidUp_JNT, LeftEyeLidMaster_JNT)
     mc.parent(LeftLobe_JNT, LeftEarUp_JNT, LeftEar_JNT)
-    mc.parent(LipDnOut_JNT, LeftLipDn1Out_JNT, LeftLipDn2_JNT, LeftLipDn1_JNT, LipDn_JNT, 'jaw') #C_jaw_JNT - RoartyDigital faceRig
+    mc.parent(LipDnOut_JNT, LeftLipDn1Out_JNT, LeftLipDn2_JNT, LeftLipDn1_JNT, LipDn_JNT, JawDn_JNT, 'jaw') #C_jaw_JNT - RoartyDigital faceRig
     mc.parent( LeftMaxilarHead_JNT, LeftMaxilarUp_JNT, LeftCheekUp_JNT, LeftUpperHead_JNT, LeftEar_JNT, LeftTemples_JNT, LeftSide_JNT)
     mc.parent(NoseDn_JNT, LeftCheekBoneFront_JNT, LeftCheekboneDn_JNT, FrontHead_JNT, NasalSeptum_JNT, LeftEyeBrow1_JNT, LeftEyeBrow3_JNT, LeftEyeBrow2_JNT,
-    LeftOcularDn_JNT, LeftCheekbone_JNT, LeftNasalUp_JNT, UpperHead_JNT, NoseBrige_JNT, LeftMaxilarDn_JNT, Frown_JNT, LeftEyeLidMaster_JNT, LeftLipUp1_JNT, Chin_JNT, Nose_JNT, LipUp_JNT, JawDn_JNT,
+    LeftOcularDn_JNT, LeftCheekbone_JNT, LeftNasalUp_JNT, UpperHead_JNT, NoseBrige_JNT, LeftMaxilarDn_JNT, Frown_JNT, LeftEyeLidMaster_JNT, LeftLipUp1_JNT, Chin_JNT, Nose_JNT, LipUp_JNT,
     LipUpOut_JNT, LeftLipUp1Out_JNT, LeftCheekDn_JNT, LeftLipUp2_JNT, LeftMaxilarNeck_JNT, LeftNostril_JNT, LeftSide_JNT, NoseUp_JNT, 'Head')#C_head_JNT - RoartyDigital faceRig
     mc.select(d=True)
 
@@ -1201,7 +1209,7 @@ def facialRigButton(*args):
 
     Master_list = ['LeftMaxilarDn_Master', 'LeftMaxilarMaster', 'LeftTempleMaster', 'LeftCheekMaster', 'LeftNoseMaster', 'LeftEyeBrowMaster']
 
-    for mM  in (Master_list):
+    for mM in (Master_list):
         mirrorCtrl = mc.curve(d = 1, p = [(-0.0133947, 0, 0.351564), (-0.0130162, 0, 0.916036), (-0.126636, 0, 0.85811), (0, 0, 1.111383), (0.126636, 0, 0.85811), (0.0121104, 0, 0.916036),
         (0.0121104, 0, 0.351564), (0.0935195, 0, 0.281599), (0.0935195, 0, 0.195095), (-0.0935195, 0, 0.195095), (-0.0935195, 0, 0.281599), (-0.0133947, 0, 0.351564)], n= mM + '_mCtrl')
         mirrorCtrlCustSpace = mc.group(em=True, n=mM + '_customization_mCtrlSpace')
@@ -1588,18 +1596,18 @@ def facialRigButton(*args):
 
     ######################################## mirror controls
     mc.select('curveShape28.cv[0:11]'), mc.move(0, 0, 3.5, r=True, os=True, wd=True)
-    mc.select('curveShape42.cv[0:11]'), mc.scale(0, 0, 0.5, ocp=True)
+    mc.select('curveShape42.cv[0:11]'), mc.scale(0.5, 0.5, 0.5, ocp=True)
     mc.select('curveShape31.cv[0:11]'), mc.move(1.1, 0, 0, r=True, os=True, wd=True)
     mc.select('curveShape55.cv[0:11]'), mc.scale(3, 3, 3, ocp=True), mc.rotate(0, 90, 0, ocp=True), mc.move(5, 0, 0, r=True, os=True, wd=True)
     mc.select('curveShape51.cv[0:11]'), mc.scale(1.7, 1.7, 1.7, ocp=True), mc.move(6, 0, 0, r=True, os=True, wd=True)
 
     mc.select(d=True)
 
-######################################################################################################################################
-########################                                                            ##################################################
-########################                            Aim Head                        ##################################################
-########################                                                            ##################################################
-######################################################################################################################################
+    ######################################################################################################################################
+    ########################                                                            ##################################################
+    ########################                            Aim Head                        ##################################################
+    ########################                                                            ##################################################
+    ######################################################################################################################################
 
 def aimHead(*args):
 
