@@ -49,17 +49,20 @@ def BodyCustomButton(*args):
     mc.mirrorJoint('LeftUpLeg', mirrorYZ=True, mirrorBehavior=True, searchReplace=('Left', 'Right')), mc.select(cl=True)
     mc.mirrorJoint('LeftSpine2AttachRear', mirrorYZ=True, mirrorBehavior=False,searchReplace=('Left', 'Right')), mc.select(cl=True)
     mc.mirrorJoint('LeftBreast', mirrorYZ=True, mirrorBehavior=False, searchReplace=('Left', 'Right')), mc.select(cl=True)
-    mc.mirrorJoint('LeftScapulaUpVolume', mirrorYZ=True, mirrorBehavior=False,searchReplace=('Left', 'Right')), mc.select(cl=True)
+    #mc.mirrorJoint('LeftScapulaUpVolume', mirrorYZ=True, mirrorBehavior=False,searchReplace=('Left', 'Right')), mc.select(cl=True)
     mc.mirrorJoint(ikLeg, mirrorYZ=True, mirrorBehavior=True, searchReplace=('Left', 'Right')), mc.select(cl=True)
     mc.mirrorJoint(ikArm, mirrorYZ=True, mirrorBehavior=True, searchReplace=('Left', 'Right')), mc.select(cl=True)
 
     # parent bones
 
-    mc.parent('RightUpLeg', 'LeftUpLeg', 'Hips')
-    mc.parent('Neck', 'LeftShoulder', 'RightShoulder', 'Spine2')
-    mc.parent('Hips', 'HipsTranslation')
+    mc.parent('RightUpLeg', 'LeftUpLeg', 'Hips'), mc.select(d=True)
+    mc.parent('Neck', 'LeftShoulder', 'RightShoulder', 'Spine2'), mc.select(d=True)
+    mc.parent('Hips', 'HipsTranslation'), mc.select(d=True)
     mc.parent('LeftSpine2AttachRear', 'LeftBreast', 'RightSpine2AttachRear', 'RightBreast', 'Spine2'), mc.select(d=True)
     mc.parent('LeftHipsAttachSide', 'LeftHipsAttachRear', 'LeftHipsAttachFront', 'RightHipsAttachSide','RightHipsAttachFront', 'RightHipsAttachRear', 'Hips'), mc.select(d=True)
+    mc.parent('SpineScale', 'Spine'), mc.select(d=True)
+    mc.parent('Spine1Scale', 'Spine1'), mc.select(d=True)
+    mc.parent('Spine2Scale', 'Spine2ExpandHelper', 'Spine2'), mc.select(d=True)
 
     RootMotion = mc.curve(d=1,p=[(0, 0, 108), (36, 0, 36), (12, 0, 36), (12, 0, 12), (36, 0, 12), (36, 0, 24), (60, 0, 0),
                              (36, 0, -24), (36, 0, -12), (12, 0, -12), (12, 0, -36), (24, 0, -36), (0, 0, -60), (-24, 0, -36), (-12, 0, -36), (-12, 0, -12),
@@ -409,16 +412,18 @@ def BodyCustomButton(*args):
     RightGimbalCtrl_space = mc.group(em=True, n='IKLocalArm_R_ctrlSpace')
     mc.parent(RightGimbalCtrl_crv, RightGimbalCtrl_space), mc.select(d=True)
 
-    mc.delete(mc.parentConstraint('IKArm_L', LeftGimbalCtrl_space, mo=False)), mc.delete(mc.parentConstraint('IKArm_R', RightGimbalCtrl_space, mo=False))
+    mc.delete(mc.parentConstraint('IKArm1_L', LeftGimbalCtrl_space, mo=False)), mc.delete(mc.parentConstraint('IKArm1_R', RightGimbalCtrl_space, mo=False))
 
     gimbalCtrl_cv_list = ['IKLocalArm_L.cv[0:4]', 'IKLocalArm_R.cv[0:4]']
     mc.select(gimbalCtrl_cv_list)
     mc.rotate(0, 90, 0, fo=True)
+    mc.scale(10, 10, 10, ocp=True)
     mc.select(d=True)
 
-    mc.parent(LeftGimbalCtrl_space, 'IKFKAlignedArm_L'), mc.parent(RightGimbalCtrl_space, 'IKFKAlignedArm_R')
+    mc.parent(LeftGimbalCtrl_space, 'IKFKAlignedArm1_L'), mc.parent(RightGimbalCtrl_space, 'IKFKAlignedArm1_R')
     # mc.delete('IKXWrist_L_orientConstraint1', 'IKXWrist_R_orientConstraint1')
-    mc.orientConstraint(LeftGimbalCtrl_crv, 'IKXWrist_L', mo=True), mc.orientConstraint(RightGimbalCtrl_crv,'IKXWrist_R', mo=True)
+    mc.orientConstraint('IKLocalArm_L', 'IKXWrist_L', mo=True)
+    mc.orientConstraint('IKLocalArm_R','IKXWrist_R', mo=True)
 
     gimbalCtrl_list = [LeftGimbalCtrl_crv, RightGimbalCtrl_crv]
 
@@ -431,15 +436,15 @@ def BodyCustomButton(*args):
         mc.setAttr(i + '.sz', l=True, k=False, ch=False)
         mc.setAttr(i + '.v', l=True, k=False, ch=False)
 
-    controlColor(LeftGimbalCtrl_crv, 13)
-    controlColor(RightGimbalCtrl_crv, 6)
+    controlColor(LeftGimbalCtrl_crv, 6)
+    controlColor(RightGimbalCtrl_crv, 13)
 
     mc.select(d=True)
 
     print('Gimbal control completed -> 03')
     ##################################### neck twist
     MDNode = mc.createNode('multiplyDivide', n='neckTwist_MD')
-    mc.connectAttr('Head.rx', MDNode + '.input1X')
+    mc.connectAttr('FKHead_M.rx', MDNode + '.input1X')
     mc.connectAttr(MDNode + '.outputX', 'NeckScale.ry')
     mc.setAttr(MDNode + '.input2X', 0.5)
 
@@ -449,7 +454,7 @@ def BodyCustomButton(*args):
     mc.parent(ExtraCtrl_GRP, 'MotionSystem')
     mc.select(d=True)
 
-    mc.parent('LeftScapulaUpVolume', 'RightScapulaUpVolume', 'Spine2')
+    #mc.parent('LeftScapulaUpVolume', 'RightScapulaUpVolume', 'Spine2')
     mc.parent('LeftButtock', 'RightButtock', 'Hips'), mc.parent('HipsExpand', 'Hips')
 
     mc.addAttr('Main', ln='extraCtrls', at='bool', k=True)
@@ -469,7 +474,7 @@ def BodyCustomButton(*args):
               'RollHeel_LShape.cv[0:15]'), mc.scale(9.3, 9.3, 9.3, ocp=True), mc.select('RollHeel_LShape.cv[0:15]','RollHeel_RShape.cv[0:15]'), mc.move(0, 3.5, -3, r=True, os=True, wd=True)
     mc.select('RollToes_RShape.cv[0:15]', 'RollToes_LShape.cv[0:15]', 'IKToes_LShape.cv[0:7]','IKToes_RShape.cv[0:7]'), mc.scale(1.5, 1.5, 1.5, ocp=True), mc.move(0, 2.6, 1.2, r=True, os=True, wd=True)
     mc.select('FKIKLeg_L.cv[0:11]'), mc.scale(2.3, 2.3, 2.3, ocp=True), mc.move(17, 0, 0, r=True, os=True,wd=True), mc.select('FKIKLeg_R.cv[0:11]'), mc.scale(2.3, 2.3, 2.3, ocp=True), mc.move(-17, 0, 0, r=True, os=True, wd=True)
-    mc.select('IKArm_LShape.cv[0:15]', 'IKArm_RShape.cv[0:15]', 'IKLocalArm_R.cv[0:4]','IKLocalArm_L.cv[0:4]'), mc.scale(8, 8, 8, ocp=True), mc.scale(0.3, 1, 1, ocp=True)
+    mc.select('IKArm_LShape.cv[0:15]', 'IKArm_RShape.cv[0:15]'), mc.scale(8, 8, 8, ocp=True), mc.scale(0.3, 1, 1, ocp=True)
     mc.select('FKKnee_LShape.cv[0:7]', 'FKKnee_RShape.cv[0:7]'), mc.scale(11.5, 11.5, 11.5, ocp=True)
     mc.select('FKAnkle_LShape.cv[0:7]', 'FKAnkle_RShape.cv[0:7]'), mc.scale(12.5, 12.5, 12.5, ocp=True)
     mc.select('FKToes_LShape.cv[0:7]', 'FKToes_RShape.cv[0:7]'), mc.scale(13, 13, 13, ocp=True), mc.move(0, 3, 0,r=True)
@@ -479,9 +484,9 @@ def BodyCustomButton(*args):
     mc.select('HipSwinger_M.cv[0:7]'), mc.rotate(0, 0, 90, ocp=True), mc.move(2.5, 0, 0, r=True), mel.eval("CenterPivot"), mc.scale(30, 30, 30, ocp=True)
     mc.select('RootX_MShape.cv[0:6]', 'RootX_MShape3.cv[0:6]', 'RootX_MShape1.cv[0:6]','RootX_MShape2.cv[0:6]'), mc.scale(13, 13, 13, ocp=True)
     mc.select('IKSpine2_MShape.cv[0:7]', 'IKSpine1_MShape.cv[0:15]', 'IKSpine3_MShape.cv[0:15]','IKhybridSpine3_MShape.cv[0:15]', 'IKhybridSpine2_MShape.cv[0:15]','IKhybridSpine1_MShape.cv[0:15]'), mc.scale(9, 9, 9, ocp=True)
-    mc.select('FKIKArm_R.cv[0:11]', 'FKIKArm_L.cv[0:11]'), mc.scale(2, 2, 2, ocp=True), mc.select('FKIKArm_L.cv[0:11]'), mc.move(8.9, 8.2, 0, r=True, os=True, wd=True), mc.select('FKIKArm_R.cv[0:11]'), mc.move(-8.9, 8.2, 0, r=True, os=True, wd=True)
+    mc.select('FKIKArm_R.cv[0:11]', 'FKIKArm_L.cv[0:11]'), mc.scale(2, 2, 2, ocp=True), mc.select('FKIKArm1_L.cv[0:11]'), mc.move(8.9, 8.2, 0, r=True, os=True, wd=True), mc.select('FKIKArm1_R.cv[0:11]'), mc.move(-8.9, 8.2, 0, r=True, os=True, wd=True)
     mc.select('FKNeck_MShape.cv[0:7]'), mc.scale(21.6, 21.6, 21.6, ocp=True), mc.select('FKNeck_MShape.cv[1]','FKNeck_MShape.cv[5]'), mc.move(4.1, 0, 0, r=True, os=True, wd=True)
-    mc.select('FKHead_MShape.cv[0:7]'), mc.scale(13, 13, 13, ocp=True) # 0 174 -6.1
+    mc.select('FKHead_MShape.cv[0:7]'), mc.scale(13, 13, 13, ocp=True, p=(0, 181, -6)) # 0 174 -6.1
     mc.select('FKScapula_LShape.cv[0:20]'), mc.scale(12.5, 12.5, 12.5, ocp=True), mc.move(-8.5, 0, 0, r=True, os=True, wd=True), mc.scale(0.3, 1, 1,r=True, p=(0.5, 115.9, -8.8))
     mc.select('FKScapula_RShape.cv[0:20]'), mc.scale(12.5, 12.5, 12.5, ocp=True), mc.move(8.5, 0, 0, r=True, os=True, wd=True), mc.scale(0.3, 1, 1, r=True, p=(-10.5, 115.9, 8.8))
     mc.select('FKShoulder1_RShape.cv[0:7]', 'FKShoulder1_LShape.cv[0:7]', 'FKElbow_LShape.cv[0:7]', 'FKElbow_RShape.cv[0:7]', 'FKWrist_RShape.cv[0:7]', 'FKWrist_LShape.cv[0:7]'), mc.scale(10, 10, 10, ocp=True)
@@ -500,7 +505,7 @@ def BodyCustomButton(*args):
 
     AS_leftCtrl_list = ['FKScapula_LShape', 'FKAnkle_LShape', 'FKElbow_LShape', 'FKHip_LShape', 'FKIndexFinger1_LShape','FKIndexFinger2_LShape', 'FKIndexFinger3_LShape', 'FKKnee_LShape', 'FKMiddleFinger1_LShape',
                         'FKMiddleFinger3_LShape', 'FKPinkyFinger1_LShape', 'FKPinkyFinger2_LShape','FKPinkyFinger3_LShape', 'FKRingFinger1_LShape', 'FKRingFinger2_LShape', 'FKRingFinger3_LShape',
-                        'FKShoulder1_LShape','FKThumbFinger2_LShape', 'FKThumbFinger3_LShape', 'FKToes_LShape', 'FKWrist_LShape','IKArm_LShape', 'curveShape16', 'PoleArm_LShape', 'IKLeg_LShape', 'RollHeel_LShape',
+                        'FKShoulder1_LShape','FKThumbFinger2_LShape', 'FKThumbFinger3_LShape', 'FKToes_LShape', 'FKWrist_LShape','IKArm1_LShape', 'PoleArm1_LShape', 'IKLeg_LShape', 'RollHeel_LShape',
                         'RollToesEnd_LShape','RollToes_LShape', 'Fingers_LShape', 'PoleLeg_LShape', 'FKCup_LShape', 'FKMiddleFinger2_LShape','FKThumbFinger1_LShape', 'IKToes_LShape']
     for AS_lCtrls in AS_leftCtrl_list:
         controlColor(AS_lCtrls, 6)
@@ -508,7 +513,7 @@ def BodyCustomButton(*args):
     AS_rightCtrl_list = ['FKScapula_RShape', 'FKAnkle_RShape', 'FKElbow_RShape', 'FKHip_RShape','FKIndexFinger1_RShape', 'FKIndexFinger2_RShape', 'FKIndexFinger3_RShape', 'FKKnee_RShape','FKMiddleFinger1_RShape',
                          'FKMiddleFinger3_RShape', 'FKPinkyFinger1_RShape', 'FKPinkyFinger2_RShape','FKPinkyFinger3_RShape', 'FKRingFinger1_RShape', 'FKRingFinger2_RShape',
                          'FKRingFinger3_RShape', 'FKShoulder1_RShape','FKThumbFinger2_RShape', 'FKThumbFinger3_RShape', 'FKToes_RShape', 'FKWrist_RShape',
-                         'IKArm_RShape', 'curveShape16', 'PoleArm_RShape', 'IKLeg_RShape', 'RollHeel_RShape','RollToesEnd_RShape','RollToes_RShape', 'Fingers_RShape', 'PoleLeg_RShape', 'FKCup_RShape',
+                         'IKArm1_RShape', 'PoleArm1_RShape', 'IKLeg_RShape', 'RollHeel_RShape','RollToesEnd_RShape','RollToes_RShape', 'Fingers_RShape', 'PoleLeg_RShape', 'FKCup_RShape',
                          'FKMiddleFinger2_RShape', 'FKThumbFinger1_RShape', 'IKToes_RShape']
     for AS_rCtrls in AS_rightCtrl_list:
         controlColor(AS_rCtrls, 13)
@@ -594,7 +599,6 @@ def BodyCustomButton(*args):
     mc.select(d=True)
 
     print('Camera setup completed -> 06')
-
 
 ######################################################################################################################################
 ########################                                                            ##################################################
