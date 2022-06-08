@@ -1,4 +1,5 @@
 import maya.cmds as mc
+import pymel.core as pm
 
 #######################################################################
 #
@@ -53,11 +54,11 @@ class myControls():
 
     ##################################################### gear control ###########################################################
     def gear_ctrl(self, name='gear', itemColor=8):
-        gearCtrl = mc.curve(d=True, p=((1.724336, 7.352745, 3.448672), (1.724336, 5.973276, 3.448672), (4.310841, 4.479957, 3.448672), (5.505496, 5.169692, 3.448672), (7.229832, 2.183053, 3.448672),
-                                       (6.035176, 1.493319, 3.448672), (6.035176, -1.493319, 3.448672), (7.229832, -2.183053, 3.448672), (5.505496, -5.169692, 3.448672), (4.310841, -4.479957, 3.448672),
-                                       (1.724336, -5.973276, 3.448672), (1.724336, -7.352745, 3.448672), (-1.724337, -7.352745, 3.448672), (-1.724337, -5.973276, 3.448672), (-4.310841, -4.479957, 3.448672),
-                                       (-5.505496, -5.169692, 3.448672), (-7.229832, -2.183054, 3.448672), (-6.035176, -1.49332, 3.448672), (-6.035176, 1.493318, 3.448672), (-7.229832, 2.183052, 3.448672),
-                                       (-5.505496, 5.16969, 3.448672), (-4.310841, 4.479956, 3.448672), (-1.724337, 5.973276, 3.448672), (-1.724337, 7.352745, 3.448672), (1.724336, 7.352745, 3.448672)), n=name + '_ctrl')
+        gearCtrl = mc.curve(d=True, p=((1.724336, 7.352745, 0), (1.724336, 5.973276, 0), (4.310841, 4.479957, 0), (5.505496, 5.169692, 0), (7.229832, 2.183053, 0),
+                                       (6.035176, 1.493319, 0), (6.035176, -1.493319, 0), (7.229832, -2.183053, 0), (5.505496, -5.169692, 0), (4.310841, -4.479957, 0),
+                                       (1.724336, -5.973276, 0), (1.724336, -7.352745, 0), (-1.724337, -7.352745, 0), (-1.724337, -5.973276, 0), (-4.310841, -4.479957, 0),
+                                       (-5.505496, -5.169692, 0), (-7.229832, -2.183054, 0), (-6.035176, -1.49332, 0), (-6.035176, 1.493318, 0), (-7.229832, 2.183052, 0),
+                                       (-5.505496, 5.16969, 0), (-4.310841, 4.479956, 0), (-1.724337, 5.973276, 0), (-1.724337, 7.352745, 0), (1.724336, 7.352745, 0)), n=name + '_ctrl')
         gearCtrlSpace = mc.group(em=True, n=name + '_ctrlSpace')
         print(gearCtrl)
         gearCtrlSpaceMaster = mc.group(em=True, n=name + '_ctrlSpaceMaster')
@@ -110,4 +111,22 @@ class myControls():
         fkCtrlSpaceMaster = mc.group(em=True, n=name + '_ctrlSpaceMaster')
         mc.move(-15, 0, 0, fkCtrlSpaceMaster + '.scalePivot', fkCtrlSpaceMaster + '.rotatePivot', r=True)
         mc.parent(fkCtrl, fkCtrlSpace), mc.parent(fkCtrlSpace, fkCtrlSpaceMaster)
+        mc.select(d=True)
+
+    ################################################### Line curve guide #########################################################
+    def lineCrv_ctrl(self, name='lineCurve', itemColor=8):
+        lCrvCtrl = mc.curve(d=True, p=((0, 0, 0), (0, 0, 1)), n=name + str('_lCrvCtrl'))
+        lCrvCtrlSpace = mc.group(em=True, n=name + '_lCrvCtrlSpace')
+        print(lCrvCtrl)
+        lCrvCtrlSpaceMaster = mc.group(em=True, n=name + '_lCrvCtrlSpaceMaster')
+        mc.parent(lCrvCtrl, lCrvCtrlSpace)
+        mc.parent(lCrvCtrlSpace, lCrvCtrlSpaceMaster)
+        mc.select(d=True)
+
+    ###################################################### Bombomboom control #####################################################
+    def bombomboom_ctrl(self, name='bombomboom', itemColor='8'):
+        bbboomCtrl = mc.curve(d=True, p=((0, 0, 0), (0, 5, 0), (1, 6, 0), (1, 7, 0), (0, 8, 0), (-1, 7, 0), (-1, 6, 0), (0, 5, 0)), n=name + '_ctrl')
+        bbboomCtrlSpace = mc.group(em=True, n=name + '_ctrlSpace')
+        bbboomCtrlSpaceMaster = mc.group(em=True, n=name + '_ctrlSpaceMaster')
+        mc.parent(bbboomCtrl, bbboomCtrlSpace), mc.parent(bbboomCtrlSpace, bbboomCtrlSpaceMaster)
         mc.select(d=True)

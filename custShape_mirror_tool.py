@@ -10,17 +10,19 @@ import maya.cmds as mc
 #############################################################################################################################################################################################
 ###############################################################                                  Create loc                                 #################################################
 
-leftBones_list = ['LeftUpLeg', 'LeftUpperlegHelper', 'LeftButtock', 'LeftUpperlegHelperUp', 'LeftUpLegRoll', 'LeftUpperlegHelperDn', 'LeftLeg', 'LeftLowerleg', 'LeftLegRoll', 'LeftBreast',
+leftBones_list = ['LeftUpLeg', 'LeftUpperlegHelper', 'LeftButtock', 'LeftUpperlegHelperUp', 'LeftUpperlegHelperDn', 'LeftLeg', 'LeftLowerleg', 'LeftLegRoll', 'LeftBreast',
                   'LeftShoulder', 'LeftArm', 'LeftUpperarm', 'LeftShoulderarmHelper_01', 'LeftArmRoll', 'LeftShoulderarmHelper_02', 'LeftForeArm', 'LeftLowerarm', 'LeftForeArmRoll', 'LeftWristHelper',
-                  'LeftHipExpandLeft']
+                  'LeftHipExpandLeft', 'LeftHand']
 
-leftBones_loc_list = ['LeftUpLeg_locCust', 'LeftUpperlegHelper_locCust', 'LeftButtock_locCust', 'LeftUpperlegHelperUp_locCust', 'LeftUpLegRoll_locCust', 'LeftUpperlegHelperDn_locCust', 'LeftLeg_locCust', 'LeftLowerleg_locCust',
+leftBones_loc_list = ['LeftUpLeg_locCust', 'LeftUpperlegHelper_locCust', 'LeftButtock_locCust', 'LeftUpperlegHelperUp_locCust', 'LeftUpperlegHelperDn_locCust', 'LeftLeg_locCust', 'LeftLowerleg_locCust',
                       'LeftLegRoll_locCust', 'LeftBreast_locCust', 'LeftShoulder_locCust', 'LeftArm_locCust', 'LeftUpperarm_locCust', 'LeftShoulderarmHelper_01_locCust', 'LeftArmRoll_locCust', 'LeftShoulderarmHelper_02_locCust',
-                      'LeftForeArm_locCust', 'LeftLowerarm_locCust', 'LeftForeArmRoll_locCust',  'LeftWristHelper_locCust', 'LeftHipExpandLeft_locCust']
+                      'LeftForeArm_locCust', 'LeftLowerarm_locCust', 'LeftForeArmRoll_locCust',  'LeftWristHelper_locCust', 'LeftHipExpandLeft_locCust', 'LeftHand_locCust']
 
-rightBones_list = ['RightUpLeg', 'RightUpperlegHelper', 'RightButtock', 'RightUpperlegHelperUp', 'RightUpLegRoll', 'RightUpperlegHelperDn', 'RightLeg', 'RightLowerleg',
+rightBones_list = ['RightUpLeg', 'RightUpperlegHelper', 'RightButtock', 'RightUpperlegHelperUp', 'RightUpperlegHelperDn', 'RightLeg', 'RightLowerleg',
                     'RightLegRoll', 'RightBreast', 'RightShoulder', 'RightArm', 'RightUpperarm', 'RightShoulderarmHelper_01', 'RightArmRoll', 'RightShoulderarmHelper_02',
-                    'RightForeArm', 'RightLowerarm', 'RightForeArmRoll',  'RightWristHelper', 'RightHipExpandRight']
+                    'RightForeArm', 'RightLowerarm', 'RightForeArmRoll',  'RightWristHelper', 'RightHipExpandRight', 'RightHand']
+
+centerBones_list = ['Hips_ExpandFront', 'HipsExpandBack', 'SpineScale', 'Spine1Scale', 'Spine2Scale', 'HipsExpand']
 
 for i in leftBones_list:
     loc = mc.spaceLocator(n=i + '_locCust')
@@ -66,3 +68,15 @@ for r, item in enumerate(rightBones_list):
     mc.pointConstraint(leftBones_loc_list[r], item, mo=True)
     mc.orientConstraint(leftBones_loc_list[r], item, mo=True)
     mc.connectAttr(leftBones_loc_list[r] + '.s', item + '.s', f=True)
+
+#############################################################################################################################################################################################
+###############################################################        Bake locators and delete constrainst final                           #################################################
+
+startF = mc.playbackOptions(q=True, minTime=True)
+print(startF)
+endF = mc.playbackOptions(q=True, maxTime=True)
+print(endF)
+mc.bakeResults(rightBones_list, centerBones_list, t=(startF, endF), sm=True)
+mc.delete(locSpaceGRP)
+
+print(' - CUSTOM SHAPE MIRROR DONE // BAKE ALL BONES WITH TRANSFORMS IS COMPLETED - ')
